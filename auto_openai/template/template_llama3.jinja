@@ -1,0 +1,15 @@
+{%- for message in messages -%}
+    {%- if message['role'] == 'user' -%}
+        {{- '<|start_header_id|>user<|end_header_id|>\n' + message['content'] + '<|eot_id|>' -}}
+    {%- elif message['role'] == 'assistant' -%}
+        {{- '<|start_header_id|>assistant<|end_header_id|>\n' + message['content'] + '<|eot_id|>' -}}
+    {%- endif -%}
+    {%- if (loop.last and add_generation_prompt) or not loop.last -%}
+        {{- '' -}}
+    {%- endif -%}
+{%- endfor -%}
+
+
+{%- if add_generation_prompt and messages[-1]['role'] != 'assistant' -%}
+    {{- '<|start_header_id|>user<|end_header_id|>' -}}
+{% endif %}

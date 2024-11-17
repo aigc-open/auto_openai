@@ -1,0 +1,38 @@
+# 文本到图像 API
+
+该 API 允许您根据文本提示生成图像，支持多种模型、采样器和调度器。以下是 API 功能的详细介绍，以及各个参数的说明、类型和默认值。
+
+## API 功能
+
+文本到图像 API 接收文本提示，并根据指定的参数生成图像。您可以通过选择不同的模型、采样器和调度器来定制生成过程。
+
+## 参数说明
+
+| 参数名             | 类型          | 默认值                                                                    | 描述                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------------ | ------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `model`            | `Models`      | `sd1.5/majicmixRealistic_betterV6.safetensors`                            | 用于图像生成的模型。可选项包括：`sd1.5/majicmixRealistic_betterV6.safetensors` 等。                                                                                                                                                                                                                                                                          |
+| `seed`             | `int`         | `0`                                                                       | 随机数生成的种子。设置特定的种子可以实现结果的可重复性。                                                                                                                                                                                                                                                                                                                                                      |
+| `steps`            | `int`         | `20`                                                                      | 图像生成过程中的步骤数。更多的步骤可能会导致更高质量的图像。                                                                                                                                                                                                                                                                                                                                                  |
+| `batch_size`       | `int`         | `1`                                                                       | 一次生成的图像数量。                                                                                                                                                                                                                                                                                                                                                                                          |
+| `width`            | `int`         | `512`                                                                     | 生成图像的宽度（以像素为单位）。                                                                                                                                                                                                                                                                                                                                                                              |
+| `height`           | `int`         | `512`                                                                     | 生成图像的高度（以像素为单位）。                                                                                                                                                                                                                                                                                                                                                                              |
+| `sampler_name`     | `SamplerName` | `euler`                                                                   | 用于生成过程的采样器。可选项包括：`euler`、`euler_cfg_pp`、`euler_ancestral`、`euler_ancestral_cfg_pp`、`heun`、`heunpp2`、`dpm_2`、`dpm_2_ancestral`、`lms`、`dpm_fast`、`dpm_adaptive`、`dpmpp_2s_ancestral`、`dpmpp_sde`、`dpmpp_sde_gpu`、`dpmpp_2m`、`dpmpp_2m_sde`、`dpmpp_2m_sde_gpu`、`dpmpp_3m_sde`、`dpmpp_3m_sde_gpu`、`ddpm`、`lcm`、`ipndm`、`ipndm_v`、`deis`、`ddim`、`uni_pc`、`uni_pc_bh2`。 |
+| `cfg`              | `int`         | `8`                                                                       | 无分类器引导的比例。较高的值可能会导致更严格地遵循提示。                                                                                                                                                                                                                                                                                                                                                      |
+| `denoise_strength` | `float`       | `0.75`                                                                    | 在图像生成过程中应用的去噪强度。                                                                                                                                                                                                                                                                                                                                                                              |
+| `scheduler`        | `Scheduler`   | `normal`                                                                  | 用于生成过程的调度器。可选项包括：`normal`、`karras`、`exponential`、`sgm_uniform`、`simple`、`ddim_uniform`、`beta`。                                                                                                                                                                                                                                                                                        |
+| `prompt`           | `str`         | `"beautiful scenery nature glass bottle landscape, purple galaxy bottle"` | 描述所需图像的文本提示。                                                                                                                                                                                                                                                                                                                                                                                      |
+| `negative_prompt`  | `str`         | `"text, watermark"`                                                       | 描述在生成图像中要避免的元素的文本提示。                                                                                                                                                                                                                                                                                                                                                                      |
+
+# 支持的模型名称
+
+| 模型名称                                         |
+|--------------------------------------------------|
+| sd1.5/majicmixRealistic_betterV6.safetensors     |
+| sd1.5/dreamshaper-v8/dreamshaper_8.safetensors   |
+| sdxl/sd_xl_base_1.0.safetensors                  |
+| flux.1-schnell/flux1-schnell.safetensors         |
+
+
+## 结论
+
+该 API 提供了一种灵活的方式来根据文本提示生成图像，您可以根据需要调整参数，探索创意的可能性！

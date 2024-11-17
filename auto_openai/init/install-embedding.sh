@@ -1,0 +1,1 @@
+cd /workspace && git clone https://gitee.com/lijiacai/embedding-webui.git && cd /workspace/embedding-webui && pip install -r requirements.txt
