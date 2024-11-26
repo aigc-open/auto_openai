@@ -1,1 +1,0 @@
-cd /workspace && git clone https://gitee.com/lijiacai/llm-transformer-server.git && cd /workspace/llm-transformer-server && pip install -r requirements.txt

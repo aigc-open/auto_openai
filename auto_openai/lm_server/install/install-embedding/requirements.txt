@@ -1,0 +1,3 @@
+langchain_huggingface==0.1.2
+gradio
+fire

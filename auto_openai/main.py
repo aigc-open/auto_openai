@@ -3,7 +3,8 @@ from typing import Optional, Union, List
 import time
 import asyncio
 from fastapi import HTTPException, Depends
-from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest
+from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
+    ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest
 from fastapi.responses import JSONResponse, StreamingResponse, Response
 from auto_openai.utils.init_env import global_config
 import json
@@ -13,8 +14,6 @@ import requests
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string
 from auto_openai.utils.depends import get_model_config
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
-import auto_openai.workflow as workflow
-from auto_openai.workflow import Workflow
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
 import gradio as gr
@@ -92,7 +91,7 @@ async def completion(
 
 @app.get("/v1/models")
 async def get_model(request: Request):
-    model_list = global_config.LLM_MODELS
+    model_list = global_config.get_MODELS_MAPS()["LLM"]
     out = []
     for model in model_list:
         out.append({
@@ -109,15 +108,23 @@ async def get_model(request: Request):
 
 
 @app.post("/v1/images/generations")
-async def image_generations(request: Request, data: Workflow):
+async def image_generations(request: Request):
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
-    model_config = get_model_config(name=data.model)
+    # 获取body 数据
+    data = await request.json()
+    model_config = get_model_config(name=data["model"])
     scheduler.set_model_config(
-        model_name=data.model, value=json.dumps(model_config))
+        model_name=data["model"], value=json.dumps(model_config))
     request_id = gen_request_id()
-    data.format_json()
-    return await scheduler.ImageGenerations(request=data, request_id=request_id)
+    server_type = model_config["server_type"]
+    api_type = model_config["api_type"]
+    if server_type == "comfyui":
+        if api_type == "BaseGenerateImage":
+            from auto_openai.workflow import BaseGenerateImage
+            req = BaseGenerateImage(**data)
+        req.format()
+        return await scheduler.ImageGenerations(request=req, request_id=request_id)
 
 
 @app.post("/v1/audio/speech")
@@ -164,11 +171,6 @@ async def audio_speech(request: Request, model: str = Form(...), file: UploadFil
     return {"text": text}
 
 
-class EmbeddingsRequest(BaseModel):
-    model: str
-    input: Optional[List[str]] = []
-
-
 @app.post("/v1/embeddings")
 async def embeddings(request: Request, data: EmbeddingsRequest):
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
@@ -179,6 +181,18 @@ async def embeddings(request: Request, data: EmbeddingsRequest):
     request_id = gen_request_id()
     embeddings = await scheduler.Embeddings(request=data, request_id=request_id)
     return embeddings
+
+
+@app.post("/v1/rerank")
+async def Rerank(request: Request, data: RerankRequest):
+    scheduler = Scheduler(redis_client=redis_client, http_request=request,
+                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
+    model_config = get_model_config(name=data.model)
+    scheduler.set_model_config(
+        model_name=data.model, value=json.dumps(model_config))
+    request_id = gen_request_id()
+    out = await scheduler.Rerank(request=data, request_id=request_id)
+    return out
 
 ########################### other api for frontend ############################
 
@@ -221,47 +235,15 @@ async def running_models(request: Request):
     }
 
 
-class LLMModelsConfig(BaseModel):
-    name: str
-    model_max_tokens: int
-    description: str
-
-
-@app.get("/v1/llm-models")
-async def llm_models(request: Request):
-    results = []
-    for i in global_config.LLM_MODELS:
-        results.append(LLMModelsConfig(**i))
-    return {
-        "count": len(results),
-        "results": results
-    }
-
-
-class SDModelsConfig(BaseModel):
-    name: str
-    description: str
-
-
-@app.get("/v1/sd-models")
-async def llm_models(request: Request):
-    results = []
-    for i in global_config.SD_MODELS:
-        results.append(SDModelsConfig(**i))
-    return {
-        "count": len(results),
-        "results": results
-    }
-
-
 ########################### web html ############################
 app = gr.mount_gradio_app(app, DemoWebApp(
     title="Openai-本地大模型API文档").app, path="/")
 
 
-def run(port: int = 9000,workers=2):
+def run(port: int = 9000, workers=2):
     import uvicorn
-    uvicorn.run("auto_openai.main:app", host="0.0.0.0", port=port, workers=workers)
+    uvicorn.run("auto_openai.main:app", host="0.0.0.0",
+                port=port, workers=workers)
 
 
 if __name__ == "__main__":

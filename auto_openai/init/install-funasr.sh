@@ -1,1 +1,0 @@
-cd /workspace && git clone https://gitee.com/lijiacai/funasr-webui.git && cd /workspace/funasr-webui && pip install -r requirements.txt

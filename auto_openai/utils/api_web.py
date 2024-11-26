@@ -3,6 +3,63 @@ import os
 import gradio as gr
 from auto_openai.utils.init_env import global_config
 from auto_openai import project_path
+import pandas as pd
+from typing import Dict, Any
+from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  AudioSpeechRequest, \
+    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, BaseGenerateImageRequest
+
+
+def generate_api_documentation(schema: Dict[str, Any]):
+    # 创建一个空列表来存储每个属性的信息
+    data = []
+
+    # 处理属性
+    properties = schema.get('properties', {})
+    for prop_name, prop_details in properties.items():
+        title = prop_details.get('title', prop_name)
+        default = prop_details.get('default', '无')
+
+        # 处理类型
+        if 'anyOf' in prop_details:
+            types = [option.get('type', '未知类型')
+                     for option in prop_details['anyOf']]
+            if 'null' in types:
+                types.remove('null')
+            prop_type = '/'.join(types)
+        else:
+            prop_type = prop_details.get('type', '未知类型')
+
+        # 处理枚举类型
+        enum_str = ""
+        if '$ref' in prop_details:
+            ref = prop_details['$ref']
+            # 动态查找枚举值
+            enum_values = schema['$defs'].get(
+                ref.split('/')[-1], {}).get('enum', [])
+            if enum_values:
+                enum_str = f" (可选值: {', '.join(enum_values)})"
+                prop_type = "string"  # 假设枚举类型为字符串
+        elif 'allOf' in prop_details:
+            for item in prop_details['allOf']:
+                if '$ref' in item:
+                    ref = item['$ref']
+                    # 动态查找枚举值
+                    enum_values = schema['$defs'].get(
+                        ref.split('/')[-1], {}).get('enum', [])
+                    if enum_values:
+                        enum_str = f" (可选值: {', '.join(enum_values)})"
+                        prop_type = "string"  # 假设枚举类型为字符串
+
+        # 将属性信息添加到列表中
+        data.append({
+            '名称': prop_name,
+            '类型': prop_type,
+            '默认值/参考': f'{default}',
+            '描述': enum_str
+        })
+
+    df = pd.DataFrame(data)
+    return df
 
 
 class APIDocsApp():
@@ -92,12 +149,12 @@ class APIDocsApp():
 
 class DemoWebApp(APIDocsApp):
     home_readme = os.path.join(project_path, "README.md")
-    docs_path = os.path.join(project_path, "docs")
-    demo_path = os.path.join(project_path, "tests")
+    demo_path = os.path.join(project_path, "web/tests")
 
     def _content_page_(self, model_config, model_type,
                        model_headers=["name", "description"],
-                       model_headers_desc=["名称", "描述"]):
+                       model_headers_desc=["名称", "描述"],
+                       RequestBaseModel=[]):
         with gr.Column(elem_classes="content-container"):
             model_list = []
             for m in model_config:
@@ -112,9 +169,13 @@ class DemoWebApp(APIDocsApp):
                         model_list,
                         headers=model_headers_desc
                     )
-                with gr.Tab("文档说明"):
-                    md_path = os.path.join(self.docs_path, f"{model_type}.MD")
-                    gr.Markdown(self.read_file(md_path))
+                if RequestBaseModel is not None:
+                    with gr.Tab("文档参数说明"):
+                        for r_basemodel in RequestBaseModel:
+                            gr.Markdown(f"# {r_basemodel.__name__}")
+                            data = generate_api_documentation(
+                                r_basemodel.model_json_schema())
+                            gr.DataFrame(data)
                 with gr.Tab("python 示例"):
                     py_path = os.path.join(self.demo_path, f"{model_type}.py")
                     gr.Code(self.read_file(py_path),
@@ -132,69 +193,65 @@ class DemoWebApp(APIDocsApp):
         with gr.Column(elem_classes="content-container"):
             gr.Markdown("# 努力开发中...")
 
-    def 大语言模型_page(self):
-        return self._content_page_(
-            model_config=global_config.LLM_MODELS,
-            model_type="大语言模型",
-            model_headers=["name", "model_max_tokens", "description"],
-            model_headers_desc=["名称", "最大支持tokens", "描述"]
-        )
-
-    def 向量Embeddings_page(self):
-        return self._content_page_(
-            model_config=global_config.EMBEDDING_MODELS,
-            model_type="向量Embeddings",
-            model_headers=["name", "description"],
-            model_headers_desc=["名称", "描述"]
-        )
-
-    def 语音生成_page(self):
-        return self._content_page_(
-            model_config=global_config.TTS_MODELS,
-            model_type="语音生成",
-            model_headers=["name", "description"],
-            model_headers_desc=["名称", "描述"]
-        )
-
-    def 语音识别_page(self):
-        return self._content_page_(
-            model_config=global_config.ASR_MODELS,
-            model_type="语音识别",
-            model_headers=["name", "description"],
-            model_headers_desc=["名称", "描述"]
-        )
-
-    def 绘图_page(self):
-        with gr.Tabs():
-            for type_ in global_config.SD_MODELS:
-                with gr.Tab(type_["name"]):
+    def Models_pages(self):
+        data = global_config.get_MODELS_MAPS()
+        with gr.Column():
+            with gr.Tabs():
+                with gr.Tab("LLM"):
                     self._content_page_(
-                        model_config=type_["model_list"],
-                        model_type=type_["name"],
-                        model_headers=["name"],
-                        model_headers_desc=["名称"]
+                        model_config=data["LLM"],
+                        model_type="LLM",
+                        model_headers=[
+                            "name", "model_max_tokens", "description"],
+                        model_headers_desc=["名称", "最大支持tokens", "描述"],
+                        RequestBaseModel=[
+                            ChatCompletionRequest, CompletionRequest]
                     )
-        return
-
-    def 多模态_page(self):
-        return self._content_page_(
-            model_config=global_config.VISION_MODELS,
-            model_type="多模态",
-            model_headers=["name", "model_max_tokens", "description"],
-            model_headers_desc=["名称", "最大支持tokens", "描述"]
-        )
+                with gr.Tab("VLLM"):
+                    self._content_page_(
+                        model_config=data["VLLM"],
+                        model_type="VLLM",
+                        model_headers=[
+                            "name", "model_max_tokens", "description"],
+                        model_headers_desc=["名称", "最大支持tokens", "描述"],
+                        RequestBaseModel=[ChatCompletionRequest]
+                    )
+                with gr.Tab("BaseGenerateImage"):
+                    self._content_page_(
+                        model_config=data["BaseGenerateImage"],
+                        model_type="BaseGenerateImage",
+                        RequestBaseModel=[BaseGenerateImageRequest]
+                    )
+                with gr.Tab("Embedding"):
+                    self._content_page_(
+                        model_config=data["Embedding"],
+                        model_type="Embedding",
+                        RequestBaseModel=[EmbeddingsRequest]
+                    )
+                with gr.Tab("Rerank"):
+                    self._content_page_(
+                        model_config=data["Rerank"],
+                        model_type="Rerank",
+                        RequestBaseModel=[RerankRequest]
+                    )
+                with gr.Tab("TTS"):
+                    self._content_page_(
+                        model_config=data["TTS"],
+                        model_type="TTS",
+                        RequestBaseModel=[AudioSpeechRequest]
+                    )
+                with gr.Tab("ASR"):
+                    self._content_page_(
+                        model_config=data["ASR"],
+                        model_type="ASR",
+                        RequestBaseModel=[AudioTranscriptionsRequest]
+                    )
 
     @property
     def config(self):
         return {
             "首页": self.Home_page,
-            "大语言模型": self.大语言模型_page,
-            "多模态": self.多模态_page,
-            "绘图": self.绘图_page,
-            "向量Embeddings": self.向量Embeddings_page,
-            "语音生成": self.语音生成_page,
-            "语音识别": self.语音识别_page,
-
+            "模型广场": self.Models_pages,
         }
 
 

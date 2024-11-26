@@ -23,12 +23,13 @@ class UrlParser:
         return os.path.join(global_config.COMFYUI_INPUTS_DIR, f"{gen_random_uuid()}.{self.file_extension}")
 
 
-def get_model_names(type_):
-    model_names = []
-    for model_ in global_config.SD_MODELS:
-        if model_["name"] == type_:
-            for _model_ in model_["model_list"]:
-                model_names.append(_model_["name"])
-    if not model_names:
-        raise Exception(f"Model type {type_} not found")
-    return model_names
+class WorkflowFormat():
+
+    api_json: dict = {}
+    download_json: dict = {}
+
+    def format(self):
+        self.api_json, self.download_json = self.format_json()
+
+    def format_json(self):
+        ...

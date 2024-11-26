@@ -19,7 +19,7 @@ def check_process_exists(keyword):
 
 
 if __name__ == '__main__':
-    process_name = 'main.py'
+    process_name = 'maskgct'
     if check_process_exists(process_name):
         print(f"{process_name} is running.")
     else:

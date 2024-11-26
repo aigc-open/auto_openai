@@ -16,17 +16,22 @@ class GlobalConfig(BaseModel):
 
     #
     VLLM_MODEL_ROOT_PATH: str = "/root/.cache"
-    COMFYUI_MODEL_ROOT_PATH: str = "/workspace/ComfyUI/models"
-    COMFYUI_ROOT_PATH: str = "/workspace/ComfyUI"
+    COMFYUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models/"
     COMFYUI_INPUTS_DIR: str = "/tmp"
     MASKGCT_MODEL_ROOT_PATH: str = "/root/.cache/MaskGCT-models/"
-    MASKGCT_ROOT_PATH: str = "/workspace/MaskGCT"
-    FUNASR_ROOT_PATH: str = "/workspace/funasr-webui"
     FUNASR_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
-    EMBEDDING_ROOT_PATH: str = "/workspace/embedding-webui"
     EMBEDDING_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
-    LLM_TRANSFORMER_ROOT_PATH: str = "/workspace/llm-transformer-server"
     LLM_TRANSFORMER_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
+    WEBUI_MODEL_ROOT_PATH: str = "/root/.cache/webui-models/models"
+    RERANK_MODEL_ROOT_PATH: str = "/root/.cache/rerank-models/"
+    #
+    COMFYUI_ROOT_PATH: str = "/workspace/ComfyUI"
+    WEBUI_ROOT_PATH: str = "/workspace/stable-diffusion-webui"
+    MASKGCT_ROOT_PATH: str = "/workspace/MaskGCT"
+    FUNASR_ROOT_PATH: str = "/workspace/install-funasr"
+    EMBEDDING_ROOT_PATH: str = "/workspace/install-embedding"
+    LLM_TRANSFORMER_ROOT_PATH: str = "/workspace/install-llm-transformer-server"
+    RERANK_ROOT_PATH: str = "/workspace/install-rerank"
     # oss
     OSS_CLIENT_CONFIG: dict = {}
     #
@@ -38,12 +43,7 @@ class GlobalConfig(BaseModel):
     GPU_DEVICE_ENV_NAME: str = "TOPS_VISIBLE_DEVICES"
     ONLY_SERVER_TYPES: list = []
     GPU_TYPE: str = "EF-S60"
-    LLM_MODELS: list = []
-    VISION_MODELS: list = []
-    SD_MODELS: list = []
-    TTS_MODELS: list = []
-    ASR_MODELS: list = []
-    EMBEDDING_MODELS: list = []
+    MODELS: list = []
 
     def parse_config(self, path=".conf/config.yaml"):
         if not os.path.exists(path):
@@ -79,6 +79,12 @@ class GlobalConfig(BaseModel):
                 logger.warning(f"参数{k}={v}设置失败,因为没有这个属性")
         return env_
 
+    def get_MODELS_MAPS(self):
+        data  = {}
+        for m in global_config.MODELS:
+            if "api_type" in m:
+                data[m["api_type"]] = data.get(m["api_type"], []) + [m]
+        return data
 
 global_config = GlobalConfig()
 AUTO_OPENAI_CONFIG_PATH = os.environ.get(
