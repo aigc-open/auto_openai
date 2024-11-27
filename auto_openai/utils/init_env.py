@@ -75,6 +75,7 @@ class GlobalConfig(BaseModel):
                         setattr(self, k, False)
                 else:
                     setattr(self, k, type(getattr(self, k))(v))
+                logger.info(f"修改配置: {k}={v}, type={type(v)}")
             else:
                 logger.warning(f"参数{k}={v}设置失败,因为没有这个属性")
         return env_

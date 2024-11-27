@@ -22,7 +22,7 @@ services:
   lm-scheduler01:
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
     environment:
-      NODE_GCU_TOTAL: "0,1"
+      NODE_GPU_TOTAL: "0,1"
       GPU_TYPE: "EF-S60"
     command: 
       - /bin/sh
@@ -41,7 +41,7 @@ services:
   lm-scheduler23:
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
     environment:
-      NODE_GCU_TOTAL: "2,3"
+      NODE_GPU_TOTAL: "2,3"
       GPU_TYPE: "EF-S60"
     command: 
       - /bin/sh
@@ -60,7 +60,7 @@ services:
   lm-scheduler-cpu:
     image: harbor.uat.enflame.cc/library/enflame.cn/hetero-power:1.3
     environment:
-      NODE_GCU_TOTAL: "1,2,3,4"
+      NODE_GPU_TOTAL: "1,2,3,4"
       GPU_TYPE: "CPU"
     command: 
       - /bin/sh
