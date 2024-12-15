@@ -10,9 +10,11 @@ def gen_random_uuid() -> str:
     return str(uuid7(as_type="int"))
 
 
-class BaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
+class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
 
     def format_json(self):
+        if "flux" in self.model:
+            return self.flux_format_json()
         return self.normal_format_json()
 
     def normal_format_json(self):

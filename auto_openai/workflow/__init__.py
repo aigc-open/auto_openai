@@ -1,2 +1,2 @@
 
-from .BaseGenerateImage import BaseGenerateImage
+from .SolutionBaseGenerateImage import SolutionBaseGenerateImage

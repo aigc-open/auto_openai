@@ -129,9 +129,9 @@ async def image_generations(request: Request):
     server_type = model_config["server_type"]
     api_type = model_config["api_type"]
     if server_type == "comfyui":
-        if api_type == "BaseGenerateImage":
-            from auto_openai.workflow import BaseGenerateImage
-            req = BaseGenerateImage(**data)
+        if api_type == "SolutionBaseGenerateImage":
+            from auto_openai.workflow import SolutionBaseGenerateImage
+            req = SolutionBaseGenerateImage(**data)
         req.format()
         return await scheduler.ImageGenerations(request=req, request_id=request_id)
 

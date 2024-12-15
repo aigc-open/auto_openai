@@ -40,9 +40,9 @@ cd $funasr_path && git lfs install && git clone https://www.modelscope.cn/iic/sp
 # rerank
 rerank_path="/root/share_models/Rerank-models/"
 mkdir -p $rerank_path
-cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-base.git
-cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
-cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/mixedbread-ai/mxbai-rerank-xsmall-v1.git
+# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-base.git
+# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
+# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/mixedbread-ai/mxbai-rerank-xsmall-v1.git
 
 
 # webui  && comfyui
@@ -50,10 +50,19 @@ webui_path="/root/share_models/webui-models/"
 mkdir -p $webui_path
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/chineking/adetailer.git
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/licyks/controlnet_v1.1_annotator.git  # for webui controlnet 处理器, 挂载目录: /workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads
-cd $webui_path && git lfs install && git clone https://www.modelscope.cn/jackle/comfyui_controlnet_aux_ckpts.git # for webui controlnet 处理器，挂载目录: /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts
+cd $webui_path && git lfs install && git clone https://www.modelscope.cn/jackle/comfyui_controlnet_aux_ckpts.git # for ComfyUI controlnet 处理器，挂载目录: /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/shareAI/lllyasviel-ControlNet-v1-1.git ControlNet # webui/comfyui 公用同一个controlnet
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/AI-ModelScope/clip-vit-large-patch14.git # webui 使用的clip,必须安装
 
 # checkpoint 下载
-mkdir -p $webui_path/Stable-diffusion/svd
-cd $webui_path/Stable-diffusion/svd && wget https://www.modelscope.cn/models/AI-ModelScope/stable-video-diffusion-img2vid-xt/resolve/master/svd_xt.safetensors # svd 视频生成
+# mkdir -p $webui_path/Stable-diffusion/svd
+# cd $webui_path/Stable-diffusion/svd && wget https://www.modelscope.cn/models/AI-ModelScope/stable-video-diffusion-img2vid-xt/resolve/master/svd_xt.safetensors # svd 视频生成
+
+mkdir -p $webui_path/CogVideo
+cd $webui_path/CogVideo && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/CogVideoX-5b.git
+
+mkdir -p $webui_path/Stable-diffusion
+cd $webui_path/Stable-diffusion && git lfs install && git clone https://www.modelscope.cn/black-forest-labs/FLUX.1-schnell.git
+
+mkdir -p $webui_path/Stable-diffusion
+cd $webui_path/Stable-diffusion && git lfs install && git clone https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git
