@@ -44,6 +44,7 @@ class GlobalConfig(BaseModel):
     ONLY_SERVER_TYPES: list = []
     GPU_TYPE: str = "EF-S60"
     MODELS: list = []
+    AVAILABLE_MODELS: list = ["ALL"]
 
     def parse_config(self, path=".conf/config.yaml"):
         if not os.path.exists(path):
@@ -81,11 +82,12 @@ class GlobalConfig(BaseModel):
         return env_
 
     def get_MODELS_MAPS(self):
-        data  = {}
+        data = {}
         for m in global_config.MODELS:
             if "api_type" in m:
                 data[m["api_type"]] = data.get(m["api_type"], []) + [m]
         return data
+
 
 global_config = GlobalConfig()
 AUTO_OPENAI_CONFIG_PATH = os.environ.get(

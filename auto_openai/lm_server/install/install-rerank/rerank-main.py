@@ -9,7 +9,7 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
     try:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
-        device = "cuda"
+        device = "gcu"
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:

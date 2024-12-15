@@ -1,3 +1,16 @@
+```bash
+python3 -m auto_openai.lm_server.install_plugin tiktoken
+python3 -m auto_openai.lm_server.install_plugin comfyui
+python3 -m auto_openai.lm_server.install_plugin webui
+python3 -m auto_openai.lm_server.install_plugin maskgct
+#
+python3 -m auto_openai.lm_server.install_plugin embedding
+python3 -m auto_openai.lm_server.install_plugin funasr
+python3 -m auto_openai.lm_server.install_plugin llm_transformer
+python3 -m auto_openai.lm_server.install_plugin rerank
+```
+
+
 # 启动
 
 ```bash

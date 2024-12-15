@@ -11,7 +11,7 @@ import json
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
 import requests
-from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string
+from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string, cut_messages
 from auto_openai.utils.depends import get_model_config
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from pydantic import BaseModel
@@ -41,12 +41,17 @@ async def chat_completion(
         data: ChatCompletionRequest):
     # 处理模型最终需要完成的token数量
     model_config = get_model_config(name=data.model)
-    current_token_count = messages_token_count(
-        messages=data.messages, token_limit=1024*200) + 100  # 上浮100token误差
     model_max_tokens = model_config.get("model_max_tokens", 2048)
+
+    data.messages = cut_messages(
+        messages=data.messages, token_limit=int(model_max_tokens*4/5))
+    current_token_count = messages_token_count(
+        messages=data.messages, token_limit=int(model_max_tokens*4/5)) + 100  # 上浮100token误差
+
     max_tokens = min([data.max_tokens, model_max_tokens - current_token_count])
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
+    data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
 
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
@@ -67,13 +72,17 @@ async def completion(
         request: Request,
         data: CompletionRequest):
     model_config = get_model_config(name=data.model)
-    # 处理模型最终需要完成的token数量
-    current_token_count = cut_string(
-        str=data.messages, token_limit=1024*200) + 100  # 上浮100token误差
     model_max_tokens = model_config.get("model_max_tokens", 2048)
+    # 处理模型最终需要完成的token数量
+    data.prompt = cut_string(
+        str=data.prompt, token_limit=int(model_max_tokens*4/5))
+    current_token_count = string_token_count(
+        str=data.prompt, token_limit=int(model_max_tokens*4/5)) + 100  # 上浮100token误差
+
     max_tokens = min([data.max_tokens, model_max_tokens - current_token_count])
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
+    data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
 
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
@@ -234,6 +243,13 @@ async def running_models(request: Request):
         "results": result
     }
 
+
+@app.get("/v1/profiler")
+async def get_profiler(request: Request):
+    scheduler = Scheduler(redis_client=redis_client, http_request=request,
+                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
+
+    return scheduler.get_profiler()
 
 ########################### web html ############################
 app = gr.mount_gradio_app(app, DemoWebApp(

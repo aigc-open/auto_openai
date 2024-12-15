@@ -16,7 +16,7 @@ INFER_TIMEOUT: 100
 USERFULL_TIMES_PER_MODEL: 20
 UNUSERFULL_TIMES_PER_MODEL: 10
 DEFAULT_MODEL_CONFIG_max_tokens: 4096
-NODE_GPU_TOTAL: "0"
+NODE_GPU_TOTAL: "4,5"
 MOCK: false
 
 COMFYUI_INPUTS_DIR: "/tmp"
@@ -40,8 +40,24 @@ RERANK_MODEL_ROOT_PATH: "/root/share_models/Rerank-models/"
 GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
 ONLY_SERVER_TYPES: [] # ["vllm"]
 GPU_TYPE: EF-S60
+AVAILABLE_MODELS: ["ALL"]
 MODELS:
-# LLM_MODELS:
+  # LLM_MODELS:
+  - name: "Qwen2.5-72B-Instruct"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "Qwen2.5-72B-Instruct"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 4
   - name: "Qwen2.5-32B-Instruct-GPTQ-Int4"
     server_type: vllm
     api_type: LLM
@@ -119,7 +135,7 @@ MODELS:
       EF-S60:
         need_gpu_count: 1
 
-# VISION_MODELS:
+  # VISION_MODELS:
   - name: "glm-4v-9b"
     server_type: llm-transformer-server
     api_type: VLLM
@@ -136,7 +152,7 @@ MODELS:
       EF-S60:
         need_gpu_count: 1
 
-# SD_MODELS:
+  # SD_MODELS:
   - name: "sd1.5/majicmixRealistic_betterV6.safetensors"
     server_type: comfyui
     api_type: BaseGenerateImage
@@ -174,21 +190,21 @@ MODELS:
       EF-S60:
         need_gpu_count: 1
 
-# TTS_MODELS:
-  - name: "maskgct-tts-clone"
-    server_type: maskgct
-    api_type: TTS
-    need_gpu_count: 1
-    description: "maskgct-tts-clone"
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
+  # TTS_MODELS:
+  # - name: "maskgct-tts-clone"
+  #   server_type: maskgct
+  #   api_type: TTS
+  #   need_gpu_count: 1
+  #   description: "maskgct-tts-clone"
+  #   gpu_types:
+  #     NV-A100:
+  #       need_gpu_count: 1
+  #     NV-4090:
+  #       need_gpu_count: 1
+  #     EF-S60:
+  #       need_gpu_count: 1
 
-# ASR_MODELS:
+  # ASR_MODELS:
   - name: "funasr"
     server_type: funasr
     api_type: ASR
@@ -204,7 +220,7 @@ MODELS:
       CPU:
         need_gpu_count: 1
 
-# EMBEDDING_MODELS:
+  # EMBEDDING_MODELS:
   - name: "bge-base-zh-v1.5"
     server_type: embedding
     api_type: Embedding
@@ -233,8 +249,7 @@ MODELS:
       CPU:
         need_gpu_count: 1
 
-
-# RERANK_MODELS:
+  # RERANK_MODELS:
   - name: "bge-reranker-base"
     server_type: rerank
     api_type: Rerank
@@ -262,4 +277,3 @@ MODELS:
         need_gpu_count: 1
       CPU:
         need_gpu_count: 1
-

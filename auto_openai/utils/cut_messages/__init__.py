@@ -44,22 +44,33 @@ def string_token_count(str):
 
 
 def cut_messages(messages, token_limit):
+    if len(messages) >= 20:
+        messages = messages[-20:]
     message_last = messages[-1]
     if message_last.get("role") == "assistant":
         # 如果最后一个元素是assistant,则不要
         messages.pop()
         message_last = messages[-1]
-    while len(messages) > 0 and messages_token_count(messages, token_limit) > token_limit:
+    while True:
+        current_token_count = messages_token_count(messages, token_limit)
+        if messages_token_count(messages, token_limit) < token_limit or len(messages) <= 0:
+            break
         messages.pop(0)
     if len(messages) == 0:
         content = message_last.get("content", "")
         content = cut_string(content, token_limit=token_limit)
         message_last["content"] = content
         messages.append(message_last)
+    logger.info(
+        f"cut_messages len,token: {len(messages)},{current_token_count}")
     return messages
 
 
 def cut_string(str, token_limit):
-    while string_token_count(str) > token_limit and len(str) > 3:
-        str = str[3:]
+    while True:
+        current_token_count = string_token_count(str)
+        if len(str) <= 3 or current_token_count < token_limit:
+            break
+        str = str[int(len(str)*token_limit/current_token_count):]
+    logger.info(f"cut_string len,token: {len(str)},{current_token_count}")
     return str

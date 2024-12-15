@@ -18,7 +18,7 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
     except Exception as e:
         raise e
 
-runpy.run_path(F"{WEBUI_ROOT_PATH}/launch.py",
+runpy.run_path(F"{ROOT_PATH}/launch.py",
                run_name="__main__")
 
 

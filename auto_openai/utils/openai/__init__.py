@@ -215,6 +215,19 @@ class Scheduler:
             return json.loads(data.decode())
         return {}
 
+    def set_profiler(self, data: dict):
+        """设置模型相关性能参数"""
+        self.redis_client.set(
+            name=f"lm-profiler", value=json.dumps(data))
+
+    def get_profiler(self):
+        """获取模型相关性能参数"""
+        data = self.redis_client.get(f"lm-profiler")
+
+        if data is not None:
+            return json.loads(data.decode())
+        return {}
+
     async def stream(self, request: ChatCompletionRequest, request_id=gen_request_id()) -> RedisStreamInfer:
         self.set_request_queue(model_name=request.model, request_id=request_id)
         # 排队

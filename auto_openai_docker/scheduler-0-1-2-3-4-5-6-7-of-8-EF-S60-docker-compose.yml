@@ -1,0 +1,17 @@
+services:
+  scheduler-0_1_2_3_4_5_6_7:
+    command:
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      GPU_TYPE: EF-S60
+      NODE_GPU_TOTAL: 0,1,2,3,4,5,6,7
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
+    privileged: true
+    restart: always
+    shm_size: 64gb
+    volumes:
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+version: '3'

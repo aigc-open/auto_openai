@@ -1,15 +1,15 @@
 import gradio as gr
-from langchain_huggingface import HuggingFaceEmbeddings
 import os
 import sys
 import json
+from langchain_huggingface import HuggingFaceEmbeddings
 import torch
 if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
     # 支持GCU算力卡
     try:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
-        device = "cuda"
+        device = "gcu"
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
@@ -17,11 +17,12 @@ elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
 else:
     device = "cpu"
 
+
 embed_model = None
 model_name_path = None
 
 
-async def embed_query(inputs:list, model_name: str):
+def load_model(model_name: str):
     global model_name_path, embed_model
     now_model_name_path = os.path.join(
         os.environ["model_root_path"], model_name)
@@ -32,6 +33,10 @@ async def embed_query(inputs:list, model_name: str):
             encode_kwargs={'normalize_embeddings': False}
         )
         model_name_path = now_model_name_path
+
+
+def embed_query(inputs: list, model_name: str):
+    load_model(model_name)
     res = embed_model.embed_documents(inputs)
     data = []
     for i, em in enumerate(res):
@@ -41,8 +46,10 @@ async def embed_query(inputs:list, model_name: str):
     return data
 
 
-def run(port=7861, model_root_path="/root/share_models/Embedding-models/"):
+def run(port=7861, model_root_path="/root/share_models/Embedding-models/", model_name=""):
     os.environ["model_root_path"] = model_root_path
+    if model_name:
+        load_model(model_name)
     demo = gr.Interface(
         fn=embed_query,
         inputs=[gr.JSON(label="输入文本", value=["Hello", "World"]),
@@ -57,6 +64,7 @@ def run(port=7861, model_root_path="/root/share_models/Embedding-models/"):
 # bge-base-zh-v1.5
 # bge-m3
 # ["hello", "world"]
+# TOPS_VISIBLE_DEVICES=7 python3 auto_openai/lm_server/install/install-embedding/embedding-main.py --model_name bge-base-zh-v1.5
 
 
 if __name__ == '__main__':

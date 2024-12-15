@@ -21,8 +21,15 @@ from auto_openai.lm_server import CMD
 from gradio_client import Client, file
 from auto_openai.utils.check_process import check_process_exists
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string
+from auto_openai.utils.daily_basic_function import safe_dir
+import wget
+import os
+from pydub import AudioSegment
 scheduler = Scheduler(redis_client=redis_client)
 root_path = os.path.dirname(os.path.abspath(__file__))
+
+
+MODEL_PROF_KEY = "Profiler"
 
 
 class BaseTask:
@@ -97,6 +104,46 @@ class BaseTask:
         for i in range(self.workers_num):
             result.append(url.format(port=self.worker_start_port + i))
         return result
+
+    def get_audio_time(self, audio_path):
+
+        if audio_path.startswith("http"):
+            with safe_dir("temp") as _dir:
+                audio_path_ = os.path.join(_dir, "temp_audio.mp3")
+                wget.download(audio_path, audio_path_)
+                # 加载音频文件
+                audio = AudioSegment.from_file(audio_path_)  # 替换为你的音频文件路径
+        else:
+            # 加载音频文件
+            audio = AudioSegment.from_file(audio_path)
+
+        # 获取音频长度（以毫秒为单位）
+        duration_ms = len(audio)
+
+        # 转换为秒
+        duration_sec = duration_ms / 1000.0
+        return duration_sec
+
+    def profiler_collector(self, model_name, key, value, description=""):
+        # 统计服务加载时间
+        profiler = scheduler.get_profiler()
+        server_time = profiler.get(key, {})
+        # 添加最小时间，最大时间
+        max_time = server_time.get(model_name, {}).get(
+            "max_time", value)
+        min_time = server_time.get(model_name, {}).get(
+            "min_time", value)
+
+        server_time.update({
+            model_name: {
+                "max_time": max(max_time, value),
+                "min_time": min(min_time, value),
+                "new_time": value,
+                "description": description
+            }
+        })
+        profiler[key] = server_time
+        scheduler.set_profiler(data=profiler)
 
 
 class VllmTask(BaseTask):
@@ -226,6 +273,10 @@ class VllmTask(BaseTask):
 
                         tps = completion_tokens / (end_time-start_time)
                         logger.info(f"本轮对话{request_id}-tps: {tps}")
+                        if tps:
+                            model_name = self.model_config["name"]
+                            self.profiler_collector(
+                                model_name=model_name, key=MODEL_PROF_KEY, value=tps,description="每秒生成token的数量")
                     send_text += text
                     all_text += text
                     if len(send_text) > 5 or finish is True:
@@ -296,6 +347,7 @@ class ComfyuiTask(BaseTask):
 
     def comfyui_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
+        start_time = time.time()
         try:
             logger.info(f"处理Comfyui推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -314,11 +366,19 @@ class ComfyuiTask(BaseTask):
                 out = client.infer(json_data=params.get(
                     "api_json"), bucket_name=global_config.OSS_CLIENT_CONFIG.get("bucket_name"))
                 client.close()
+
                 data = {"created": 0, "data": out}
                 scheduler.set_result(request_id=request_id,
                                      value=RedisStreamInfer(
                                          text=f"{json.dumps(data)}",
                                          finish=True))
+
+                end_time = time.time()
+
+                if len(out) > 0:
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(out),description="每张图所耗时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -379,6 +439,7 @@ class MaskGCTTask(BaseTask):
 
     def maskgct_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
+        start_time = time.time()
         try:
             logger.info(f"处理maskgct推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -411,6 +472,11 @@ class MaskGCTTask(BaseTask):
                                      value=RedisStreamInfer(
                                          text=f"{url}",
                                          finish=True))
+                end_time = time.time()
+                if len(text):
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(text),description="每个字符转换语音推理耗时")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -466,8 +532,9 @@ class FunAsrTask(BaseTask):
 
     def funasr_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
+        start_time = time.time()
         try:
-            logger.info(f"处理maskgct推理任务中: {llm_server} {request_id} {params}")
+            logger.info(f"处理funasr推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
                 scheduler.set_result(request_id=request_id,
                                      value=RedisStreamInfer(
@@ -487,6 +554,11 @@ class FunAsrTask(BaseTask):
                                      value=RedisStreamInfer(
                                          text=f"{text}",
                                          finish=True))
+                end_time = time.time()
+                if url:
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/self.get_audio_time(url),description="语音合成：每秒语音的推理时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -542,6 +614,7 @@ class EmbeddingTask(BaseTask):
 
     def embedding_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
+        start_time = time.time()
         try:
             logger.info(f"处理maskgct推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -566,6 +639,11 @@ class EmbeddingTask(BaseTask):
                                      value=RedisStreamInfer(
                                          text=f"{json.dumps(result)}",
                                          finish=True))
+                end_time = time.time()
+                if input_:
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_),description="每个输入转换耗时")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -673,6 +751,7 @@ class RerankTask(BaseTask):
 
     def rerank_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
+        start_time = time.time()
         try:
             logger.info(f"处理rerank推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -699,6 +778,11 @@ class RerankTask(BaseTask):
                                      value=RedisStreamInfer(
                                          text=f"{json.dumps(result)}",
                                          finish=True))
+                end_time = time.time()
+                if input_:
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_),description="每个输入的推理时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -762,6 +846,9 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
             if not self.model_config:
                 # 如果没有该模型配置，则跳过该模型
                 continue
+            if model_name not in global_config.AVAILABLE_MODELS and "ALL" not in global_config.AVAILABLE_MODELS:
+                # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
+                continue
             # 更新当前设备的gpu count
             if self.model_config.get("gpu_types", {}).get(global_config.GPU_TYPE):
                 self.model_config["need_gpu_count"] = self.model_config.get(
@@ -813,6 +900,7 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
                 concurrent.futures.as_completed(future_to_task)
 
     def start_server(self):
+        start_time = time.time()
         if self.model_config.get("server_type") == "vllm":
             # 启动vllm 大模型服务
             self.start_vllm_server(
@@ -844,6 +932,10 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
         else:
             raise Exception(
                 f"未知的模型服务类型: {self.model_config.get('server_type')}")
+        end_time = time.time()
+        # 收集模型启动时间
+        self.profiler_collector(
+            self.model_config["name"], "start_server_time", end_time - start_time, description="模型启动时间")
 
     def set_infer_fn(self):
         if self.model_config.get("server_type") == "vllm":
