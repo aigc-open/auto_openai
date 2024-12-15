@@ -13,4 +13,4 @@ for file in $scheduler_file
 do
     echo "# docker-compose -f $file up -d" >> start.sh
 done
-echo "Done
+echo "Done"

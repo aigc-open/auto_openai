@@ -1,0 +1,36 @@
+FROM nvcr.io/nvidia/pytorch:23.12-py3
+
+
+RUN apt update -y && apt install curl git ffmpeg -y && python3 -m pip install --upgrade pip==24.0
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+WORKDIR /workspace
+
+# 安装本项目
+COPY ./dist/auto_openai-0.1-py3-none-any.whl /tmp/auto_openai-0.1-py3-none-any.whl
+RUN pip install /tmp/auto_openai-0.1-py3-none-any.whl
+
+# 安装需要的依赖，按需安装
+RUN python3 -m auto_openai.lm_server.install_plugin tiktoken
+RUN python3 -m auto_openai.lm_server.install_plugin comfyui
+RUN python3 -m auto_openai.lm_server.install_plugin webui
+RUN python3 -m auto_openai.lm_server.install_plugin maskgct
+#
+RUN python3 -m auto_openai.lm_server.install_plugin embedding
+RUN python3 -m auto_openai.lm_server.install_plugin funasr
+RUN python3 -m auto_openai.lm_server.install_plugin llm_transformer
+RUN python3 -m auto_openai.lm_server.install_plugin rerank
+
+# 覆盖部分依赖
+RUN pip install /tmp/auto_openai-0.1-py3-none-any.whl
+# RUN pip install torch==2.3.0 --force-reinstall
+
+COPY . /app/
+
+ENTRYPOINT []
+
+WORKDIR /app
+
+
+CMD "python3 -m auto_openai.main --port=9000 --workers=10"
