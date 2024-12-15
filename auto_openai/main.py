@@ -4,7 +4,7 @@ import time
 import asyncio
 from fastapi import HTTPException, Depends
 from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
-    ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest
+    ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest, VideoGenerationsRequest
 from fastapi.responses import JSONResponse, StreamingResponse, Response
 from auto_openai.utils.init_env import global_config
 import json
@@ -201,6 +201,18 @@ async def Rerank(request: Request, data: RerankRequest):
         model_name=data.model, value=json.dumps(model_config))
     request_id = gen_request_id()
     out = await scheduler.Rerank(request=data, request_id=request_id)
+    return out
+
+
+@app.post("/v1/video/generations")
+async def VideoGenerations(request: Request, data: VideoGenerationsRequest):
+    scheduler = Scheduler(redis_client=redis_client, http_request=request,
+                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
+    model_config = get_model_config(name=data.model)
+    scheduler.set_model_config(
+        model_name=data.model, value=json.dumps(model_config))
+    request_id = gen_request_id()
+    out = await scheduler.VideoGenerations(request=data, request_id=request_id)
     return out
 
 ########################### other api for frontend ############################

@@ -396,3 +396,9 @@ class Scheduler:
             return {
                 "results": content
             }
+
+    async def VideoGenerations(self, request: CompletionRequest, request_id=gen_request_id()):
+        return {
+            "revised_prompt": "",
+            "url": "https://XXXXXX.mp4"
+        }

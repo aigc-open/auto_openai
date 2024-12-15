@@ -238,6 +238,13 @@ class RerankRequest(BaseModel):
     return_documents: Optional[bool] = False
 
 
+class VideoGenerationsRequest(BaseModel):
+    model: str
+    prompt: str
+    width: int = 512
+    height: int = 512
+
+
 class SamplerName(str, Enum):
     euler = "euler"
     euler_cfg_pp = "euler_cfg_pp"
@@ -276,6 +283,22 @@ class Scheduler(str, Enum):
     simple = "simple"
     ddim_uniform = "ddim_uniform"
     beta = "beta"
+
+
+class SD15BaseGenerateImageRequest(BaseModel):
+    model: str = "sd1.5/majicmixRealistic_betterV6.safetensors"
+    seed: int = 0
+    steps: int = 20
+    batch_size: int = 1
+    width: int = 512
+    height: int = 512
+    sampler_name: SamplerName = SamplerName("euler")  # 使用枚举类型
+    cfg: int = 8
+    denoise_strength: float = 0.75
+    scheduler: Scheduler = Scheduler("normal")  # 使用枚举类型
+    prompt: str = "beautiful scenery nature glass bottle landscape, purple galaxy bottle"
+    negative_prompt: str = "text, watermark"
+    image_url: str = ""
 
 
 class BaseGenerateImageRequest(BaseModel):

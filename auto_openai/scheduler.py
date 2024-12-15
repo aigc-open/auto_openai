@@ -13,7 +13,6 @@ import requests
 import os
 import random
 from auto_openai.utils.mock import LLM_MOCK_DATA
-from auto_openai.utils.depends import get_model_config
 from auto_openai.utils.comfyui_client import ComfyUIClient
 from auto_openai.utils.public import s3_client
 import wget

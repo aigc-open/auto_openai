@@ -8,6 +8,20 @@ except ImportError:
 from pydantic import BaseModel
 
 
+class LMConfig(BaseModel):
+    name: str
+    server_type: str
+    api_type: str
+    description: str
+    need_gpu_count: int
+    gpu_types: dict
+
+class LLMConfig(LMConfig):
+    model_max_tokens: int
+    template: str
+    stop: list
+
+
 class GlobalConfig(BaseModel):
     REDIS_CLIENT_CONFIG: dict = {}
     QUEUE_TIMEOUT: int = 600
@@ -83,10 +97,15 @@ class GlobalConfig(BaseModel):
 
     def get_MODELS_MAPS(self):
         data = {}
-        for m in global_config.MODELS:
+        for m in self.MODELS:
             if "api_type" in m:
                 data[m["api_type"]] = data.get(m["api_type"], []) + [m]
         return data
+
+    def validate_models(self):
+        for m in self.MODELS:
+            if LMConfig(**m).api_type in ["LLM", "VLLM"]:
+                LLMConfig(**m)
 
 
 global_config = GlobalConfig()
@@ -94,3 +113,4 @@ AUTO_OPENAI_CONFIG_PATH = os.environ.get(
     "AUTO_OPENAI_CONFIG_PATH", "./conf/config.yaml")
 global_config.init_config(path=AUTO_OPENAI_CONFIG_PATH)
 global_config.init_env()
+global_config.validate_models()

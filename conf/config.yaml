@@ -237,6 +237,7 @@ MODELS:
         need_gpu_count: 1
   - name: "bge-m3"
     server_type: embedding
+    api_type: Embedding
     need_gpu_count: 1
     description: "bge-m3"
     gpu_types:
@@ -266,6 +267,7 @@ MODELS:
         need_gpu_count: 1
   - name: "bge-reranker-v2-m3"
     server_type: rerank
+    api_type: Rerank
     need_gpu_count: 1
     description: "bge-reranker-v2-m3"
     gpu_types:
