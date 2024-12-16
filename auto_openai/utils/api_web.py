@@ -173,6 +173,7 @@ class DemoWebApp(APIDocsApp):
                     value=0.0,
                     label="Temperature",
                 )
+                
         chatbot = gr.Chatbot(
             elem_id="chatbot", bubble_full_width=False, type="messages")
 
@@ -211,6 +212,8 @@ class DemoWebApp(APIDocsApp):
                 max_tokens=model_params[model],
                 temperature=float(temperature),
                 stream=True,
+                presence_penalty=2.0,
+                frequency_penalty=2.0
             )
 
             for chunk in response:
@@ -371,12 +374,33 @@ class DemoWebApp(APIDocsApp):
             df2 = gr.DataFrame(tps_spi_df, label="模型性能")
             fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df1, df2])
 
+
+    def vnode_pages(self):
+        def convert_to_dataframe():
+            scheduler = Scheduler(redis_client=redis_client, http_request=None)
+            data = scheduler.get_running_node()
+            if data:
+                return pd.DataFrame(data)
+            else:
+                return pd.DataFrame([])
+        node_df = convert_to_dataframe()
+        with gr.Column(elem_classes="content-container"):
+            fresh = gr.Button("刷新", elem_id="refresh-button",
+                              variant="primary")
+            gr.Markdown("""
+            ## 虚拟节点
+            > 注意：真实的物理节点可能被虚拟成多个虚拟节点，每个虚拟节点可以处理一个请求。
+            - 每个虚拟节点独占自己的卡，不会被其他卡获取""")
+            df = gr.DataFrame(node_df, label="节点信息")
+            fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df])
+
     @property
     def config(self):
         return {
             "首页": self.Home_page,
             "模型广场": self.Models_pages,
             "性能查看": self.Performance_pages,
+            "系统分布式虚拟节点": self.vnode_pages
         }
 
 

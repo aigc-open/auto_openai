@@ -202,6 +202,22 @@ class Scheduler:
             out.append(key.decode().replace("lm-running-", ""))
         return out
 
+    def set_running_node(self, node_name, value: str, pexpire=10*1000):
+        """设置正在运行的节点"""
+        self.redis_client.set(
+            name=f"lm-running-node-{node_name}", value=value, px=int(pexpire))
+
+    def get_running_node(self):
+        """获取正在运行的节点"""
+        keys = self.redis_client.keys(pattern=f"lm-running-node-*")
+        out = []
+
+        for key in keys:
+            data = self.redis_client.get(key)
+            if data is not None:
+                out.append(json.loads(data.decode()))
+        return out
+
     def set_model_config(self, model_name, value, pexpire=120*1000):
         """设置模型相关参数"""
         self.redis_client.set(

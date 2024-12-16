@@ -263,6 +263,12 @@ async def get_profiler(request: Request):
 
     return scheduler.get_profiler()
 
+
+@app.get("/v1/nodes")
+async def get_nodes(request: Request):
+    scheduler = Scheduler(redis_client=redis_client, http_request=request)
+    return scheduler.get_running_node()
+
 ########################### web html ############################
 app = gr.mount_gradio_app(app, DemoWebApp(
     title="Openai-本地大模型API文档").app, path="/")

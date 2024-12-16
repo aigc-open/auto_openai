@@ -23,6 +23,7 @@ from auto_openai.utils.cut_messages import messages_token_count, string_token_co
 from auto_openai.utils.daily_basic_function import safe_dir
 import wget
 import os
+from auto_openai.utils.check_node import get_address_hostname
 from pydub import AudioSegment
 scheduler = Scheduler(redis_client=redis_client)
 root_path = os.path.dirname(os.path.abspath(__file__))
@@ -85,7 +86,21 @@ class BaseTask:
         if self.current_model:
             scheduler.set_running_model(model_name=self.current_model)
 
+    def report_node(self):
+        while True:
+            try:
+                data = get_address_hostname()
+                data["device-ids"] = self.node_gpu_total
+                data["device-type"] = global_config.GPU_TYPE
+                scheduler.set_running_node(node_name=data.get(
+                    "hostname"), value=json.dumps(data))
+                time.sleep(8)
+            except:
+                pass
+
     def loop(self):
+        import threading
+        threading.Thread(target=self.report_node).start()
         while True:
             try:
                 self.run()
@@ -124,17 +139,18 @@ class BaseTask:
         return duration_sec
 
     def profiler_collector(self, model_name, key, value, description=""):
+        device_model_name = f"{global_config.GPU_TYPE}/{model_name}"
         # 统计服务加载时间
         profiler = scheduler.get_profiler()
         server_time = profiler.get(key, {})
         # 添加最小时间，最大时间
-        max_time = server_time.get(model_name, {}).get(
+        max_time = server_time.get(device_model_name, {}).get(
             "max_time", value)
-        min_time = server_time.get(model_name, {}).get(
+        min_time = server_time.get(device_model_name, {}).get(
             "min_time", value)
 
         server_time.update({
-            model_name: {
+            device_model_name: {
                 "max_time": max(max_time, value),
                 "min_time": min(min_time, value),
                 "new_time": value,
@@ -275,7 +291,7 @@ class VllmTask(BaseTask):
                         if tps:
                             model_name = self.model_config["name"]
                             self.profiler_collector(
-                                model_name=model_name, key=MODEL_PROF_KEY, value=tps,description="每秒生成token的数量")
+                                model_name=model_name, key=MODEL_PROF_KEY, value=tps, description="每秒生成token的数量")
                     send_text += text
                     all_text += text
                     if len(send_text) > 5 or finish is True:
@@ -377,7 +393,7 @@ class ComfyuiTask(BaseTask):
                 if len(out) > 0:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
-                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(out),description="每张图所耗时间")
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(out), description="每张图所耗时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -475,7 +491,7 @@ class MaskGCTTask(BaseTask):
                 if len(text):
                     model_name = self.model_config["name"]
                     self.profiler_collector(
-                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(text),description="每个字符转换语音推理耗时")
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(text), description="每个字符转换语音推理耗时")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -557,7 +573,7 @@ class FunAsrTask(BaseTask):
                 if url:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
-                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/self.get_audio_time(url),description="语音合成：每秒语音的推理时间")
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/self.get_audio_time(url), description="语音合成：每秒语音的推理时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -642,7 +658,7 @@ class EmbeddingTask(BaseTask):
                 if input_:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
-                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_),description="每个输入转换耗时")
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_), description="每个输入转换耗时")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -781,7 +797,7 @@ class RerankTask(BaseTask):
                 if input_:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
-                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_),description="每个输入的推理时间")
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_), description="每个输入的推理时间")
 
         except Exception as e:
             logger.exception(f"推理异常: {e}")
@@ -844,6 +860,13 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
                 model_name=model_name)  # 设置本次需要运行的模型参数
             if not self.model_config:
                 # 如果没有该模型配置，则跳过该模型
+                continue
+            # 检测模型文件是否存在,如果不存在就直接跳过该模型
+            if self.model_config["server_type"] == "vllm" and not os.path.exists(os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name)):
+                continue
+            elif self.model_config["server_type"] == "embedding" and not os.path.exists(os.path.join(global_config.EMBEDDING_MODEL_ROOT_PATH, model_name)):
+                continue
+            elif self.model_config["server_type"] == "rerank" and not os.path.exists(os.path.join(global_config.RERANK_MODEL_ROOT_PATH, model_name)):
                 continue
             if model_name not in global_config.AVAILABLE_MODELS and "ALL" not in global_config.AVAILABLE_MODELS:
                 # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行

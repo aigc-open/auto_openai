@@ -36,6 +36,8 @@ class Plugin:
         path = os.path.join(project_path, "lm_server/install/install-webui.sh")
         os.system(f"bash {path}")
         os.system("python3 -m auto_openai.lm_server.webui_modify.modify_files")
+        os.system("rm -rf /workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads")
+        os.system("ln -s /root/share_models/webui-models/controlnet_v1.1_annotator/ /workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads")
 
     ############## 自定义项目 ##############
 

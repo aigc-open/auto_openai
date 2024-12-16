@@ -86,8 +86,8 @@ class ChatCompletionRequest(BaseModel):
     max_tokens: Optional[int] = 512
     stop: Optional[Union[str, List[str]]] = Field(default=[])
     stream: Optional[bool] = False
-    presence_penalty: Optional[float] = 1.0
-    frequency_penalty: Optional[float] = 1.0
+    presence_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    frequency_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
     # Additional parameters supported by vLLM
@@ -117,8 +117,8 @@ class CompletionRequest(BaseModel):
     # logprobs: Optional[int] = None
     echo: Optional[bool] = False
     stop: Optional[Union[str, List[str]]] = Field(default_factory=list)
-    presence_penalty: Optional[float] = 0.0
-    frequency_penalty: Optional[float] = 0.0
+    presence_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    frequency_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     best_of: Optional[int] = None
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
