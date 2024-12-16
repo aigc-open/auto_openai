@@ -120,6 +120,23 @@ class CMD:
         os.system(cmd)
 
     @classmethod
+    def kill_diffusers_video(cls):
+        cmd = "ps -ef|grep diffusers-video-main.py | awk '{print $2}' | xargs kill -9"
+        os.system(cmd)
+        os.system(cmd)
+
+    @classmethod
+    def get_diffusers_video(cls, model_name, device, port):
+        cmd = f"""
+            cd {global_config.DIFFUSERS_ROOT_PATH} &&
+            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            python3 diffusers-video-main.py --port={port}
+            --model_path={os.path.join(global_config.DIFFUSERS_MODEL_ROOT_PATH, model_name)}"""
+        cmd = cmd.replace("\n", " ")
+        logger.info(f"本次启动模型: \n{cmd}")
+        return cmd
+
+    @classmethod
     def get_rerank(cls, device, port):
         cmd = f"""
             cd {global_config.RERANK_ROOT_PATH} &&

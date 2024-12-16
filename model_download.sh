@@ -61,8 +61,8 @@ cd $webui_path && git lfs install && git clone https://www.modelscope.cn/AI-Mode
 mkdir -p $webui_path/CogVideo
 cd $webui_path/CogVideo && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/CogVideoX-5b.git
 
-mkdir -p $webui_path/Stable-diffusion
-cd $webui_path/Stable-diffusion && git lfs install && git clone https://www.modelscope.cn/black-forest-labs/FLUX.1-schnell.git
+# mkdir -p $webui_path/Stable-diffusion
+# cd $webui_path/Stable-diffusion && git lfs install && git clone https://www.modelscope.cn/black-forest-labs/FLUX.1-schnell.git
 
 mkdir -p $webui_path/Stable-diffusion
 cd $webui_path/Stable-diffusion && git lfs install && git clone https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git

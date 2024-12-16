@@ -36,6 +36,8 @@ LLM_TRANSFORMER_MODEL_ROOT_PATH: "/root/share_models/LLM/"
 WEBUI_MODEL_ROOT_PATH: "/root/share_models/webui-models"
 #
 RERANK_MODEL_ROOT_PATH: "/root/share_models/Rerank-models/"
+# 
+DIFFUSERS_MODEL_ROOT_PATH: "/root/share_models/webui-models/"
 #
 GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
 ONLY_SERVER_TYPES: [] # ["vllm"]

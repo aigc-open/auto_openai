@@ -36,8 +36,9 @@ class GlobalConfig(BaseModel):
     FUNASR_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
     EMBEDDING_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
     LLM_TRANSFORMER_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
-    WEBUI_MODEL_ROOT_PATH: str = "/root/.cache/webui-models/models"
+    WEBUI_MODEL_ROOT_PATH: str = "/root/.cache/webui-models"
     RERANK_MODEL_ROOT_PATH: str = "/root/.cache/rerank-models/"
+    DIFFUSERS_MODEL_ROOT_PATH: str = "/root/.cache/webui-models"
     #
     COMFYUI_ROOT_PATH: str = "/workspace/ComfyUI"
     WEBUI_ROOT_PATH: str = "/workspace/stable-diffusion-webui"
@@ -46,6 +47,8 @@ class GlobalConfig(BaseModel):
     EMBEDDING_ROOT_PATH: str = "/workspace/install-embedding"
     LLM_TRANSFORMER_ROOT_PATH: str = "/workspace/install-llm-transformer-server"
     RERANK_ROOT_PATH: str = "/workspace/install-rerank"
+    DIFFUSERS_ROOT_PATH:str = "/workspace/install-diffusers-server"
+    
     # oss
     OSS_CLIENT_CONFIG: dict = {}
     #
