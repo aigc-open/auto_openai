@@ -186,3 +186,4 @@ class CMD:
         cls.kill_llm_transformer()
         cls.kill_webui()
         cls.kill_rerank()
+        cls.kill_diffusers_video()

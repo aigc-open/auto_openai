@@ -12,7 +12,7 @@ client = OpenAI(base_url=base_url, api_key=api_key)
 
 ########################### ###########################
 response = client.chat.completions.create(
-    model="Qwen2.5-72B-Instruct",
+    model="Qwen2.5-7B-Instruct",
     messages=[
         {"role": "user", "content": "What are some fun things to do in New York?"}],
     max_tokens=204096,

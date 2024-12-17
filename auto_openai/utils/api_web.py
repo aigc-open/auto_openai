@@ -303,10 +303,10 @@ class DemoWebApp(APIDocsApp):
                         model_headers_desc=["名称", "最大支持tokens", "描述"],
                         RequestBaseModel=[ChatCompletionRequest]
                     )
-                with gr.Tab("BaseGenerateImage"):
+                with gr.Tab("SolutionBaseGenerateImage"):
                     self._content_page_(
-                        model_config=data.get("BaseGenerateImage"),
-                        model_type="BaseGenerateImage",
+                        model_config=data.get("SolutionBaseGenerateImage"),
+                        model_type="SolutionBaseGenerateImage",
                         RequestBaseModel=[BaseGenerateImageRequest]
                     )
                 with gr.Tab("Embedding"):
