@@ -24,40 +24,19 @@ pip install .
 
 # 已支持的模型
 
-## 大语言模型
-
-- [x] [vllm 支持的所有模型](https://docs.vllm.ai/en/latest/models/supported_models.html)
-
-## 多模态
-
-- [x] glm-4v-9b
-
-## 图像生成
-
-- [x] SD1.5 系列所有模型以及 Controlnet
-- [x] ComfyUI 基础文生图工作流的所有模型
-
-## Embedding
-
-- [x] bge-base-zh-v1.5
-- [x] bge-m3
-
-## Rerank
-
-- [x] bge-reranker-base
-- [x] bge-reranker-v2-m3
-
-## TTS
-
-- [x] maskgct-tts-clone
-
-## ASR
-
-- [x] funasr
-
-## 视频生成
-
-- [x] CogVideo/CogVideoX-5b
+| 模型类别   | 模型名称                                                                           | 状态 |
+| ---------- | ---------------------------------------------------------------------------------- | ---- |
+| 大语言模型 | [vllm 支持的所有模型](https://docs.vllm.ai/en/latest/models/supported_models.html) | ✅   |
+| 多模态     | glm-4v-9b                                                                          | ✅   |
+| 图像生成   | SD1.5 系列所有模型以及 Controlnet                                                  | ✅   |
+|            | ComfyUI 基础文生图工作流的所有模型                                                 | ✅   |
+| Embedding  | bge-base-zh-v1.5                                                                   | ✅   |
+|            | bge-m3                                                                             | ✅   |
+| Rerank     | bge-reranker-base                                                                  | ✅   |
+|            | bge-reranker-v2-m3                                                                 | ✅   |
+| TTS        | maskgct-tts-clone                                                                  | ✅   |
+| ASR        | funasr                                                                             | ✅   |
+| 视频生成   | CogVideo/CogVideoX-5b                                                              | ✅   |
 
 ## 本项目依赖的第三方组件
 
