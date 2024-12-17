@@ -14,6 +14,7 @@ import os
 import random
 from auto_openai.utils.mock import LLM_MOCK_DATA
 from auto_openai.utils.comfyui_client import ComfyUIClient
+from auto_openai.utils.webui_client import WebUIClient
 from auto_openai.utils.public import s3_client
 import wget
 from auto_openai.lm_server import CMD
@@ -25,6 +26,8 @@ import wget
 import os
 from auto_openai.utils.check_node import get_address_hostname
 from pydub import AudioSegment
+from auto_openai.utils.openai.openai_request import SD15MultiControlnetGenerateImage
+import webuiapi
 scheduler = Scheduler(redis_client=redis_client)
 root_path = os.path.dirname(os.path.abspath(__file__))
 
@@ -404,6 +407,93 @@ class ComfyuiTask(BaseTask):
         # 使用wget下载文件到本地，k 是输出的文件名称，v 是下载链接
         for k, v in download_json_.items():
             wget.download(v, k)
+
+
+class WebuiTask(BaseTask):
+
+    def start_webui(self, idx: int, model_name):
+        # 需要保证服务一定完全启动
+        if global_config.MOCK:
+            logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
+            time.sleep(5)
+        else:
+            port = self.worker_start_port + idx
+            device = ",".join(map(str, self.split_gpu()[idx]))
+            try:
+                cmd = CMD.get_webui(device=device, port=port)
+                subprocess.Popen(cmd, shell=True)
+            except Exception as e:
+                logger.exception(f"启动模型失败: {e}")
+                raise e
+            time.sleep(10)
+            start_time = time.time()
+            while True:
+                check_process_exists(keyword="webui")
+                try:
+                    url = f"http://localhost:{port}"
+                    if requests.get(url).status_code < 300:
+                        WebUIClient(server=url).warmup()
+                        break
+                except Exception as e:
+                    time.sleep(1)
+
+                if time.time() - start_time > 60*20:
+                    self.current_model = None
+                    raise Exception("服务启动异常")
+
+    def start_webui_server(self, model_name):
+        # 启动大模型服务
+        self.kill_model_server()  # 要启动就一定要kil旧得进程
+        # 改多线程启动模型服务
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.workers_num) as executor:
+            # 提交任务给线程池,线程池大小由实际任务数量决定
+            future_to_task = {executor.submit(
+                self.start_webui, i, model_name): i for i in range(self.workers_num)}
+            concurrent.futures.as_completed(future_to_task)
+        # for idx in range(self.workers_num):
+        #     self.start_cmd(idx=idx, model_name=model_name)
+        scheduler.set_running_model(model_name=model_name)
+        self.current_model = model_name
+        logger.info(f"当前运行模型: {self.current_model}")
+
+    def webui_infer(self, llm_server, request_id, params, model_config):
+        self.update_running_model()
+        start_time = time.time()
+        try:
+            logger.info(f"处理webui推理任务中: {llm_server} {request_id} {params}")
+            if global_config.MOCK:
+                data = {"created": 0, "data": [
+                    {"url": "http://localhost:8000/images/1.png"}]}
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"{json.dumps(data)}",
+                                         finish=True))
+                time.sleep(1)
+            else:
+                self.update_running_model()
+                
+                client = WebUIClient(server=llm_server, s3_client=s3_client)
+                webui_data = SD15MultiControlnetGenerateImage(
+                    **params).convert_webui_data()
+                out = client.infer(
+                    webui_data=webui_data, bucket_name=global_config.OSS_CLIENT_CONFIG.get("bucket_name"))
+
+                data = {"created": 0, "data": out}
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"{json.dumps(data)}",
+                                         finish=True))
+                end_time = time.time()
+
+                if len(out) > 0:
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(out), description="每张图所耗时间")
+
+        except Exception as e:
+            logger.exception(f"推理异常: {e}")
+            scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
+                text="{}", finish=True))
 
 
 class MaskGCTTask(BaseTask):
@@ -910,7 +1000,7 @@ class RerankTask(BaseTask):
             self.current_model = None
 
 
-class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask):
+class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask):
 
     def loop_infer(self, llm_server, request_info, free_status_list, idx, max_workers=8, infer_fn=None):
         logger.info(f"进程服务信息: {llm_server}")
@@ -1035,6 +1125,10 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
             # 启动comfyui 大模型服务
             self.start_comfyui_server(
                 model_name=self.model_config["name"])
+        elif self.model_config.get("server_type") == "webui":
+            # 启动comfyui 大模型服务
+            self.start_webui_server(
+                model_name=self.model_config["name"])
         elif self.model_config.get("server_type") == "maskgct":
             # 启动comfyui 大模型服务
             self.start_maskgct_server(
@@ -1078,6 +1172,12 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
             # 启动comfyui 大模型服务
             self.max_workers = 1
             self.infer_fn = self.comfyui_infer
+            self.service_list = self.__service_list__(
+                url_format="localhost:{port}")
+        elif self.model_config.get("server_type") == "webui":
+            # 启动comfyui 大模型服务
+            self.max_workers = 1
+            self.infer_fn = self.webui_infer
             self.service_list = self.__service_list__(
                 url_format="localhost:{port}")
         elif self.model_config.get("server_type") == "maskgct":

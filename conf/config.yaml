@@ -155,11 +155,23 @@ MODELS:
         need_gpu_count: 1
 
   # SD_MODELS:
-  - name: "sd1.5/majicmixRealistic_betterV6.safetensors"
+  - name: "majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors"
     server_type: comfyui
     api_type: SolutionBaseGenerateImage
     need_gpu_count: 1
     description: "majicmixRealistic_betterV6"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+  - name: "SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors"
+    server_type: webui
+    api_type: SD15MultiControlnetGenerateImage
+    need_gpu_count: 1
+    description: "majicmixRealistic_v7"
     gpu_types:
       NV-A100:
         need_gpu_count: 1

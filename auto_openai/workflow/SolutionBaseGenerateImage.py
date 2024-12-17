@@ -2,7 +2,7 @@ from pydantic import BaseModel
 from enum import Enum
 import os
 from .base import UrlParser, WorkflowFormat
-from auto_openai.utils.openai import BaseGenerateImageRequest
+from auto_openai.utils.openai import SolutionBaseGenerateImageRequest
 from uuid_extensions import uuid7, uuid7str
 
 
@@ -10,7 +10,7 @@ def gen_random_uuid() -> str:
     return str(uuid7(as_type="int"))
 
 
-class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
+class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat):
 
     def format_json(self):
         if "flux" in self.model:
@@ -18,6 +18,8 @@ class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
         return self.normal_format_json()
 
     def normal_format_json(self):
+        sampler_name= "euler"
+        scheduler_name = "normal"
         if self.image_url:
             UrlParser(url=self.image_url).generate_random_local_file_name()
             filename = UrlParser(
@@ -86,8 +88,8 @@ class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
                         "seed": self.seed,
                         "steps": self.steps,
                         "cfg": self.cfg,
-                        "sampler_name": self.sampler_name,
-                        "scheduler": self.scheduler,
+                        "sampler_name": sampler_name,
+                        "scheduler": scheduler_name,
                         "denoise": self.denoise_strength,
                         "model": [
                             "177",
@@ -152,8 +154,8 @@ class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
                         "seed": self.seed,
                         "steps": self.steps,
                         "cfg": self.cfg,
-                        "sampler_name": self.sampler_name,
-                        "scheduler": self.scheduler,
+                        "sampler_name": sampler_name,
+                        "scheduler": scheduler_name,
                         "denoise": self.denoise_strength,
                         "model": [
                             "4",
@@ -369,7 +371,7 @@ class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
             },
             "16": {
                 "inputs": {
-                    "sampler_name": self.sampler_name
+                    "sampler_name": sampler_name
                 },
                 "class_type": "KSamplerSelect",
                 "_meta": {
@@ -378,7 +380,7 @@ class SolutionBaseGenerateImage(BaseGenerateImageRequest, WorkflowFormat):
             },
             "17": {
                 "inputs": {
-                    "scheduler": self.scheduler,
+                    "scheduler": scheduler_name,
                     "steps": 4,
                     "denoise": 1.0,
                     "model": [

@@ -6,7 +6,7 @@ from auto_openai import project_path
 import pandas as pd
 from typing import Dict, Any
 from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  AudioSpeechRequest, \
-    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, BaseGenerateImageRequest, VideoGenerationsRequest
+    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, SolutionBaseGenerateImageRequest, VideoGenerationsRequest, SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
 from openai import OpenAI
@@ -303,11 +303,18 @@ class DemoWebApp(APIDocsApp):
                         model_headers_desc=["名称", "最大支持tokens", "描述"],
                         RequestBaseModel=[ChatCompletionRequest]
                     )
+                with gr.Tab("SD15MultiControlnetGenerateImage"):
+                    self._content_page_(
+                        model_config=data.get("SD15MultiControlnetGenerateImage"),
+                        model_type="SD15MultiControlnetGenerateImage",
+                        RequestBaseModel=[
+                            SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
+                    )
                 with gr.Tab("SolutionBaseGenerateImage"):
                     self._content_page_(
                         model_config=data.get("SolutionBaseGenerateImage"),
                         model_type="SolutionBaseGenerateImage",
-                        RequestBaseModel=[BaseGenerateImageRequest]
+                        RequestBaseModel=[SolutionBaseGenerateImageRequest]
                     )
                 with gr.Tab("Embedding"):
                     self._content_page_(

@@ -160,6 +160,7 @@ class CMD:
             PYTHONPATH="/workspace/webui-site-packages/:$PYTHONPATH"
             python3 -m auto_openai.lm_server.webui_modify.server  
             --skip-version-check --skip-install --skip-prepare-environment 
+            --api
             --skip-torch-cuda-test --skip-load-model-at-start --enable-insecure-extension-access 
             --models-dir={global_config.WEBUI_MODEL_ROOT_PATH}
             --enable-insecure-extension-access --listen  

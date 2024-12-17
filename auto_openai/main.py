@@ -133,7 +133,11 @@ async def image_generations(request: Request):
             from auto_openai.workflow import SolutionBaseGenerateImage
             req = SolutionBaseGenerateImage(**data)
         req.format()
-        return await scheduler.ImageGenerations(request=req, request_id=request_id)
+    elif server_type == "webui":
+        if api_type == "SD15MultiControlnetGenerateImage":
+            from auto_openai.utils.openai.openai_request import SD15MultiControlnetGenerateImageRequest
+            req = SD15MultiControlnetGenerateImageRequest(**data)
+    return await scheduler.ImageGenerations(request=req, request_id=request_id)
 
 
 @app.post("/v1/audio/speech")

@@ -16,6 +16,10 @@ from openai.types.chat.chat_completion import ChatCompletion
 from openai.types.chat.chat_completion_chunk import ChatCompletionChunk
 from openai.types.completion import Completion
 from uuid_extensions import uuid7, uuid7str
+import requests
+from PIL import Image
+from io import BytesIO
+import webuiapi
 
 
 def random_uuid() -> str:
@@ -252,72 +256,219 @@ class VideoGenerationsRequest(BaseModel):
 
 
 class SamplerName(str, Enum):
-    euler = "euler"
-    euler_cfg_pp = "euler_cfg_pp"
-    euler_ancestral = "euler_ancestral"
-    euler_ancestral_cfg_pp = "euler_ancestral_cfg_pp"
-    heun = "heun"
-    heunpp2 = "heunpp2"
-    dpm_2 = "dpm_2"
-    dpm_2_ancestral = "dpm_2_ancestral"
-    lms = "lms"
-    dpm_fast = "dpm_fast"
-    dpm_adaptive = "dpm_adaptive"
-    dpmpp_2s_ancestral = "dpmpp_2s_ancestral"
-    dpmpp_sde = "dpmpp_sde"
-    dpmpp_sde_gpu = "dpmpp_sde_gpu"
-    dpmpp_2m = "dpmpp_2m"
-    dpmpp_2m_sde = "dpmpp_2m_sde"
-    dpmpp_2m_sde_gpu = "dpmpp_2m_sde_gpu"
-    dpmpp_3m_sde = "dpmpp_3m_sde"
-    dpmpp_3m_sde_gpu = "dpmpp_3m_sde_gpu"
-    ddpm = "ddpm"
-    lcm = "lcm"
-    ipndm = "ipndm"
-    ipndm_v = "ipndm_v"
-    deis = "deis"
-    ddim = "ddim"
-    uni_pc = "uni_pc"
-    uni_pc_bh2 = "uni_pc_bh2"
+    DPM_PLUS_PLUS_2M = 'DPM++ 2M'
+    DPM_PLUS_PLUS_SDE = 'DPM++ SDE'
+    DPM_PLUS_PLUS_2M_SDE = 'DPM++ 2M SDE'
+    DPM_PLUS_PLUS_2M_SDE_HEUN = 'DPM++ 2M SDE Heun'
+    DPM_PLUS_PLUS_2S_A = 'DPM++ 2S a'
+    DPM_PLUS_PLUS_3M_SDE = 'DPM++ 3M SDE'
+    EULER_A = 'Euler a'
+    EULER = 'Euler'
+    LMS = 'LMS'
+    HEUN = 'Heun'
+    DPM2 = 'DPM2'
+    DPM2_A = 'DPM2 a'
+    DPM_FAST = 'DPM fast'
+    DPM_ADAPTIVE = 'DPM adaptive'
+    RESTART = 'Restart'
+    DDIM = 'DDIM'
+    DDIM_CFG_PLUS_PLUS = 'DDIM CFG++'
+    PLMS = 'PLMS'
+    UNIPC = 'UniPC'
+    LCM = 'LCM'
 
 
 class Scheduler(str, Enum):
-    normal = "normal"
-    karras = "karras"
-    exponential = "exponential"
-    sgm_uniform = "sgm_uniform"
-    simple = "simple"
-    ddim_uniform = "ddim_uniform"
-    beta = "beta"
+    AUTOMATIC = 'Automatic'
+    UNIFORM = 'Uniform'
+    KARRAS = 'Karras'
+    EXPONENTIAL = 'Exponential'
+    POLYEXPONENTIAL = 'Polyexponential'
+    SGM_UNIFORM = 'SGM Uniform'
+    KL_OPTIMAL = 'KL Optimal'
+    ALIGN_YOUR_STEPS = 'Align Your Steps'
+    SIMPLE = 'Simple'
+    NORMAL = 'Normal'
+    DDIM = 'DDIM'
+    BETA = 'Beta'
 
 
-class SD15BaseGenerateImageRequest(BaseModel):
+class ControlnetModule(str, Enum):
+    NONE = 'none'
+    # IP_ADAPTER_AUTO = 'ip-adapter-auto'
+    TILE_RESAMPLE = 'tile_resample'
+    PIDINET = 'pidinet'
+    # ONEFORMER_ADE20K = 'oneformer_ade20k'
+    # PIDINET_SCRIBBLE = 'pidinet_scribble'
+    REVISION_CLIPVISION = 'revision_clipvision'
+    REFERENCE_ONLY = 'reference_only'
+    RECOLOR_LUMINANCE = 'recolor_luminance'
+    OPENPOSE_FULL = 'openpose_full'
+    NORMAL_BAE = 'normal_bae'
+    MLSD = 'mlsd'
+    LINEART_STANDARD = 'lineart_standard'
+    # IP_ADAPTER_CLIP_SD15 = 'ip-adapter_clip_sd15'
+    INPAINT_ONLY = 'inpaint_only'
+    DEPTH = 'depth'
+    CANNY = 'canny'
+    # INVERT = 'invert'
+    # TILE_COLORFIX_SHARP = 'tile_colorfix+sharp'
+    # TILE_COLORFIX = 'tile_colorfix'
+    # THRESHOLD = 'threshold'
+    # CLIP_VISION = 'clip_vision'
+    # PIDINET_SKETCH = 'pidinet_sketch'
+    # COLOR = 'color'
+    SOFTEDGE_TEED = 'softedge_teed'
+    PIDINET_SAFE = 'pidinet_safe'
+    HED_SAFE = 'hed_safe'
+    HED = 'hed'
+    SOFTEDGE_ANYLINE = 'softedge_anyline'
+    SHUFFLE = 'shuffle'
+    # SEGMENTATION = 'segmentation'
+    # ONEFORMER_COCO = 'oneformer_coco'
+    # ANIME_FACE_SEGMENT = 'anime_face_segment'
+    # SCRIBBLE_XDOG = 'scribble_xdog'
+    SCRIBBLE_HED = 'scribble_hed'
+    # REVISION_IGNORE_PROMPT = 'revision_ignore_prompt'
+    # REFERENCE_ADAIN_ATT = 'reference_adain+attn'
+    # REFERENCE_ADAIN = 'reference_adain'
+    # RECOLOR_INTENSITY = 'recolor_intensity'
+    # OPENPOSE_HAND = 'openpose_hand'
+    # OPENPOSE_FACEONLY = 'openpose_faceonly'
+    # OPENPOSE_FACE = 'openpose_face'
+    OPENPOSE = 'openpose'
+    # NORMAL_MAP = 'normal_map'
+    # NORMAL_DSINE = 'normal_dsine'
+    # MOBILE_SAM = 'mobile_sam'
+    # MEDIAPIPE_FACE = 'mediapipe_face'
+    LINEART = 'lineart'
+    # LINEART_COARSE = 'lineart_coarse'
+    # LINEART_ANIME_DENOISE = 'lineart_anime_denoise'
+    # LINEART_ANIME = 'lineart_anime'
+    # IP_ADAPTER_PULID = 'ip-adapter_pulid'
+    IP_ADAPTER_FACE_ID_PLUS = 'ip-adapter_face_id_plus'
+    # IP_ADAPTER_FACE_ID = 'ip-adapter_face_id'
+    # IP_ADAPTER_CLIP_SDXL_PLUS_VITH = 'ip-adapter_clip_sdxl_plus_vith'
+    # IP_ADAPTER_CLIP_SDXL = 'ip-adapter_clip_sdxl'
+    INSTANT_ID_FACE_KEYPOINTS = 'instant_id_face_keypoints'
+    INSTANT_ID_FACE_EMBEDDING = 'instant_id_face_embedding'
+    # INPAINT_ONLY_LAMA = 'inpaint_only+lama'
+    INPAINT = 'inpaint'
+    # FACEXLIB = 'facexlib'
+    # DW_OPENPOSE_FULL = 'dw_openpose_full'
+    # DEPTH_ZOE = 'depth_zoe'
+    # DEPTH_LERES_PLUS_PLUS = 'depth_leres++'
+    # DEPTH_LERES = 'depth_leres'
+    # DEPTH_HAND_REFINER = 'depth_hand_refiner'
+    # DEPTH_ANYTHING_V2 = 'depth_anything_v2'
+    # DEPTH_ANYTHING = 'depth_anything'
+    # DENSEPOSE_PARULA = 'densepose_parula'
+    # DENSEPOSE = 'densepose'
+    # BLUR_GAUSSIAN = 'blur_gaussian'
+    # ANIMAL_OPENPOSE = 'animal_openpose'
+
+
+class ControlnetResizeMode(str, Enum):
+    RESIZE_AND_FILL = "Resize and Fill"
+    RESIZE_AND_CROP = "Crop and Resize"
+    RESIZE = "Just Resize"
+
+
+class SD15ControlnetUnit(BaseModel):
+    image_url: str
+    mask_url: str = ""
+    module: ControlnetModule = ControlnetModule("none")
+    weight: float = 1.0
+    # resize_mode: ControlnetResizeMode = ControlnetResizeMode.RESIZE_AND_FILL.value
+    guidance_start: float = 0.0
+    guidance_end: float = 1.0
+
+
+class SD15MultiControlnetGenerateImageRequest(BaseModel):
     model: str = "sd1.5/majicmixRealistic_betterV6.safetensors"
     seed: int = 0
     steps: int = 20
     batch_size: int = 1
     width: int = 512
     height: int = 512
-    sampler_name: SamplerName = SamplerName("euler")  # 使用枚举类型
+    sampler_name: SamplerName = SamplerName("Euler")  # 使用枚举类型
     cfg: int = 8
     denoise_strength: float = 0.75
-    scheduler: Scheduler = Scheduler("normal")  # 使用枚举类型
+    scheduler: Scheduler = Scheduler("Normal")  # 使用枚举类型
     prompt: str = "beautiful scenery nature glass bottle landscape, purple galaxy bottle"
     negative_prompt: str = "text, watermark"
     image_url: str = ""
+    # style: list = []
+    controlnets: List[SD15ControlnetUnit] = []
 
 
-class BaseGenerateImageRequest(BaseModel):
+class SD15MultiControlnetGenerateImage(SD15MultiControlnetGenerateImageRequest):
+
+    def ImageFromUrl(self, url: str):
+        response = requests.get(url)
+        image_data = BytesIO(response.content)
+        image = Image.open(image_data)
+        return image
+
+    def controlnet_model_map(self, module):
+        return {
+            ControlnetModule.CANNY.value: "control_v11p_sd15_canny",
+            ControlnetModule.SHUFFLE.value: "control_v11e_sd15_shuffle",
+            ControlnetModule.TILE_RESAMPLE.value: "control_v11f1e_sd15_tile",
+            ControlnetModule.DEPTH.value: "control_v11f1p_sd15_depth",
+            ControlnetModule.INPAINT.value: "control_v11p_sd15_inpaint",
+            ControlnetModule.OPENPOSE.value: "control_v11p_sd15_openpose",
+            ControlnetModule.SCRIBBLE_HED.value: "control_v11p_sd15_scribble",
+            ControlnetModule.SOFTEDGE_ANYLINE.value: "control_v11p_sd15_softedge",
+            ControlnetModule.IP_ADAPTER_FACE_ID_PLUS.value: "ip-adapter-plus-face_sd15"
+        }.get(module, None)
+
+    def convert_webui_data(self):
+        data = {
+            "model": self.model.replace("SD15MultiControlnetGenerateImage/", ""),
+            "prompt": self.prompt,
+            "negative_prompt": self.negative_prompt,
+            "seed": self.seed,
+            "sampler_name": self.sampler_name.value,
+            "cfg_scale": self.cfg,
+            "denoising_strength": self.denoise_strength,
+            "steps": self.steps,
+            "batch_size": self.batch_size,
+            "width": self.width,
+            "height": self.height,
+            "scheduler": self.scheduler.value
+        }
+        if self.image_url:
+            data["images"] = [self.ImageFromUrl(self.image_url)]
+        controlnets = []
+        if self.controlnets:
+            for item in self.controlnets:
+                image = self.ImageFromUrl(item.image_url)
+                if item.mask_url:
+                    mask = self.ImageFromUrl(item.mask_url)
+                else:
+                    mask = None
+                controlnets.append(webuiapi.ControlNetUnit(
+                    image=image, mask=mask, module=item.module,
+                    model=self.controlnet_model_map(item.module),
+                    guidance_end=item.guidance_end,
+                    guidance_start=item.guidance_start,
+                    # resize_mode=item.resize_mode,
+                    weight=item.weight
+                ))
+        data["controlnet_units"] = controlnets
+        return data
+
+
+class SolutionBaseGenerateImageRequest(BaseModel):
     model: str = "sd1.5/majicmixRealistic_betterV6.safetensors"
     seed: int = 0
     steps: int = 20
     batch_size: int = 1
     width: int = 512
     height: int = 512
-    sampler_name: SamplerName = SamplerName("euler")  # 使用枚举类型
     cfg: int = 8
     denoise_strength: float = 0.75
-    scheduler: Scheduler = Scheduler("normal")  # 使用枚举类型
     prompt: str = "beautiful scenery nature glass bottle landscape, purple galaxy bottle"
     negative_prompt: str = "text, watermark"
     image_url: str = ""
