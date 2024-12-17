@@ -6,7 +6,7 @@ from auto_openai import project_path
 import pandas as pd
 from typing import Dict, Any
 from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  AudioSpeechRequest, \
-    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, BaseGenerateImageRequest
+    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, BaseGenerateImageRequest, VideoGenerationsRequest
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
 from openai import OpenAI
@@ -173,7 +173,7 @@ class DemoWebApp(APIDocsApp):
                     value=0.0,
                     label="Temperature",
                 )
-                
+
         chatbot = gr.Chatbot(
             elem_id="chatbot", bubble_full_width=False, type="messages")
 
@@ -333,6 +333,12 @@ class DemoWebApp(APIDocsApp):
                         model_type="ASR",
                         RequestBaseModel=[AudioTranscriptionsRequest]
                     )
+                with gr.Tab("视频生成"):
+                    self._content_page_(
+                        model_config=data.get("Video"),
+                        model_type="Video",
+                        RequestBaseModel=[VideoGenerationsRequest]
+                    )
 
     def Performance_pages(self):
         def convert_to_dataframe():
@@ -373,7 +379,6 @@ class DemoWebApp(APIDocsApp):
             """)
             df2 = gr.DataFrame(tps_spi_df, label="模型性能")
             fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df1, df2])
-
 
     def vnode_pages(self):
         def convert_to_dataframe():

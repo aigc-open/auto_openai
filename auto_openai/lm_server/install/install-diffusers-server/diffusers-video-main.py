@@ -46,16 +46,29 @@ def load_model(model_path):
         pipline.to(device)
         pipline.enable_model_cpu_offload()
         pipline.vae.enable_tiling()
+    else:
+        raise Exception("不支持的模型")
 
 
-def infer(prompt, num_inference_steps: int = 25, num_frames: int = 49, guidance_scale: float = 6, seed=42, fps: int = 8):
+def infer(prompt, negative_prompt=None,
+          height: int = 480,
+          width: int = 720,
+          num_inference_steps: int = 50,
+          num_frames: int = 16, guidance_scale: float = 6,
+          seed=42, fps: int = 8):
+    seed = int(time.time()) if seed == -1 else seed
+    width = width//8*8
+    height = height//8*8
     video = pipline(
         prompt=prompt,
+        negative_prompt=negative_prompt,
+        width=width,
+        height=height,
         num_videos_per_prompt=1,
         num_inference_steps=num_inference_steps,
         num_frames=num_frames,
         guidance_scale=guidance_scale,
-        generator=torch.Generator(device="cuda").manual_seed(seed),
+        generator=torch.Generator(device=device).manual_seed(seed),
     ).frames[0]
     path = f"/tmp/{random_uuid()}.mp4"
     export_to_video(video, path, fps=fps)
@@ -76,20 +89,25 @@ def ui():
                 prompt = gr.Textbox(label="Prompt", lines=2,
                                     placeholder="Enter your prompt here...",
                                     value="A panda, dressed in a small, red jacket and a tiny hat, sits on a wooden stool in a serene bamboo forest. The panda's fluffy paws strum a miniature acoustic guitar, producing soft, melodic tunes. Nearby, a few other pandas gather, watching curiously and some clapping in rhythm. Sunlight filters through the tall bamboo, casting a gentle glow on the scene. The panda's face is expressive, showing concentration and joy as it plays. The background includes a small, flowing stream and vibrant green foliage, enhancing the peaceful and magical atmosphere of this unique musical performance.")
+                negative_prompt = gr.Textbox(label="Negative Prompt", lines=2,
+                                             placeholder="Enter your negative prompt here...", value="")
+                width = gr.Slider(64, 1024, value=720, step=64, label="Width")
+                height = gr.Slider(64, 1024, value=480,
+                                   step=64, label="Height")
                 num_inference_steps = gr.Slider(
-                    1, 50, value=25, step=1, label="Number of inference steps")
+                    1, 50, value=50, step=1, label="Number of inference steps")
                 num_frames = gr.Slider(
-                    1, 50, value=49, step=1, label="Number of frames")
+                    1, 50, value=16, step=1, label="Number of frames")
                 guidance_scale = gr.Slider(
                     1, 50, value=6, step=1, label="Guidance scale")
-                seed = gr.Slider(1, 50, value=42, step=1, label="Seed")
+                seed = gr.Number(value=42, label="Seed")
                 fps = gr.Slider(1, 50, value=8, step=1, label="FPS")
                 run = gr.Button("Run")
             with gr.Column():
                 video = gr.Video(label="Video")
 
-        run.click(fn=infer, inputs=[prompt, num_inference_steps,
-                  num_frames, guidance_scale, seed, fps], outputs=video)
+        run.click(fn=infer, inputs=[prompt, negative_prompt, height, width, num_inference_steps,
+                  num_frames, guidance_scale, seed, fps], outputs=[video])
     return demo
 # PATH:auto_openai/lm_server/install/install-diffusers-transformer-video-main.py
 # Usage: python diffusers-transformer-video-main.py --model_path /root/share_models/webui-models/CogVideo/CogVideoX-5b

@@ -414,7 +414,11 @@ class Scheduler:
             }
 
     async def VideoGenerations(self, request: CompletionRequest, request_id=gen_request_id()):
-        return {
-            "revised_prompt": "",
-            "url": "https://XXXXXX.mp4"
-        }
+        content = ""
+        async for data_ in self.stream(request=request, request_id=request_id):
+            data: RedisStreamInfer = data_
+            content = data.text
+            return {
+                "revised_prompt": "",
+                "url": content
+            }

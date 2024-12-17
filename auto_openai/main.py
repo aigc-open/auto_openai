@@ -207,7 +207,7 @@ async def Rerank(request: Request, data: RerankRequest):
 @app.post("/v1/video/generations")
 async def VideoGenerations(request: Request, data: VideoGenerationsRequest):
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
-                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
+                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=60*10)
     model_config = get_model_config(name=data.model)
     scheduler.set_model_config(
         model_name=data.model, value=json.dumps(model_config))

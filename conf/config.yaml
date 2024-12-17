@@ -257,3 +257,16 @@ MODELS:
         need_gpu_count: 1
       CPU:
         need_gpu_count: 1
+  # VIDEO_MODELS:
+  - name: "CogVideo/CogVideoX-5b"
+    server_type: diffusers-video
+    api_type: Video
+    need_gpu_count: 1
+    description: "CogVideo/CogVideoX-5b"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1

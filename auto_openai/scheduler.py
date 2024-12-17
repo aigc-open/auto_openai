@@ -718,6 +718,110 @@ class LLMTramsformerTask(VllmTask):
         return self.vllm_infer(llm_server, request_id, params, model_config)
 
 
+class DiffusersVideoTask(VllmTask):
+
+    def start_diffusers_video(self, idx: int, model_name):
+        # 需要保证服务一定完全启动
+        if global_config.MOCK:
+            logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
+            time.sleep(5)
+        else:
+            port = self.worker_start_port + idx
+            device = ",".join(map(str, self.split_gpu()[idx]))
+            try:
+                cmd = CMD.get_diffusers_video(
+                    model_name=model_name, device=device, port=port)
+                subprocess.Popen(cmd, shell=True)
+            except Exception as e:
+                logger.exception(f"启动模型失败: {e}")
+                raise e
+            time.sleep(10)
+            start_time = time.time()
+            while True:
+                check_process_exists("diffusers-video")
+                try:
+                    url = f"http://localhost:{port}/"
+                    if requests.get(url).status_code < 300:
+                        break
+                except Exception as e:
+                    time.sleep(1)
+
+                if time.time() - start_time > 60*20:
+                    self.current_model = None
+                    raise Exception("服务启动异常")
+
+    def start_diffusers_video_server(self, model_name):
+        # 启动大模型服务
+        self.kill_model_server()  # 要启动就一定要kil旧得进程
+        # 改多线程启动模型服务
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.workers_num) as executor:
+            # 提交任务给线程池,线程池大小由实际任务数量决定
+            future_to_task = {executor.submit(
+                self.start_diffusers_video, i, model_name): i for i in range(self.workers_num)}
+            concurrent.futures.as_completed(future_to_task)
+        # for idx in range(self.workers_num):
+        #     self.start_cmd(idx=idx, model_name=model_name)
+        scheduler.set_running_model(model_name=model_name)
+        self.current_model = model_name
+        logger.info(f"当前运行模型: {self.current_model}")
+
+    def diffusers_video_infer(self, llm_server, request_id, params, model_config):
+        self.update_running_model()
+        start_time = time.time()
+        try:
+            logger.info(
+                f"处理diffusers_video推理任务中: {llm_server} {request_id} {params}")
+            if global_config.MOCK:
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"https://github.com/gradio-app/gradio/raw/main/test/test_files/audio_sample.wav",
+                                         finish=True))
+                time.sleep(1)
+            else:
+                self.update_running_model()
+                ######################################
+                model: str = params.get("model")
+                prompt: str = params.get("prompt")
+                seed: int = params.get("seed")
+                width: int = params.get("width")
+                height: int = params.get("height")
+                num_frames: int = params.get("num_frames", 16)
+                ######################################
+                client = Client(llm_server)
+                result = client.predict(
+                    prompt=prompt,
+                    negative_prompt="",
+                    height=height,
+                    width=width,
+                    num_inference_steps=50,
+                    num_frames=num_frames,
+                    guidance_scale=6,
+                    seed=42,
+                    fps=8,
+                    api_name="/infer"
+                )
+                local_path = result.get("video")
+                bucket_name = global_config.OSS_CLIENT_CONFIG.get(
+                    "bucket_name")
+                with open(local_path, "rb") as f:
+                    s3_client.upload_fileobj(f, bucket_name, local_path)
+                url = s3_client.get_download_url(bucket_name, local_path)
+
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"{url}",
+                                         finish=True))
+                end_time = time.time()
+                if len(url):
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/num_frames, description="每帧推理耗时")
+        except Exception as e:
+            logger.exception(f"推理异常: {e}")
+            scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
+                text="{}", finish=True))
+
+
 class RerankTask(BaseTask):
 
     def start_rerank(self, idx: int, model_name):
@@ -806,7 +910,7 @@ class RerankTask(BaseTask):
             self.current_model = None
 
 
-class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTask, RerankTask):
+class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask):
 
     def loop_infer(self, llm_server, request_info, free_status_list, idx, max_workers=8, infer_fn=None):
         logger.info(f"进程服务信息: {llm_server}")
@@ -951,6 +1055,10 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
             # 启动embedding 大模型服务
             self.start_rerank_server(
                 model_name=self.model_config["name"])
+        elif self.model_config.get("server_type") == "diffusers-video":
+            # 启动embedding 大模型服务
+            self.start_diffusers_video_server(
+                model_name=self.model_config["name"])
         else:
             raise Exception(
                 f"未知的模型服务类型: {self.model_config.get('server_type')}")
@@ -1000,6 +1108,11 @@ class Task(ComfyuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTa
         elif self.model_config.get("server_type") == "rerank":
             self.max_workers = 1
             self.infer_fn = self.rerank_infer
+            self.service_list = self.__service_list__(
+                url_format="http://localhost:{port}")
+        elif self.model_config.get("server_type") == "diffusers-video":
+            self.max_workers = 1
+            self.infer_fn = self.diffusers_video_infer
             self.service_list = self.__service_list__(
                 url_format="http://localhost:{port}")
         else:

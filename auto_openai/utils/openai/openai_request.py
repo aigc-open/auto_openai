@@ -86,8 +86,10 @@ class ChatCompletionRequest(BaseModel):
     max_tokens: Optional[int] = 512
     stop: Optional[Union[str, List[str]]] = Field(default=[])
     stream: Optional[bool] = False
-    presence_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
-    frequency_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    presence_penalty: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    frequency_penalty: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
     # Additional parameters supported by vLLM
@@ -117,8 +119,10 @@ class CompletionRequest(BaseModel):
     # logprobs: Optional[int] = None
     echo: Optional[bool] = False
     stop: Optional[Union[str, List[str]]] = Field(default_factory=list)
-    presence_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
-    frequency_penalty: Optional[float] = Field(default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    presence_penalty: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
+    frequency_penalty: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     best_of: Optional[int] = None
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
@@ -241,8 +245,10 @@ class RerankRequest(BaseModel):
 class VideoGenerationsRequest(BaseModel):
     model: str
     prompt: str
-    width: int = 512
-    height: int = 512
+    seed: int = -1
+    width: int = 720
+    height: int = 480
+    num_frames: int = Field(8, ge=1, le=16)
 
 
 class SamplerName(str, Enum):
