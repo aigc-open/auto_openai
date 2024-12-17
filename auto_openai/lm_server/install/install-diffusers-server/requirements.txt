@@ -1,14 +1,6 @@
 Pillow
-torch==2.3.0
-torchvision==0.18.0
 transformers==4.43.2
-sentencepiece
-opencv-python
 accelerate
-tiktoken
-PyMuPDF
-python-docx
-python-pptx
 uuid
 loguru
 numpy==1.26.4
