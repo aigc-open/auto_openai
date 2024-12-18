@@ -5,6 +5,7 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '0'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -17,6 +18,7 @@ services:
   scheduler-1:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '1'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -27,6 +29,7 @@ services:
   scheduler-2:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '2'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -37,6 +40,7 @@ services:
   scheduler-3:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -47,6 +51,7 @@ services:
   scheduler-4:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '4'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -57,6 +62,7 @@ services:
   scheduler-5:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '5'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -67,6 +73,7 @@ services:
   scheduler-6:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '6'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -77,6 +84,7 @@ services:
   scheduler-7:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: '7'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1

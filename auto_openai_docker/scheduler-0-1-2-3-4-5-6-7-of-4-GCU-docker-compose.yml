@@ -5,6 +5,7 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: 0,1,2,3
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
@@ -17,6 +18,7 @@ services:
   scheduler-4_5_6_7:
     command: *id001
     environment:
+      GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
       GPU_TYPE: EF-S60
       NODE_GPU_TOTAL: 4,5,6,7
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
