@@ -6,6 +6,10 @@ import os
 class CMD:
     @classmethod
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name, quantization=""):
+        if device == "gcu":
+            block_size = 64
+        else:
+            block_size = 32
         if quantization:
             quantization = f"--quantization {quantization}"
         else:
@@ -21,7 +25,7 @@ class CMD:
             --chat-template={template}
             --tensor-parallel-size={need_gpu_count} 
             --max-model-len={model_max_tokens} 
-            --dtype=float16 --block-size=64 --trust-remote-code 
+            --dtype=float16 --block-size={block_size} --trust-remote-code 
             --port={port} >> /tmp/{port}.log"""
         cmd = cmd.replace("\n", " ")
         logger.info(f"本次启动模型: \n{cmd}")
