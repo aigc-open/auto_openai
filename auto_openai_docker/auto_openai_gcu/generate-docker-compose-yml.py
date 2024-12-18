@@ -33,7 +33,7 @@ class Gen:
     yaml_filename = "scheduler-{gpu}-of-{split_size}-{GPU_TYPE}-docker-compose.yml"
 
     @classmethod
-    def run(cls, gpu: list = [0], split_size=1, GPU_TYPE="EF-S60", image: str = ""):
+    def gcu_gpu(cls, GPU_TYPE: str, NODE_GPU_TOTAL: str):
         if GPU_TYPE == "EF-S60":
             GPU_DEVICE_ENV_NAME = "TOPS_VISIBLE_DEVICES"
             deploy = {}
@@ -45,20 +45,30 @@ class Gen:
                         "devices": [
                             {
                                 "driver": "nvidia",
-                                "count": "all",
-                                "capabilities": "[gpu]"
+                                "device_ids": NODE_GPU_TOTAL.split(","),
+                                "capabilities": ["gpu"]
                             }
                         ]
                     }
                 }
             }
+        return deploy, GPU_DEVICE_ENV_NAME
+
+    @classmethod
+    def run(cls, gpu: list = [0], split_size=1, GPU_TYPE="EF-S60", image: str = ""):
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
             NODE_GPU_TOTAL = ",".join(map(str, data))
+            deploy, GPU_DEVICE_ENV_NAME = cls.gcu_gpu(GPU_TYPE, NODE_GPU_TOTAL)
             container = dict(cls.default_container)
             environment = dict(container["environment"])
             environment.update(
-                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL, "GPU_TYPE": GPU_TYPE, "GPU_DEVICE_ENV_NAME": GPU_DEVICE_ENV_NAME})
+                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL,
+                 "GPU_TYPE": GPU_TYPE,
+                 "GPU_DEVICE_ENV_NAME": GPU_DEVICE_ENV_NAME,
+                 })
+            if "NV" in GPU_TYPE:
+                environment.update({"NVIDIA_VISIBLE_DEVICES": NODE_GPU_TOTAL})
             container.update(
                 {"environment": environment, "shm_size": f"{8*len(data)}gb"})
             if deploy:
@@ -72,6 +82,7 @@ class Gen:
         with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size, GPU_TYPE=GPU_TYPE), 'w') as file:
             file.write(yaml_data)
         return service
+
 
 
 # size 是指一个实例挂载得卡数

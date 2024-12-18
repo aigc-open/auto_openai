@@ -30,6 +30,7 @@ RUN python3 -m auto_openai.lm_server.install_plugin embedding
 RUN python3 -m auto_openai.lm_server.install_plugin funasr
 RUN python3 -m auto_openai.lm_server.install_plugin llm_transformer
 RUN python3 -m auto_openai.lm_server.install_plugin rerank
+RUN python3 -m auto_openai.lm_server.install_plugin diffusers
 
 # 软件栈安装
 RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/WpzIWFnM/nfs/tops_daily/TopsRider_i3x_3.2.109_deb_amd64.run" && \
