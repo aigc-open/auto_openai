@@ -22,6 +22,8 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
+    device = "cuda"
 else:
     device = "cpu"
 

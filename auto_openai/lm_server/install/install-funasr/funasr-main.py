@@ -35,6 +35,8 @@ class ASR:
 def run(port=7861, model_root_path="/workspace/code/gitlab/MuseTalk/models/"):
     if os.environ.get("CUDA_VISIBLE_DEVICES"):
         device = "cuda"
+    elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
+        device = "cuda"
     else:
         device = "cpu"
     asr = ASR(root_path=model_root_path, device=device)

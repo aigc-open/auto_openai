@@ -17,10 +17,10 @@ cd $root_path/extensions && git clone https://gitee.com/webui_1/sd-webui-control
 site_packages=/workspace/webui-site-packages/ 
 rm -rf $site_packages
 mkdir -p $site_packages
-pip install -r /workspace/stable-diffusion-webui/requirements_versions.txt -t $site_packages
-pip install -r $root_path/repositories/k-diffusion/requirements.txt -t $site_packages
-pip install -r $root_path/repositories/stable-diffusion-stability-ai/requirements.txt -t $site_packages
-pip install -r $root_path/extensions/sd-webui-controlnet/requirements.txt -t $site_packages
+pip install -r /workspace/stable-diffusion-webui/requirements_versions.txt -t $site_packages --upgrade
+pip install -r $root_path/repositories/k-diffusion/requirements.txt -t $site_packages --upgrade
+pip install -r $root_path/repositories/stable-diffusion-stability-ai/requirements.txt -t $site_packages --upgrade
+pip install -r $root_path/extensions/sd-webui-controlnet/requirements.txt -t $site_packages --upgrade
 
 
 rm -rf $site_packages/torch

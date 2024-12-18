@@ -5,6 +5,14 @@ import os
 
 class CMD:
     @classmethod
+    def set_device(cls, device):
+        if global_config.GPU_DEVICE_ENV_NAME == "CUDA_VISIBLE_DEVICES" or \
+                global_config.GPU_DEVICE_ENV_NAME == "NVIDIA_VISIBLE_DEVICES":
+            return f"CUDA_VISIBLE_DEVICES={device} NVIDIA_VISIBLE_DEVICES={device} "
+        else:
+            return f"{global_config.GPU_DEVICE_ENV_NAME}={device} "
+
+    @classmethod
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name, quantization=""):
         if device == "gcu":
             block_size = 64
@@ -16,7 +24,7 @@ class CMD:
             quantization = ""
         cmd = f"""
             cd {global_config.VLLM_MODEL_ROOT_PATH} && 
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 -m vllm.entrypoints.openai.api_server 
             --model {model_name} 
             --device={device_name} 
@@ -40,7 +48,7 @@ class CMD:
     @classmethod
     def get_comfyui(cls, device, port):
         cmd = f"""
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             COMFYUI_MODEL_PATH={global_config.COMFYUI_MODEL_ROOT_PATH}
             python3 -m auto_openai.lm_server.comfyui_modify.server --listen 0.0.0.0
             --gpu-only --use-pytorch-cross-attention 
@@ -59,7 +67,7 @@ class CMD:
     def get_maskgct(cls, device, port):
         cmd = f"""
             cd {global_config.MASKGCT_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 -m auto_openai.lm_server.maskgct_modify.main --port={port}
             --model_root_path={global_config.MASKGCT_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ")
@@ -76,7 +84,7 @@ class CMD:
     def get_funasr(cls, device, port):
         cmd = f"""
             cd {global_config.FUNASR_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 funasr-main.py --port={port}
             --model_root_path={global_config.FUNASR_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ")
@@ -93,7 +101,7 @@ class CMD:
     def get_embedding(cls, device, port):
         cmd = f"""
             cd {global_config.EMBEDDING_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 embedding-main.py --port={port}
             --model_root_path={global_config.EMBEDDING_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ")
@@ -110,7 +118,7 @@ class CMD:
     def get_llm_transformer(cls, model_name, device, port):
         cmd = f"""
             cd {global_config.LLM_TRANSFORMER_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 llm-transformer-main.py --port={port}
             --model_path={os.path.join(global_config.LLM_TRANSFORMER_MODEL_ROOT_PATH, model_name)}"""
         cmd = cmd.replace("\n", " ")
@@ -133,7 +141,7 @@ class CMD:
     def get_diffusers_video(cls, model_name, device, port):
         cmd = f"""
             cd {global_config.DIFFUSERS_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)}  
             python3 diffusers-video-main.py --port={port}
             --model_path={os.path.join(global_config.DIFFUSERS_MODEL_ROOT_PATH, model_name)}"""
         cmd = cmd.replace("\n", " ")
@@ -144,7 +152,7 @@ class CMD:
     def get_rerank(cls, device, port):
         cmd = f"""
             cd {global_config.RERANK_ROOT_PATH} &&
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             python3 rerank-main.py --port={port}
             --model_root_path={global_config.RERANK_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ")
@@ -160,7 +168,7 @@ class CMD:
     @classmethod
     def get_webui(cls, device, port):
         cmd = f"""
-            {global_config.GPU_DEVICE_ENV_NAME}={device} 
+            {cls.set_device(device)} 
             PYTHONPATH="/workspace/stable-diffusion-webui/:/workspace/webui-site-packages/:$PYTHONPATH"
             python3 -m auto_openai.lm_server.webui_modify.server  
             --skip-version-check --skip-install --skip-prepare-environment 
