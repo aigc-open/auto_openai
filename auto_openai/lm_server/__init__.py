@@ -49,6 +49,8 @@ class CMD:
     def get_comfyui(cls, device, port):
         cmd = f"""
             {cls.set_device(device)} 
+            PYTHONPATH="/workspace/ComfyUI:$PYTHONPATH"
+            PYTORCH_CUDA_ALLOC_CONF=backend:cudaMallocAsync
             COMFYUI_MODEL_PATH={global_config.COMFYUI_MODEL_ROOT_PATH}
             python3 -m auto_openai.lm_server.comfyui_modify.server --listen 0.0.0.0
             --gpu-only --use-pytorch-cross-attention 

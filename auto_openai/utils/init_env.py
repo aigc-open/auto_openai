@@ -29,16 +29,16 @@ class GlobalConfig(BaseModel):
     MOCK: bool = bool(0)
 
     #
-    VLLM_MODEL_ROOT_PATH: str = "/root/.cache"
+    VLLM_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
     COMFYUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models/"
     COMFYUI_INPUTS_DIR: str = "/tmp"
-    MASKGCT_MODEL_ROOT_PATH: str = "/root/.cache/MaskGCT-models/"
-    FUNASR_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
-    EMBEDDING_MODEL_ROOT_PATH: str = "/root/.cache/funasr-models/"
+    MASKGCT_MODEL_ROOT_PATH: str = "/root/share_models/MaskGCT-models/"
+    FUNASR_MODEL_ROOT_PATH: str = "/root/share_models/funasr-models/"
+    EMBEDDING_MODEL_ROOT_PATH: str = "/root/share_models/funasr-models/"
     LLM_TRANSFORMER_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
-    WEBUI_MODEL_ROOT_PATH: str = "/root/.cache/webui-models"
-    RERANK_MODEL_ROOT_PATH: str = "/root/.cache/rerank-models/"
-    DIFFUSERS_MODEL_ROOT_PATH: str = "/root/.cache/webui-models"
+    WEBUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models"
+    RERANK_MODEL_ROOT_PATH: str = "/root/share_models/rerank-models/"
+    DIFFUSERS_MODEL_ROOT_PATH: str = "/root/share_models/webui-models"
     #
     COMFYUI_ROOT_PATH: str = "/workspace/ComfyUI"
     WEBUI_ROOT_PATH: str = "/workspace/stable-diffusion-webui"

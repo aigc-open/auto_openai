@@ -23,6 +23,7 @@ pip install -r $root_path/repositories/stable-diffusion-stability-ai/requirement
 pip install -r $root_path/extensions/sd-webui-controlnet/requirements.txt -t $site_packages --upgrade
 
 
+rm -rf $site_packages/wandb
 rm -rf $site_packages/torch
 rm -rf $site_packages/torch-*
 rm -rf $site_packages/torchvision*

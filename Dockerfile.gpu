@@ -23,12 +23,12 @@ RUN python3 -m auto_openai.lm_server.install_plugin llm_transformer
 RUN python3 -m auto_openai.lm_server.install_plugin rerank
 RUN python3 -m auto_openai.lm_server.install_plugin diffusers
 
+RUN pip install webuiapi vllm
+RUN pip install transformers==4.43.2 --force-reinstall
+RUN pip uninstall apex -y
 # 覆盖部分依赖
 RUN pip install /tmp/auto_openai-0.1-py3-none-any.whl
 # RUN pip install torch==2.3.0 --force-reinstall
-
-RUN pip install webuiapi vllm
-RUN pip install transformers==4.43.2 --force-reinstall
 COPY . /app/
 
 ENTRYPOINT []
