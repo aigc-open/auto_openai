@@ -161,7 +161,7 @@ class CMD:
     def get_webui(cls, device, port):
         cmd = f"""
             {global_config.GPU_DEVICE_ENV_NAME}={device} 
-            PYTHONPATH="/workspace/webui-site-packages/:$PYTHONPATH"
+            PYTHONPATH="/workspace/stable-diffusion-webui/:/workspace/webui-site-packages/:$PYTHONPATH"
             python3 -m auto_openai.lm_server.webui_modify.server  
             --skip-version-check --skip-install --skip-prepare-environment 
             --api
