@@ -26,6 +26,8 @@ RUN python3 -m auto_openai.lm_server.install_plugin rerank
 RUN pip install /tmp/auto_openai-0.1-py3-none-any.whl
 # RUN pip install torch==2.3.0 --force-reinstall
 
+
+RUN pip install webuiapi
 COPY . /app/
 
 ENTRYPOINT []
