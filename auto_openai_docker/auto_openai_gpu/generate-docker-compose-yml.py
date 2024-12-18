@@ -69,24 +69,11 @@ class Gen:
         service = dict(cls.default)
         service.update({"services": containers})
         yaml_data = yaml.dump(service)
-        with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size, GPU_TYPE="GCU" if "S60" in GPU_TYPE else "GPU"), 'w') as file:
+        with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size, GPU_TYPE=GPU_TYPE), 'w') as file:
             file.write(yaml_data)
         return service
 
 
 # size 是指一个实例挂载得卡数
-gcu_image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1"
 gpu_image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2"
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=1,
-        GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=2,
-        GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=4,
-        GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=8,
-        GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3], split_size=1, GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3], split_size=2, GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[0, 1, 2, 3], split_size=4, GPU_TYPE="EF-S60", image=gcu_image)
-Gen.run(gpu=[4, 5], split_size=2, GPU_TYPE="EF-S60", image=gcu_image)
 Gen.run(gpu=[0, 1, 2, 3], split_size=1, GPU_TYPE="NV-A100", image=gpu_image)
