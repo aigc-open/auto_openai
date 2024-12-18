@@ -37,73 +37,8 @@ WEBUI_MODEL_ROOT_PATH: "/root/share_models/webui-models"
 #
 RERANK_MODEL_ROOT_PATH: "/root/share_models/Rerank-models/"
 #
-GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
-ONLY_SERVER_TYPES: [] # ["vllm"]
-GPU_TYPE: EF-S60
-AVAILABLE_MODELS: ["ALL"]
 MODELS:
   # LLM_MODELS:
-  - name: "Qwen2.5-72B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "Qwen2.5-72B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 4
-  - name: "Qwen2.5-Coder-14B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-Coder-14B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 2
-  - name: "Qwen2.5-Coder-14B-Instruct-10k"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "Qwen2.5-Coder-14B-Instruct-10k"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 2
-  - name: "Qwen2.5-32B-Instruct-GPTQ-Int4"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-32B-Instruct-GPTQ-Int4"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    quantization: gptq
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
   - name: "Qwen2.5-7B-Instruct"
     server_type: vllm
     api_type: LLM
@@ -112,51 +47,6 @@ MODELS:
     need_gpu_count: 1
     template: template_qwen.jinja
     stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "Qwen2.5-Coder-7B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-Coder-7B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "codegeex4-all-9b"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 131072
-    description: "codegeex4-all-9b"
-    need_gpu_count: 1
-    template: template_glm4.jinja
-    stop: ["<|user|>", "<|assistant|>"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "glm-4-9b-chat"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 131072
-    description: "glm-4-9b-chat"
-    need_gpu_count: 1
-    template: template_glm4.jinja
-    stop: ["<|user|>", "<|assistant|>"]
     gpu_types:
       NV-A100:
         need_gpu_count: 1
@@ -174,6 +64,37 @@ MODELS:
     need_gpu_count: 1
     template: template_glm4.jinja
     stop: []
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+
+  - name: "SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors"
+    server_type: webui
+    api_type: SD15MultiControlnetGenerateImage
+    need_gpu_count: 1
+    description: "majicmixRealistic_v7"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+
+  # TTS_MODELS:
+  # ASR_MODELS:
+  # EMBEDDING_MODELS:
+  # RERANK_MODELS:
+  # VIDEO_MODELS:
+  - name: "CogVideo/CogVideoX-5b"
+    server_type: diffusers-video
+    api_type: Video
+    need_gpu_count: 1
+    description: "CogVideo/CogVideoX-5b"
     gpu_types:
       NV-A100:
         need_gpu_count: 1
