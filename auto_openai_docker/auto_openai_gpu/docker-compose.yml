@@ -1,14 +1,14 @@
 version: "3"
 services:
   redis:
-    image: harbor.uat.enflame.cc/library/enflame.cn/redis:7-alpine
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/redis:7-alpine
     ports:
       - "6379:6379"
     restart: always
     command:
       - redis-server
   openai-api:
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.1
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2
     ports:
       - "9000:9000"
     command:
