@@ -164,5 +164,5 @@ cython_debug/
 flagged
 *.wav
 bak.sh
-scheduler*.yml
+# scheduler*.yml
 tmp

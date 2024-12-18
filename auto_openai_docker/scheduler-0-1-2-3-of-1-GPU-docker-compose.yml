@@ -1,0 +1,61 @@
+services:
+  scheduler-0:
+    command: &id001
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    deploy: &id002
+      resources:
+        reservations:
+          devices:
+          - capabilities: '[gpu]'
+            count: all
+            driver: nvidia
+    environment:
+      GPU_DEVICE_ENV_NAME: CUDA_VISIBLE_DEVICES
+      GPU_TYPE: NV-A100
+      NODE_GPU_TOTAL: '0'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: &id003
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+  scheduler-1:
+    command: *id001
+    deploy: *id002
+    environment:
+      GPU_DEVICE_ENV_NAME: CUDA_VISIBLE_DEVICES
+      GPU_TYPE: NV-A100
+      NODE_GPU_TOTAL: '1'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id003
+  scheduler-2:
+    command: *id001
+    deploy: *id002
+    environment:
+      GPU_DEVICE_ENV_NAME: CUDA_VISIBLE_DEVICES
+      GPU_TYPE: NV-A100
+      NODE_GPU_TOTAL: '2'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id003
+  scheduler-3:
+    command: *id001
+    deploy: *id002
+    environment:
+      GPU_DEVICE_ENV_NAME: CUDA_VISIBLE_DEVICES
+      GPU_TYPE: NV-A100
+      NODE_GPU_TOTAL: '3'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.1-cuda12.2
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id003
+version: '3'
