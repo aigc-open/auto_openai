@@ -30,6 +30,7 @@ RUN pip uninstall apex -y
 RUN pip install /tmp/auto_openai-0.1-py3-none-any.whl
 RUN rm -rf /workspace/webui-site-packages/wandb
 RUN pip install diffusers==0.31.0 vllm==0.4.2 --upgrade
+RUN rm -rf /workspace/webui-site-packages/wandb
 # RUN pip install torch==2.3.0 --force-reinstall
 COPY . /app/
 
