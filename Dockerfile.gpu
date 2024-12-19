@@ -32,6 +32,7 @@ RUN rm -rf /workspace/webui-site-packages/wandb
 RUN pip install diffusers==0.31.0 vllm==0.4.2 --upgrade
 RUN rm -rf /workspace/webui-site-packages/wandb
 RUN pip uninstall wandb -y
+RUN pip install torch==2.3.0 torchvision==0.18.0 --force-reinstall
 # RUN pip install torch==2.3.0 --force-reinstall
 COPY . /app/
 
