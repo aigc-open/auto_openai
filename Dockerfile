@@ -10,8 +10,10 @@ RUN apt-get update && \
     apt-get clean
 
 
-RUN pip config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple
-RUN pip config set install.trusted-host artifact.enflame.cn
+# RUN pip config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple
+# RUN pip config set install.trusted-host artifact.enflame.cn
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
 
 WORKDIR /workspace
 
