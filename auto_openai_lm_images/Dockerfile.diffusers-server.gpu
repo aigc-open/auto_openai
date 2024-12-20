@@ -15,6 +15,7 @@ RUN pip install -r /tmp/requirements.txt
 RUN pip3.10 install torch==2.3.0 --force-reinstall
 
 RUN pip3.10 install protobuf==3.20 fire opencv-python
+RUN pip3.10 install torchvision==0.18.0
 # 修改适配
 COPY ./projects/diffusers-server/ /workspace/diffusers-server/
 
