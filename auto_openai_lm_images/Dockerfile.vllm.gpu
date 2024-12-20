@@ -8,7 +8,7 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && 
 WORKDIR /workspace
 
 RUN pip install vllm
-RUN pip3.10 install torch==2.3.0 --force-reinstall
+# RUN pip3.10 install torch==2.3.0 --force-reinstall
 
 RUN pip3.10 install protobuf==3.20 fire
 COPY ./template /template
