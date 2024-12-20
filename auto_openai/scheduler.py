@@ -1078,6 +1078,9 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                     time.sleep(random.randint(1, 5))
             if self.current_model is None and self.current_model in scheduler.get_running_model():
                 # 如果当前模型为空，但是该模型正在运行，则等待
+                if scheduler.get_request_queue_length(model_name=self.model_config["name"]) < self.useful_times:
+                    # 已存在的任务完全能自己处理了，不用启动新任务了
+                    continue
                 time.sleep(random.randint(1, 5))
 
             request_info = self.get_request(model_name=model_name)

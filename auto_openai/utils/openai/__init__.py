@@ -137,6 +137,10 @@ class Scheduler:
             return data.decode()
         return data
 
+    def get_request_queue_length(self, model_name):
+        """大模型任务队列长度"""
+        return self.redis_client.llen(name=f"lm-request-queue-{model_name}")
+
     def get_request_queue_all_ids(self, model_name):
         """大模型任务队列"""
         data = self.redis_client.lrange(
