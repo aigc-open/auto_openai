@@ -5,6 +5,7 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
+      LABEL: lm-server-1734698569
       NODE_GPU_TOTAL: '0'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -19,6 +20,7 @@ services:
   scheduler-1:
     command: *id001
     environment:
+      LABEL: lm-server-1734698570
       NODE_GPU_TOTAL: '1'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -29,6 +31,7 @@ services:
   scheduler-2:
     command: *id001
     environment:
+      LABEL: lm-server-1734698571
       NODE_GPU_TOTAL: '2'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -39,6 +42,7 @@ services:
   scheduler-3:
     command: *id001
     environment:
+      LABEL: lm-server-1734698572
       NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -49,6 +53,7 @@ services:
   scheduler-4:
     command: *id001
     environment:
+      LABEL: lm-server-1734698573
       NODE_GPU_TOTAL: '4'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -59,6 +64,7 @@ services:
   scheduler-5:
     command: *id001
     environment:
+      LABEL: lm-server-1734698574
       NODE_GPU_TOTAL: '5'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -69,6 +75,7 @@ services:
   scheduler-6:
     command: *id001
     environment:
+      LABEL: lm-server-1734698575
       NODE_GPU_TOTAL: '6'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
@@ -79,6 +86,7 @@ services:
   scheduler-7:
     command: *id001
     environment:
+      LABEL: lm-server-1734698576
       NODE_GPU_TOTAL: '7'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host

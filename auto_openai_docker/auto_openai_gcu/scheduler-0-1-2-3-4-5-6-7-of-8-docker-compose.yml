@@ -5,6 +5,7 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
+      LABEL: lm-server-1734698583
       NODE_GPU_TOTAL: 0,1,2,3,4,5,6,7
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host

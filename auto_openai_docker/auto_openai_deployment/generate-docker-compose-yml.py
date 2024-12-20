@@ -1,7 +1,7 @@
 
 import yaml
 import json
-
+import time
 # image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
 image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
 
@@ -44,15 +44,17 @@ class Gen:
             container = dict(cls.default_container)
             environment = dict(container["environment"])
             environment.update(
-                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL})
+                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL, "LABEL": f"lm-server-{int(time.time())}"})
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
             containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}"] = container
+            time.sleep(1)
         service = dict(cls.default)
         service.update({"services": containers})
         yaml_data = yaml.dump(service)
         with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size), 'w') as file:
             file.write(yaml_data)
+        
         return service
 
 
