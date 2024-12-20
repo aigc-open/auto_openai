@@ -581,7 +581,7 @@ class MaskGCTTask(BaseTask):
         except Exception as e:
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                text="{}", finish=True))
+                text="", finish=True))
 
 
 class FunAsrTask(BaseTask):
@@ -900,7 +900,7 @@ class DiffusersVideoTask(VllmTask):
         except Exception as e:
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                text="{}", finish=True))
+                text="推理异常", finish=True))
 
 
 class RerankTask(BaseTask):

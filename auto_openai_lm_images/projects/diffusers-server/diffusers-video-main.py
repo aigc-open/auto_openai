@@ -72,7 +72,9 @@ def infer(prompt, negative_prompt=None,
         guidance_scale=guidance_scale,
         generator=torch.Generator(device=device).manual_seed(seed),
     ).frames[0]
-    path = f"/tmp/{random_uuid()}.mp4"
+    save_dir = "/root/share_models/tmp"
+    os.makedirs(save_dir, exist_ok=True)
+    path = f"{save_dir}/{random_uuid()}.mp4"
     export_to_video(video, path, fps=fps)
     return path
 
