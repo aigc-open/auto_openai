@@ -16,6 +16,7 @@ RUN pip3.10 install torch==2.3.0 --force-reinstall
 RUN pip3.10 install wandb==0.15.12 urllib3==1.26.20 eventlet==0.35.2
 RUN pip3.10 install protobuf==3.20 fire
 RUN pip3.10 install torchvision==0.18.0 --force-reinstall
+RUN pip3.10 install transformers==4.19.0 numpy==1.26 opencv-python==4.6.0.66
 # 修改适配
 COPY ./projects/webui/ /modify/
 RUN bash /modify/modify.sh
