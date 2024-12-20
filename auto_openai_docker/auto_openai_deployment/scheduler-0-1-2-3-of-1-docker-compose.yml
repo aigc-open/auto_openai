@@ -5,7 +5,8 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      LABEL: lm-server-1734698537
+      LABEL: lm-server-1734700350
+      LM_SERVER_BASE_PORT: 30008
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
@@ -20,7 +21,8 @@ services:
   scheduler-1:
     command: *id001
     environment:
-      LABEL: lm-server-1734698538
+      LABEL: lm-server-1734700351
+      LM_SERVER_BASE_PORT: 30016
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
@@ -31,7 +33,8 @@ services:
   scheduler-2:
     command: *id001
     environment:
-      LABEL: lm-server-1734698539
+      LABEL: lm-server-1734700352
+      LM_SERVER_BASE_PORT: 30024
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
@@ -42,7 +45,8 @@ services:
   scheduler-3:
     command: *id001
     environment:
-      LABEL: lm-server-1734698540
+      LABEL: lm-server-1734700353
+      LM_SERVER_BASE_PORT: 30032
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host

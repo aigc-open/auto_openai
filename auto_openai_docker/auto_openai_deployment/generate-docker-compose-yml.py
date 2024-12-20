@@ -6,7 +6,11 @@ import time
 image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
 
 
+BASE_PORT = 30000
+
+
 class Gen:
+    
     default = {
         "version": "3",
         "services": {},
@@ -38,13 +42,15 @@ class Gen:
 
     @classmethod
     def run(cls, gpu: list = [0], split_size=1):
+        global BASE_PORT
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
+            BASE_PORT += 8
             NODE_GPU_TOTAL = ",".join(map(str, data))
             container = dict(cls.default_container)
             environment = dict(container["environment"])
             environment.update(
-                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL, "LABEL": f"lm-server-{int(time.time())}"})
+                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL, "LABEL": f"lm-server-{int(time.time())}", "LM_SERVER_BASE_PORT": BASE_PORT})
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
             containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}"] = container
@@ -54,7 +60,7 @@ class Gen:
         yaml_data = yaml.dump(service)
         with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size), 'w') as file:
             file.write(yaml_data)
-        
+
         return service
 
 
