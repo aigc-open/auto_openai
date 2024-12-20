@@ -1071,12 +1071,15 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
 
             self.update_running_model()
             if self.current_model is not None and self.current_model != self.model_config["name"]:
+                if scheduler.get_request_queue_length(model_name=model_name) < self.useful_times:
+                    # 已存在的任务完全能自己处理了，不用启动新任务了
+                    continue
                 # 当模型和自己模型不一致时，尽可能其正在运行的模型取走，如果取不走，说明并发大,需要新增副本
                 time.sleep(random.randint(1, 5))
                 if self.model_config["need_gpu_count"] != len(self.node_gpu_total):
                     # 尽量让其他对等节点去推理
                     time.sleep(random.randint(1, 5))
-            if self.current_model is None and model_name in scheduler.get_running_model():
+            elif self.current_model is None and model_name in scheduler.get_running_model():
                 # 如果当前模型为空，但是该模型正在运行，则等待
                 if scheduler.get_request_queue_length(model_name=model_name) < self.useful_times:
                     # 已存在的任务完全能自己处理了，不用启动新任务了
