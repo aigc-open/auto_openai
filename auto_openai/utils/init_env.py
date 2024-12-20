@@ -16,6 +16,7 @@ class LMConfig(BaseModel):
     need_gpu_count: int
     gpu_types: dict
 
+
 class LLMConfig(LMConfig):
     model_max_tokens: int
     template: str
@@ -25,30 +26,24 @@ class LLMConfig(LMConfig):
 class GlobalConfig(BaseModel):
     REDIS_CLIENT_CONFIG: dict = {}
     QUEUE_TIMEOUT: int = 600
-    INFER_TIMEOUT: int = 100
+    INFER_TIMEOUT: int = 600
     MOCK: bool = bool(0)
 
     #
+    COMFYUI_INPUTS_DIR: str = "/tmp"
     VLLM_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
     COMFYUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models/"
-    COMFYUI_INPUTS_DIR: str = "/tmp"
     MASKGCT_MODEL_ROOT_PATH: str = "/root/share_models/MaskGCT-models/"
     FUNASR_MODEL_ROOT_PATH: str = "/root/share_models/funasr-models/"
-    EMBEDDING_MODEL_ROOT_PATH: str = "/root/share_models/funasr-models/"
+    EMBEDDING_MODEL_ROOT_PATH: str = "/root/share_models/Embedding-models/"
     LLM_TRANSFORMER_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
     WEBUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models"
-    RERANK_MODEL_ROOT_PATH: str = "/root/share_models/rerank-models/"
+    RERANK_MODEL_ROOT_PATH: str = "/root/share_models/Rerank-models/"
     DIFFUSERS_MODEL_ROOT_PATH: str = "/root/share_models/webui-models"
-    #
-    COMFYUI_ROOT_PATH: str = "/workspace/ComfyUI"
-    WEBUI_ROOT_PATH: str = "/workspace/stable-diffusion-webui"
-    MASKGCT_ROOT_PATH: str = "/workspace/MaskGCT"
-    FUNASR_ROOT_PATH: str = "/workspace/install-funasr"
-    EMBEDDING_ROOT_PATH: str = "/workspace/install-embedding"
-    LLM_TRANSFORMER_ROOT_PATH: str = "/workspace/install-llm-transformer-server"
-    RERANK_ROOT_PATH: str = "/workspace/install-rerank"
-    DIFFUSERS_ROOT_PATH:str = "/workspace/install-diffusers-server"
-    
+
+    # image
+    IMAGE_BASE_PATH: str = "harbor.uat.enflame.cc/library/enflame.cn"
+
     # oss
     OSS_CLIENT_CONFIG: dict = {}
     #
@@ -57,11 +52,12 @@ class GlobalConfig(BaseModel):
     UNUSERFULL_TIMES_PER_MODEL: int = 10
     DEFAULT_MODEL_CONFIG_max_tokens: int = 4096
     #
-    GPU_DEVICE_ENV_NAME: str = "TOPS_VISIBLE_DEVICES"
     ONLY_SERVER_TYPES: list = []
     GPU_TYPE: str = "EF-S60"
     MODELS: list = []
     AVAILABLE_MODELS: list = ["ALL"]
+    LM_SERVER_BASE_PORT: int = 30000
+    LABEL:str="auto_openai_scheduler"
 
     def parse_config(self, path=".conf/config.yaml"):
         if not os.path.exists(path):

@@ -10,7 +10,7 @@ from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
 from openai import OpenAI
-
+import os
 
 def generate_api_documentation(schema: Dict[str, Any]):
     # 创建一个空列表来存储每个属性的信息
@@ -153,10 +153,14 @@ class APIDocsApp():
 class DemoWebApp(APIDocsApp):
     home_readme = os.path.join(project_path, "README.md")
     demo_path = os.path.join(project_path, "web/tests")
-    OPENAI_BASE_URL = "http://127.0.0.1:9000/openai/v1"
-    client = OpenAI(base_url=OPENAI_BASE_URL, api_key="EMPTY")
+
+    def get_client(self):
+        port = int(os.environ.get("MAINPORT"))
+        OPENAI_BASE_URL = f"http://127.0.0.1:{port}/openai/v1"
+        return OpenAI(base_url=OPENAI_BASE_URL, api_key="EMPTY")
 
     def LLM_playgournd(self, model_list):
+        self.client = self.get_client()
         model_params = {}
         for m_ in model_list:
             model_params[m_[0]] = m_[1]
@@ -305,7 +309,8 @@ class DemoWebApp(APIDocsApp):
                     )
                 with gr.Tab("SD15MultiControlnetGenerateImage"):
                     self._content_page_(
-                        model_config=data.get("SD15MultiControlnetGenerateImage"),
+                        model_config=data.get(
+                            "SD15MultiControlnetGenerateImage"),
                         model_type="SD15MultiControlnetGenerateImage",
                         RequestBaseModel=[
                             SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]

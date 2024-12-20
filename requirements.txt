@@ -10,12 +10,13 @@ tiktoken~=0.5.2
 uuid7
 fire
 urllib3==1.26.20
-transformers==4.43.2
-diffusers==0.24.0
 eventlet==0.35.2
 numpy==1.26.4
 boto3==1.35.63
 wget
 psutil
-accelerate==1.1.1
 webuiapi
+gradio==5.6.0
+together
+pandas
+docker

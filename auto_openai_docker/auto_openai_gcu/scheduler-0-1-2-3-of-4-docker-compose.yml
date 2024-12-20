@@ -1,0 +1,19 @@
+services:
+  scheduler-0_1_2_3:
+    command:
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      NODE_GPU_TOTAL: 0,1,2,3
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes:
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+version: '3'

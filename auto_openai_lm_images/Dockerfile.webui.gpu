@@ -1,0 +1,31 @@
+FROM nvcr.io/nvidia/pytorch:23.12-py3
+
+
+RUN apt update -y && apt install curl git ffmpeg -y && python3 -m pip install --upgrade pip==24.0
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+
+WORKDIR /workspace
+
+# 安装依赖
+COPY ./projects/webui/install.sh /tmp/install.sh
+RUN bash /tmp/install.sh
+# 强制覆盖torch
+RUN pip3.10 install torch==2.3.0 --force-reinstall
+RUN pip3.10 install wandb==0.15.12 urllib3==1.26.20 eventlet==0.35.2
+RUN pip3.10 install protobuf==3.20 fire
+# 修改适配
+COPY ./projects/webui/ /modify/
+RUN bash /modify/modify.sh
+
+ENTRYPOINT []
+
+WORKDIR /workspace/stable-diffusion-webui
+
+CMD "sleep infinity"
+
+
+
+
+

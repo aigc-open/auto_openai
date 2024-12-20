@@ -8,9 +8,35 @@
 
 - **基于 vllm 的高效推理**：利用 vllm 的优化技术提升大型语言模型推理的速度和效率。
 - **ComfyUI 集成**：集成 ComfyUI，提供直观的用户 API，便于轻松调用。
+- **transformers 支持**：支持 transformers 库，便于用户使用现有的模型和工具。
+- **SD WebUI 支持**: 支持 SD WebUI，提供丰富的图像生成功能。
 - **智能计算调度**：根据负载条件自动分配和调整计算资源，确保最佳性能。
 - **弹性扩展**：支持内部系统资源的动态扩展和收缩，以适应不断变化的工作负载。
 - **OpenAI 兼容的 API**：提供与 OpenAI API 兼容的接口，便于现有应用的快速集成和迁移。
+- **多类型 api 支持**: 支持多种类型的 API，包括 LLM, VL, SD, Embedding, Audio, Image, TTS, rerank 等。
+- **分布式支持**: 支持分布式计算，提高计算效率。
+
+# 安装
+
+```bash
+pip install .
+```
+
+# 已支持的模型
+
+| 模型类别   | 模型名称                                                                           | 状态 |
+| ---------- | ---------------------------------------------------------------------------------- | ---- |
+| 大语言模型 | [vllm 支持的所有模型](https://docs.vllm.ai/en/latest/models/supported_models.html) | ✅   |
+| 多模态     | glm-4v-9b                                                                          | ✅   |
+| 图像生成   | SD1.5 系列所有模型以及 Controlnet                                                  | ✅   |
+|            | ComfyUI 基础文生图工作流的所有模型                                                 | ✅   |
+| Embedding  | bge-base-zh-v1.5                                                                   | ✅   |
+|            | bge-m3                                                                             | ✅   |
+| Rerank     | bge-reranker-base                                                                  | ✅   |
+|            | bge-reranker-v2-m3                                                                 | ✅   |
+| TTS        | maskgct-tts-clone                                                                  | ✅   |
+| ASR        | funasr                                                                             | ✅   |
+| 视频生成   | CogVideo/CogVideoX-5b                                                              | ✅   |
 
 # API 功能
 

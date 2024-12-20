@@ -43,36 +43,10 @@ pip install .
 - vllm/transformers/ComfyUI/embedding/funasr/maskgct/webui(按需安装)
 - redis
 
-### 插件安装(按需安装)
+### 内置模型下载
 
 ```bash
-[~]# python3 -m auto_openai.install_plugin --help
-COMMANDS
-    COMMAND is one of the following:
-
-     comfyui
-
-     embedding
-
-     funasr
-
-     llm_transformer
-
-     maskgct
-
-     tiktoken
-```
-
-```bash
-python3 -m auto_openai.lm_server.install_plugin tiktoken
-python3 -m auto_openai.lm_server.install_plugin comfyui
-python3 -m auto_openai.lm_server.install_plugin webui
-python3 -m auto_openai.lm_server.install_plugin maskgct
-#
-python3 -m auto_openai.lm_server.install_plugin embedding
-python3 -m auto_openai.lm_server.install_plugin funasr
-python3 -m auto_openai.lm_server.install_plugin llm_transformer
-python3 -m auto_openai.lm_server.install_plugin rerank
+python3 -m auto_openai.lm_server.install_models tiktoken
 ```
 
 ## 配置文件

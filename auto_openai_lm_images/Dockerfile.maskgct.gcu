@@ -1,0 +1,43 @@
+FROM artifact.enflame.cn/enflame_docker_images/ubuntu/qic_ubuntu_2004_gcc9:1.5.5
+
+RUN rm -f /usr/bin/python \
+    && rm -f /usr/bin/python3 \
+    && rm -f /usr/bin/python-config \
+    && rm -f /usr/bin/python3-config \
+    && ln -s /usr/local/bin/python3.10 /usr/bin/python \
+    && ln -s /usr/local/bin/python3.10 /usr/bin/python3 \
+    && ln -s /usr/local/bin/python3.10-config /usr/bin/python-config \
+    && ln -s /usr/local/bin/python3.10-config /usr/bin/python3-config \
+    && pip3.10 install --upgrade pip
+
+RUN apt update -y && apt install curl git ffmpeg -y && python3.10 -m pip install --upgrade pip==24.0
+
+RUN pip3 config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip3 config set global.trusted-host artifact.enflame.cn
+
+# 软件栈安装
+RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/WpzIWFnM/nfs/tops_daily/TopsRider_i3x_3.2.109_deb_amd64.run" && \
+    bash topsrider.run -C vllm --container -y && \
+    rm -rf topsrider.run
+
+WORKDIR /workspace
+
+# 安装依赖
+COPY ./projects/maskgct/install.sh /tmp/install.sh
+RUN bash /tmp/install.sh
+# 强制覆盖torch
+RUN pip3.10 install torch==2.3.0 --force-reinstall
+RUN pip3.10 install protobuf==3.20 fire
+# 修改适配
+COPY ./projects/maskgct/ /modify/
+RUN bash /modify/modify.sh
+
+ENTRYPOINT []
+
+WORKDIR /workspace/MaskGCT
+
+CMD "sleep infinity"
+
+
+
+
+

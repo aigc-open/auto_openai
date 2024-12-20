@@ -10,37 +10,18 @@ OSS_CLIENT_CONFIG:
   aws_secret_access_key: cb78ddb9646518e554799c0f5ff1a3bd
   bucket_name: maas-1
   region_name:
-
+#######################################################
 QUEUE_TIMEOUT: 600
-INFER_TIMEOUT: 100
+INFER_TIMEOUT: 600
 USERFULL_TIMES_PER_MODEL: 20
 UNUSERFULL_TIMES_PER_MODEL: 10
 DEFAULT_MODEL_CONFIG_max_tokens: 4096
-NODE_GPU_TOTAL: "0"
+NODE_GPU_TOTAL: "4"
 MOCK: false
-
-COMFYUI_INPUTS_DIR: "/tmp"
-#
-COMFYUI_MODEL_ROOT_PATH: /root/share_models/webui-models
-#
-MASKGCT_MODEL_ROOT_PATH: "/root/share_models/MaskGCT-models/"
-#
-VLLM_MODEL_ROOT_PATH: /root/share_models/LLM
-#
-FUNASR_MODEL_ROOT_PATH: "/root/share_models/funasr-models/"
-#
-EMBEDDING_MODEL_ROOT_PATH: "/root/share_models/Embedding-models/"
-#
-LLM_TRANSFORMER_MODEL_ROOT_PATH: "/root/share_models/LLM/"
-#
-WEBUI_MODEL_ROOT_PATH: "/root/share_models/webui-models"
-#
-RERANK_MODEL_ROOT_PATH: "/root/share_models/Rerank-models/"
-#
-GPU_DEVICE_ENV_NAME: TOPS_VISIBLE_DEVICES
-ONLY_SERVER_TYPES: [] # ["vllm"]
 GPU_TYPE: EF-S60
+IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 AVAILABLE_MODELS: ["ALL"]
+#######################################################
 MODELS:
   # LLM_MODELS:
   - name: "Qwen2.5-72B-Instruct"

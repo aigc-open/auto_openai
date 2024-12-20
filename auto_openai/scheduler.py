@@ -19,7 +19,6 @@ from auto_openai.utils.public import s3_client
 import wget
 from auto_openai.lm_server import CMD
 from gradio_client import Client, file
-from auto_openai.utils.check_process import check_process_exists
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string
 from auto_openai.utils.daily_basic_function import safe_dir
 import wget
@@ -37,7 +36,7 @@ MODEL_PROF_KEY = "Profiler"
 
 class BaseTask:
     current_model = None
-    worker_start_port = 30000
+    worker_start_port = global_config.LM_SERVER_BASE_PORT
     model_config = {}
     useful_times = global_config.USERFULL_TIMES_PER_MODEL
     node_gpu_total: list = list([int(x.strip())
@@ -102,6 +101,7 @@ class BaseTask:
                 pass
 
     def loop(self):
+        self.kill_model_server()
         import threading
         threading.Thread(target=self.report_node).start()
         while True:
@@ -169,7 +169,7 @@ class VllmTask(BaseTask):
     def get_chat_template(self, model_name: str):
         self.stop_params = {}
         self.stop_params = {"stop": self.model_config.get("stop", [])}
-        return f"{root_path}/template/{self.model_config.get('template')}"
+        return f"/template/{self.model_config.get('template')}"
 
     def read_template(self, model_name: str):
         with open(self.get_chat_template(model_name), "r") as f:
@@ -183,24 +183,22 @@ class VllmTask(BaseTask):
         else:
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
-            if global_config.GPU_DEVICE_ENV_NAME == "CUDA_VISIBLE_DEVICES":
+            if "NV" in global_config.GPU_TYPE:
                 device_name = "auto"
-            if global_config.GPU_DEVICE_ENV_NAME == "TOPS_VISIBLE_DEVICES":
+            else:
                 device_name = "gcu"
             try:
                 cmd = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
                     self.split_gpu()[idx]), port=port, template=self.get_chat_template(model_name),
                     model_max_tokens=self.model_config['model_max_tokens'], device_name=device_name,
                     quantization=self.model_config.get("quantization", None))
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists(
-                    keyword="vllm.entrypoints.openai.api_server")
                 try:
                     url = f"http://localhost:{port}/metrics"
                     if requests.get(url).status_code < 300:
@@ -329,14 +327,13 @@ class ComfyuiTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_comfyui(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists(keyword="comfyui")
                 try:
                     url = f"http://localhost:{port}/queue"
                     if requests.get(url).status_code < 300:
@@ -421,14 +418,13 @@ class WebuiTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_webui(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists(keyword="webui")
                 try:
                     url = f"http://localhost:{port}"
                     if requests.get(url).status_code < 300:
@@ -471,7 +467,7 @@ class WebuiTask(BaseTask):
                 time.sleep(1)
             else:
                 self.update_running_model()
-                
+
                 client = WebUIClient(server=llm_server, s3_client=s3_client)
                 webui_data = SD15MultiControlnetGenerateImage(
                     **params).convert_webui_data()
@@ -508,14 +504,13 @@ class MaskGCTTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_maskgct(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("maskgct")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -601,14 +596,13 @@ class FunAsrTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_funasr(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("funasr")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -683,14 +677,13 @@ class EmbeddingTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_embedding(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("embedding")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -770,14 +763,13 @@ class LLMTramsformerTask(VllmTask):
                 self.get_chat_template(model_name)
                 cmd = CMD.get_llm_transformer(
                     model_name=model_name, device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("llm-transformer")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -821,14 +813,13 @@ class DiffusersVideoTask(VllmTask):
             try:
                 cmd = CMD.get_diffusers_video(
                     model_name=model_name, device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("diffusers-video")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -924,14 +915,13 @@ class RerankTask(BaseTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 cmd = CMD.get_rerank(device=device, port=port)
-                subprocess.Popen(cmd, shell=True)
+
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
                 raise e
             time.sleep(10)
             start_time = time.time()
             while True:
-                check_process_exists("rerank")
                 try:
                     url = f"http://localhost:{port}/"
                     if requests.get(url).status_code < 300:
@@ -1086,6 +1076,10 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 if self.model_config["need_gpu_count"] != len(self.node_gpu_total):
                     # 尽量让其他对等节点去推理
                     time.sleep(random.randint(1, 5))
+            if self.current_model is None and self.current_model in scheduler.get_running_model():
+                # 如果当前模型为空，但是该模型正在运行，则等待
+                time.sleep(random.randint(1, 5))
+
             request_info = self.get_request(model_name=model_name)
             if not request_info:
                 logger.info(f'模型: {self.model_config["name"]} 没有推理请求, 跳过')

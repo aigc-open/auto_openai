@@ -21,7 +21,6 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
         sampler_name= "euler"
         scheduler_name = "normal"
         if self.image_url:
-            UrlParser(url=self.image_url).generate_random_local_file_name()
             filename = UrlParser(
                 url=self.image_url).generate_random_local_file_name()
 

@@ -14,11 +14,9 @@ print("install package ...\n", find_packages())
 with open('requirements.txt') as f:
     requirements = f.readlines()
 
-pip.main(["install", "gradio==5.6.0"])
-
 setup(
     name="auto_openai",
-    version="0.1",
+    version="0.2",
     packages=find_packages(),
     include_package_data=True,
     install_requires=requirements,

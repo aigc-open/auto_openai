@@ -1,22 +1,25 @@
-from fastapi import FastAPI, Request, Body, Header, Query, File, UploadFile, Form
-from typing import Optional, Union, List
+
 import time
 import asyncio
+import os
+import requests
+import json
+import gradio as gr
 from fastapi import HTTPException, Depends
-from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
-    ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest, VideoGenerationsRequest
 from fastapi.responses import JSONResponse, StreamingResponse, Response
 from auto_openai.utils.init_env import global_config
-import json
 from fastapi.middleware.cors import CORSMiddleware
 from enum import Enum
-import requests
+from fastapi import FastAPI, Request, Body, Header, Query, File, UploadFile, Form
+from typing import Optional, Union, List
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string, cut_messages
 from auto_openai.utils.depends import get_model_config
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
-import gradio as gr
+from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
+    ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest, VideoGenerationsRequest
+
 from auto_openai.utils.api_web import DemoWebApp
 
 
@@ -274,12 +277,13 @@ async def get_nodes(request: Request):
     return scheduler.get_running_node()
 
 ########################### web html ############################
-app = gr.mount_gradio_app(app, DemoWebApp(
-    title="Openai-本地大模型API文档").app, path="/")
+demo_web = DemoWebApp(title="Openai-本地大模型API文档")
+app = gr.mount_gradio_app(app, demo_web.app, path="/")
 
 
 def run(port: int = 9000, workers=2):
     import uvicorn
+    os.environ["MAINPORT"] = str(port)
     uvicorn.run("auto_openai.main:app", host="0.0.0.0",
                 port=port, workers=workers)
 

@@ -1,0 +1,91 @@
+REDIS_CLIENT_CONFIG:
+  address: 10.12.110.149:6379
+  username:
+  password:
+  cluster: False
+
+OSS_CLIENT_CONFIG:
+  endpoint_url: http://oss-cnsq01.cdsgss.com
+  aws_access_key_id: ef55cb62ff7511edb70f46ae5a5d3b50
+  aws_secret_access_key: cb78ddb9646518e554799c0f5ff1a3bd
+  bucket_name: maas-1
+  region_name:
+
+#######################################################
+QUEUE_TIMEOUT: 600
+INFER_TIMEOUT: 600
+USERFULL_TIMES_PER_MODEL: 20
+UNUSERFULL_TIMES_PER_MODEL: 10
+DEFAULT_MODEL_CONFIG_max_tokens: 4096
+NODE_GPU_TOTAL: "4"
+MOCK: false
+GPU_TYPE: NV-A100
+IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
+AVAILABLE_MODELS: ["ALL"]
+#######################################################
+#
+MODELS:
+  # LLM_MODELS:
+  - name: "Qwen2.5-7B-Instruct"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 32768
+    description: "Qwen2.5-7B-Instruct"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      EF-S60:
+        need_gpu_count: 1
+
+  # VISION_MODELS:
+  - name: "glm-4v-9b"
+    server_type: llm-transformer-server
+    api_type: VLLM
+    model_max_tokens: 8192
+    description: "glm-4v-9b"
+    need_gpu_count: 1
+    template: template_glm4.jinja
+    stop: []
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+
+  - name: "SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors"
+    server_type: webui
+    api_type: SD15MultiControlnetGenerateImage
+    need_gpu_count: 1
+    description: "majicmixRealistic_v7"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+
+  # TTS_MODELS:
+  # ASR_MODELS:
+  # EMBEDDING_MODELS:
+  # RERANK_MODELS:
+  # VIDEO_MODELS:
+  - name: "CogVideo/CogVideoX-5b"
+    server_type: diffusers-video
+    api_type: Video
+    need_gpu_count: 1
+    description: "CogVideo/CogVideoX-5b"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1

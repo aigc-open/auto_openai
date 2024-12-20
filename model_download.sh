@@ -1,4 +1,7 @@
 
+# 存放零时数据的目录,图片等
+mkdir -p /root/share_models/tmp
+
 # Embedding
 Embedding_path=/root/share_models/Embedding-models
 mkdir -p $Embedding_path
