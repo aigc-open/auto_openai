@@ -3,6 +3,7 @@ import os
 import tiktoken
 import time
 import json
+import math
 from loguru import logger
 from auto_openai.utils.daily_basic_function import logger_execute_time
 
@@ -24,9 +25,21 @@ def messages_token_count(messages, token_limit):
     for message in messages:
         num_tokens += tokens_per_message
         for key, value in message.items():
-            if type(value) is list:
-                value = json.dumps(value)
-            num_tokens += len(encoding.encode(value))
+            # 分辨率
+            width = 1024
+            height = 1024
+            block_count = math.ceil(width/512) * math.ceil(height/512)
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, dict):
+                        if item.get("type") == "text":
+                            num_tokens += len(encoding.encode(item["text"]))
+                        if item.get("type") == "image url":
+                            num_tokens += (85+170*block_count)
+            elif isinstance(value, str):
+                num_tokens += len(encoding.encode(value))
+            else:
+                num_tokens += len(encoding.encode(str(value)))
             if key == "name":
                 num_tokens += tokens_per_name
             if num_tokens > token_limit:
