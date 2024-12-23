@@ -7,10 +7,10 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-37280090
-      LM_SERVER_BASE_PORT: 30128
+      LABEL: lm-server-1734921645-593344929
+      LM_SERVER_BASE_PORT: 30040
       NODE_GPU_TOTAL: '0'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -25,10 +25,10 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-1697849171
-      LM_SERVER_BASE_PORT: 30136
+      LABEL: lm-server-1734921645-531104043
+      LM_SERVER_BASE_PORT: 30048
       NODE_GPU_TOTAL: '1'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -39,24 +39,10 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-754548928
-      LM_SERVER_BASE_PORT: 30144
+      LABEL: lm-server-1734921645-1189367040
+      LM_SERVER_BASE_PORT: 30056
       NODE_GPU_TOTAL: '2'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
-    network_mode: host
-    privileged: true
-    restart: always
-    shm_size: 8gb
-    volumes: *id002
-  scheduler-3-of-3:
-    command: *id001
-    environment:
-      AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-629544523
-      LM_SERVER_BASE_PORT: 30152
-      NODE_GPU_TOTAL: '3'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always

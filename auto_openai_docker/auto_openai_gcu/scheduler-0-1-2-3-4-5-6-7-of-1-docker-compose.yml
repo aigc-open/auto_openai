@@ -1,11 +1,13 @@
 services:
-  scheduler-0:
+  scheduler-0-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      LABEL: lm-server-1734700526
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-543480265
       LM_SERVER_BASE_PORT: 30008
       NODE_GPU_TOTAL: '0'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -18,10 +20,12 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1:
+  scheduler-1-of-1:
     command: *id001
     environment:
-      LABEL: lm-server-1734700527
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-588361477
       LM_SERVER_BASE_PORT: 30016
       NODE_GPU_TOTAL: '1'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -30,10 +34,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-2:
+  scheduler-2-of-2:
     command: *id001
     environment:
-      LABEL: lm-server-1734700528
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-113156095
       LM_SERVER_BASE_PORT: 30024
       NODE_GPU_TOTAL: '2'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -42,10 +48,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-3:
+  scheduler-3-of-3:
     command: *id001
     environment:
-      LABEL: lm-server-1734700529
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-1614407079
       LM_SERVER_BASE_PORT: 30032
       NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -54,10 +62,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-4:
+  scheduler-4-of-4:
     command: *id001
     environment:
-      LABEL: lm-server-1734700530
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-515226408
       LM_SERVER_BASE_PORT: 30040
       NODE_GPU_TOTAL: '4'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -66,10 +76,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-5:
+  scheduler-5-of-5:
     command: *id001
     environment:
-      LABEL: lm-server-1734700531
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-37116246
       LM_SERVER_BASE_PORT: 30048
       NODE_GPU_TOTAL: '5'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -78,10 +90,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-6:
+  scheduler-6-of-6:
     command: *id001
     environment:
-      LABEL: lm-server-1734700532
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-822489675
       LM_SERVER_BASE_PORT: 30056
       NODE_GPU_TOTAL: '6'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -90,10 +104,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-7:
+  scheduler-7-of-7:
     command: *id001
     environment:
-      LABEL: lm-server-1734700533
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-1494314721
       LM_SERVER_BASE_PORT: 30064
       NODE_GPU_TOTAL: '7'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2

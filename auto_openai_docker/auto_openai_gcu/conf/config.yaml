@@ -20,7 +20,6 @@ NODE_GPU_TOTAL: "4"
 MOCK: false
 GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
-AVAILABLE_MODELS: ["ALL"]
 #######################################################
 MODELS:
   # LLM_MODELS:
@@ -161,4 +160,63 @@ MODELS:
       NV-4090:
         need_gpu_count: 1
       EF-S60:
+        need_gpu_count: 1
+  # EMBEDDING_MODELS:
+  - name: "bge-base-zh-v1.5"
+    server_type: embedding
+    api_type: Embedding
+    need_gpu_count: 1
+    description: "bge-base-zh-v1.5"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+      CPU:
+        need_gpu_count: 1
+  - name: "bge-m3"
+    server_type: embedding
+    api_type: Embedding
+    need_gpu_count: 1
+    description: "bge-m3"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+      CPU:
+        need_gpu_count: 1
+
+  # RERANK_MODELS:
+  - name: "bge-reranker-base"
+    server_type: rerank
+    api_type: Rerank
+    need_gpu_count: 1
+    description: "bge-reranker-base"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+      CPU:
+        need_gpu_count: 1
+  - name: "bge-reranker-v2-m3"
+    server_type: rerank
+    api_type: Rerank
+    need_gpu_count: 1
+    description: "bge-reranker-v2-m3"
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      EF-S60:
+        need_gpu_count: 1
+      CPU:
         need_gpu_count: 1

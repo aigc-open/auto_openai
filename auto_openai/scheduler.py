@@ -247,7 +247,10 @@ class VllmTask(BaseTask):
                 self.update_running_model()
                 client = VLLMOpenAI(api_key="xxx", base_url=llm_server)
                 params.update(self.stop_params)
-                stream = client.chat.completions.create(**params)
+                if params.get("messages"):
+                    stream = client.chat.completions.create(**params)
+                else:
+                    stream = client.completions.create(**params)
                 start_time = time.time()
                 # 基本参数
                 text = ""
@@ -266,8 +269,10 @@ class VllmTask(BaseTask):
                         logger.info(
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
-                    if chunk.choices[0].delta.content is not None:
-                        text = chunk.choices[0].delta.content
+                    if params.get("messages") and chunk.choices[0].delta.content is not None:
+                        text = chunk.choices[0].text
+                    elif params.get("prompt") and chunk.choices[0].text is not None:
+                        text = chunk.choices[0].text
                     else:
                         text = ""
 
@@ -1052,8 +1057,12 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 continue
             elif self.model_config["server_type"] == "rerank" and not os.path.exists(os.path.join(global_config.RERANK_MODEL_ROOT_PATH, model_name)):
                 continue
-            if model_name not in global_config.AVAILABLE_MODELS and "ALL" not in global_config.AVAILABLE_MODELS:
+            self.set_infer_fn()
+            if model_name not in global_config.get_AVAILABLE_MODELS_LIST() and "ALL" not in global_config.get_AVAILABLE_MODELS_LIST():
                 # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
+                continue
+            # 服务类型不在范围内得也要跳过
+            if self.model_config["server_type"] not in global_config.get_SERVER_TYPES_LIST() and "ALL" not in global_config.get_SERVER_TYPES_LIST():
                 continue
             # 更新当前设备的gpu count
             if self.model_config.get("gpu_types", {}).get(global_config.GPU_TYPE):
@@ -1071,7 +1080,8 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
 
             self.update_running_model()
             if self.current_model is not None and self.current_model != self.model_config["name"]:
-                if scheduler.get_request_queue_length(model_name=model_name) <= self.max_workers*2:
+
+                if model_name in scheduler.get_running_model() and scheduler.get_request_queue_length(model_name=model_name) <= self.max_workers*2:
                     # 已存在的任务完全能自己处理了，不用启动新任务了
                     continue
                 # 当模型和自己模型不一致时，尽可能其正在运行的模型取走，如果取不走，说明并发大,需要新增副本
@@ -1079,12 +1089,13 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 if self.model_config["need_gpu_count"] != len(self.node_gpu_total):
                     # 尽量让其他对等节点去推理
                     time.sleep(random.randint(1, 5))
-            elif self.current_model is None and model_name in scheduler.get_running_model():
+            elif self.current_model is None:
                 # 如果当前模型为空，但是该模型正在运行，则等待
-                if scheduler.get_request_queue_length(model_name=model_name) < self.useful_times:
+                if model_name in scheduler.get_running_model() and scheduler.get_request_queue_length(model_name=model_name) <= self.max_workers*2:
                     # 已存在的任务完全能自己处理了，不用启动新任务了
                     continue
-                time.sleep(random.randint(1, 5))
+
+                # time.sleep(random.randint(1, 5))
 
             request_info = self.get_request(model_name=model_name)
             if not request_info:

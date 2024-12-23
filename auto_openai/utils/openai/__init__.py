@@ -19,7 +19,6 @@ from uuid_extensions import uuid7, uuid7str
 from .openai_request import *
 ##############################
 
-
 class RedisStreamInfer(BaseModel):
     text: str = ""
     finish: bool = False
@@ -44,7 +43,7 @@ class CompletionClient:
         if self.chat_flag is True:
             Response = ChatCompletionChunk
         else:
-            Response = Completion
+            Response = CompletionStreamResponse
         for chunk in response.iter_content(chunk_size=1024):
             if chunk:
                 try:
@@ -52,12 +51,14 @@ class CompletionClient:
                     if chunk.strip() == "[DONE]":
                         return
                     chunk = json.loads(chunk)
+                    chunk["object"]= "text_completion"
+                    
                     yield Response(**chunk)
                 except Exception as e:
                     logger.warning(str(e))
                     logger.warning(f"流式任务解析失败: {chunk}")
                     yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
-                                      'object': '', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'delta': {'content': 'Error'}, 'logprobs': None, 'finish_reason': "stop"}]})
+                                      'object': 'text_completion', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'text': "Error", 'logprobs': None, 'finish_reason': "stop"}]})
                     return
 
     def create_(self, **kwargs):

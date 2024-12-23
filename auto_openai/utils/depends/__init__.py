@@ -11,4 +11,4 @@ def get_model_config(name):
     for i in global_config.MODELS:
         if i['name'] == name:
             return i
-    raise HTTPException(status_code=400, detail="model not found")
+    raise HTTPException(status_code=404, detail="model not found")

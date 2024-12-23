@@ -21,7 +21,6 @@ NODE_GPU_TOTAL: "4"
 MOCK: false
 GPU_TYPE: NV-A100
 IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
-AVAILABLE_MODELS: ["ALL"]
 #######################################################
 #
 MODELS:

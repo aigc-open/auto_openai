@@ -52,12 +52,18 @@ class GlobalConfig(BaseModel):
     UNUSERFULL_TIMES_PER_MODEL: int = 10
     DEFAULT_MODEL_CONFIG_max_tokens: int = 4096
     #
-    ONLY_SERVER_TYPES: list = []
+    AVAILABLE_SERVER_TYPES: str = "ALL"
     GPU_TYPE: str = "EF-S60"
     MODELS: list = []
-    AVAILABLE_MODELS: list = ["ALL"]
+    AVAILABLE_MODELS: str = "ALL"
     LM_SERVER_BASE_PORT: int = 30000
     LABEL:str="auto_openai_scheduler"
+
+    def get_AVAILABLE_MODELS_LIST(self):
+        return self.AVAILABLE_MODELS.split(",")
+
+    def get_SERVER_TYPES_LIST(self):
+        return self.AVAILABLE_SERVER_TYPES.split(",")
 
     def parse_config(self, path=".conf/config.yaml"):
         if not os.path.exists(path):

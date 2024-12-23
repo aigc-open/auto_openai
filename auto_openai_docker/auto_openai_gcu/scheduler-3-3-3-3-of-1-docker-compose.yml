@@ -1,15 +1,15 @@
 services:
-  scheduler-0-of-0:
+  scheduler-3-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-37280090
-      LM_SERVER_BASE_PORT: 30128
-      NODE_GPU_TOTAL: '0'
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734922220-450599943
+      LM_SERVER_BASE_PORT: 30240
+      NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
@@ -20,28 +20,28 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-3-of-1:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-1697849171
-      LM_SERVER_BASE_PORT: 30136
-      NODE_GPU_TOTAL: '1'
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734922220-514536406
+      LM_SERVER_BASE_PORT: 30248
+      NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-2-of-2:
+  scheduler-3-of-2:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-754548928
-      LM_SERVER_BASE_PORT: 30144
-      NODE_GPU_TOTAL: '2'
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734922220-1216465797
+      LM_SERVER_BASE_PORT: 30256
+      NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
@@ -52,9 +52,9 @@ services:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-629544523
-      LM_SERVER_BASE_PORT: 30152
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734922220-1191988379
+      LM_SERVER_BASE_PORT: 30264
       NODE_GPU_TOTAL: '3'
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host

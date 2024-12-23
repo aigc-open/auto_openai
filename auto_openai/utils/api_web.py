@@ -270,11 +270,11 @@ class DemoWebApp(APIDocsApp):
                     curl_path = os.path.join(
                         self.demo_path, f"{model_type}.sh")
                     gr.Code(self.read_file(curl_path), language="shell")
-                with gr.Tab("PlayGround"):
-                    if model_type == "LLM":
-                        self.LLM_playgournd(model_list=model_list)
-                    else:
-                        gr.Markdown("# 努力开发中...")
+                # with gr.Tab("PlayGround"):
+                #     if model_type == "LLM":
+                #         self.LLM_playgournd(model_list=model_list)
+                #     else:
+                #         gr.Markdown("# 努力开发中...")
 
     def Home_page(self):
         with gr.Column(elem_classes="content-container"):

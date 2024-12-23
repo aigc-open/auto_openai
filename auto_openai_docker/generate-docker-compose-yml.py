@@ -2,9 +2,16 @@
 import yaml
 import json
 import time
-image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
-# image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
+import random
+import os
+
 BASE_PORT = 30000
+
+image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
+generate_dir = "auto_openai_gcu"
+# image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
+# generate_dir = "auto_openai_deployment"
+
 
 class Gen:
     default = {
@@ -34,10 +41,10 @@ class Gen:
         "network_mode": "host"
     }
 
-    yaml_filename = "scheduler-{gpu}-of-{split_size}-docker-compose.yml"
+    yaml_filename = "{generate_dir}/scheduler-{gpu}-of-{split_size}-docker-compose.yml"
 
     @classmethod
-    def run(cls, gpu: list = [0], split_size=1):
+    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL"):
         global BASE_PORT
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
@@ -46,15 +53,20 @@ class Gen:
             container = dict(cls.default_container)
             environment = dict(container["environment"])
             environment.update(
-                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL, "LABEL": f"lm-server-{int(time.time())}", "LM_SERVER_BASE_PORT": BASE_PORT})
+                {"NODE_GPU_TOTAL": NODE_GPU_TOTAL,
+                 "LABEL": f"lm-server-{int(time.time())}-{random.randint(0, int(time.time()))}",
+                 "LM_SERVER_BASE_PORT": BASE_PORT,
+                 "AVAILABLE_SERVER_TYPES": AVAILABLE_SERVER_TYPES,
+                 "AVAILABLE_MODELS": AVAILABLE_MODELS
+                 })
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
-            containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}"] = container
-            time.sleep(1)
+            containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}-of-{idx}"] = container
         service = dict(cls.default)
         service.update({"services": containers})
         yaml_data = yaml.dump(service)
-        with open(cls.yaml_filename.format(gpu="-".join(map(str, gpu)), split_size=split_size), 'w') as file:
+        os.makedirs(generate_dir, exist_ok=True)
+        with open(cls.yaml_filename.format(generate_dir=generate_dir, gpu="-".join(map(str, gpu)), split_size=split_size), 'w') as file:
             file.write(yaml_data)
         return service
 
@@ -65,6 +77,10 @@ Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=2)
 Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=4)
 Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=8)
 Gen.run(gpu=[0, 1, 2, 3], split_size=1)
+Gen.run(gpu=[0, 1, 2], split_size=1)
 Gen.run(gpu=[0, 1, 2, 3], split_size=2)
 Gen.run(gpu=[0, 1, 2, 3], split_size=4)
-Gen.run(gpu=[4, 5], split_size=2)
+Gen.run(gpu=[4, 4, 4, 4], split_size=1,
+        AVAILABLE_SERVER_TYPES="embedding,rerank")
+Gen.run(gpu=[3, 3, 3, 3], split_size=1,
+        AVAILABLE_SERVER_TYPES="embedding,rerank")

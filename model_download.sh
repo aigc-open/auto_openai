@@ -5,8 +5,8 @@ mkdir -p /root/share_models/tmp
 # Embedding
 Embedding_path=/root/share_models/Embedding-models
 mkdir -p $Embedding_path
-# cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/ai-modelscope/bge-base-zh-v1.5.git
-# cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-m3.git
+cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/ai-modelscope/bge-base-zh-v1.5.git
+cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-m3.git
 
 # LLM
 LLM_path=/root/share_models/LLM
@@ -43,9 +43,9 @@ mkdir -p $funasr_path
 # rerank
 rerank_path="/root/share_models/Rerank-models/"
 mkdir -p $rerank_path
-# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-base.git
-# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
-# cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/mixedbread-ai/mxbai-rerank-xsmall-v1.git
+cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-base.git
+cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
+cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/mixedbread-ai/mxbai-rerank-xsmall-v1.git
 
 
 # webui  && comfyui

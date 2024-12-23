@@ -1,16 +1,16 @@
 services:
-  scheduler-0-of-0:
+  scheduler-3-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-37280090
-      LM_SERVER_BASE_PORT: 30128
-      NODE_GPU_TOTAL: '0'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734921645-1059129043
+      LM_SERVER_BASE_PORT: 30104
+      NODE_GPU_TOTAL: '3'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -20,29 +20,29 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-3-of-1:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-1697849171
-      LM_SERVER_BASE_PORT: 30136
-      NODE_GPU_TOTAL: '1'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734921645-736358074
+      LM_SERVER_BASE_PORT: 30112
+      NODE_GPU_TOTAL: '3'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-2-of-2:
+  scheduler-3-of-2:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-754548928
-      LM_SERVER_BASE_PORT: 30144
-      NODE_GPU_TOTAL: '2'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734921645-216577430
+      LM_SERVER_BASE_PORT: 30120
+      NODE_GPU_TOTAL: '3'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -52,11 +52,11 @@ services:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-629544523
-      LM_SERVER_BASE_PORT: 30152
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      LABEL: lm-server-1734921645-1129895320
+      LM_SERVER_BASE_PORT: 30128
       NODE_GPU_TOTAL: '3'
-    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always

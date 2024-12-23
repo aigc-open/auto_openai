@@ -1,12 +1,14 @@
 services:
-  scheduler-0_1_2_3:
+  scheduler-0_1_2_3-of-0:
     command:
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      LABEL: lm-server-1734700547
-      LM_SERVER_BASE_PORT: 30176
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1734922220-1474248951
+      LM_SERVER_BASE_PORT: 30200
       NODE_GPU_TOTAL: 0,1,2,3
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host

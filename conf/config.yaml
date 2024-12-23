@@ -21,7 +21,6 @@ NODE_GPU_TOTAL: "4"
 MOCK: false
 GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
-AVAILABLE_MODELS: ["ALL"]
 #######################################################
 MODELS:
   # LLM_MODELS:

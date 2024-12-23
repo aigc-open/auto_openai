@@ -80,7 +80,7 @@ async def completion(
     data.prompt = cut_string(
         str=data.prompt, token_limit=int(model_max_tokens*4/5))
     current_token_count = string_token_count(
-        str=data.prompt, token_limit=int(model_max_tokens*4/5)) + 100  # 上浮100token误差
+        str=data.prompt) + 100  # 上浮100token误差
 
     max_tokens = min([data.max_tokens, model_max_tokens - current_token_count])
     max_tokens = 1 if max_tokens < 0 else max_tokens
