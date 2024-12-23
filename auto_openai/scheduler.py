@@ -967,9 +967,9 @@ class RerankTask(BaseTask):
             else:
                 self.update_running_model()
                 client = Client(llm_server)
-                input_ = params.get("input", [])
-                if type(input_) == str:
-                    input_ = [input_]
+                documents = params.get("documents", [])
+                if type(documents) == str:
+                    input_ = [documents]
                 # inputs: list, query, model_name: str, top_k=3
                 result = client.predict(
                     inputs=params.get("documents", []),
@@ -983,7 +983,7 @@ class RerankTask(BaseTask):
                                          text=f"{json.dumps(result)}",
                                          finish=True))
                 end_time = time.time()
-                if input_:
+                if documents:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
                         model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_), description="每个输入的推理时间")

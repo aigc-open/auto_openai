@@ -114,8 +114,7 @@ class APIDocsApp():
         return {}
 
     def layout(self):
-        with gr.Blocks(css=self.custom_css) as demo:
-
+        with gr.Blocks(css=self.custom_css,theme=gr.themes.Soft()) as demo:
             with gr.Column(elem_classes="navbar", scale=1):
                 gr.Markdown(self.title, elem_classes="title")
                 compatibility = gr.Dropdown(
