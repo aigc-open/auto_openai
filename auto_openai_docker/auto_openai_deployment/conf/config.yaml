@@ -40,7 +40,66 @@ MODELS:
         need_gpu_count: 2
       EF-S60:
         need_gpu_count: 1
-
+  - name: "Qwen2.5-Coder-7B"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 32768
+    description: "Qwen2.5-Coder-7B"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      EF-S60:
+        need_gpu_count: 1
+  - name: "Qwen2.5-Coder-7B-Instruct"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 32768
+    description: "Qwen2.5-Coder-7B-Instruct"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      EF-S60:
+        need_gpu_count: 1
+  - name: "deepseek-coder-6.7b-base"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 32768
+    description: "deepseek-coder-6.7b-base"
+    need_gpu_count: 1
+    template: template_deepseek-coder.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      EF-S60:
+        need_gpu_count: 1
+  - name: "DeepSeek-Coder-V2-Lite-Instruct"
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "DeepSeek-Coder-V2-Lite-Instruct"
+    need_gpu_count: 1
+    template: template_deepseek-coder.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      NV-A100:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      EF-S60:
+        need_gpu_count: 1
   # VISION_MODELS:
   - name: "glm-4v-9b"
     server_type: llm-transformer-server

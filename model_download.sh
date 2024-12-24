@@ -12,8 +12,10 @@ cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/BAA
 LLM_path=/root/share_models/LLM
 mkdir -p $LLM_path
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git
-# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
-# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B-Instruct.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/codegeex4-all-9b.git
