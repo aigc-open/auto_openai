@@ -13,6 +13,7 @@ client = OpenAI(base_url=base_url, api_key=api_key)
 
 response = client.images.generate(
     model="SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
+    prompt="",
     extra_body={
         "prompt": "a bottle with a beautiful rainbow galaxy inside it on top of a wooden table in the middle of a modern kitchen beside a plate of vegetables and mushrooms and a wine glasse that contains a planet earth with a plate with a half eaten apple pie on it",
         "batch_size": 1,

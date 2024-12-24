@@ -270,7 +270,7 @@ class VllmTask(BaseTask):
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
                     if params.get("messages") and chunk.choices[0].delta.content is not None:
-                        text = chunk.choices[0].text
+                        text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:
                         text = chunk.choices[0].text
                     else:

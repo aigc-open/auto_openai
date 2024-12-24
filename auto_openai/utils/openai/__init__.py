@@ -19,6 +19,7 @@ from uuid_extensions import uuid7, uuid7str
 from .openai_request import *
 ##############################
 
+
 class RedisStreamInfer(BaseModel):
     text: str = ""
     finish: bool = False
@@ -41,7 +42,7 @@ class CompletionClient:
         response = requests.post(
             self.url, headers=self.headers, data=json.dumps(kwargs), stream=True)
         if self.chat_flag is True:
-            Response = ChatCompletionChunk
+            Response = ChatCompletionStreamResponse
         else:
             Response = CompletionStreamResponse
         for chunk in response.iter_content(chunk_size=1024):
@@ -51,14 +52,19 @@ class CompletionClient:
                     if chunk.strip() == "[DONE]":
                         return
                     chunk = json.loads(chunk)
-                    chunk["object"]= "text_completion"
-                    
+                    chunk["object"] = "text_completion"
+
                     yield Response(**chunk)
                 except Exception as e:
                     logger.warning(str(e))
                     logger.warning(f"流式任务解析失败: {chunk}")
-                    yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
-                                      'object': 'text_completion', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'text': "Error", 'logprobs': None, 'finish_reason': "stop"}]})
+                    if self.chat_flag is True:
+                        yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
+                                          'object': 'chat.completion.chunk', 'created': 1731385347, 'model': '',
+                                          'choices': [{'index': 0, 'delta': {'role': 'assistant', "content": ""}, 'logprobs': None, 'finish_reason': None}]})
+                    else:
+                        yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
+                                          'object': 'text_completion', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'text': "Error", 'logprobs': None, 'finish_reason': "stop"}]})
                     return
 
     def create_(self, **kwargs):
