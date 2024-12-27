@@ -97,15 +97,18 @@ class UsageInfo(BaseModel):
 
 
 class ChatCompletionRequest(BaseModel):
-    model: str = "chatglm3-6b"
+    model: str = Field(..., description="模型名称")
     messages: Union[List[Dict[str, Union[str, List[Dict[str, Union[str, Dict[str, str]]]]]]]] = [
         {"role": "user", "content": "hi"}]
-    temperature: Optional[float] = 0.7
-    top_p: Optional[float] = 1.0
+    temperature: Optional[float] = Field(
+        default=0.7, gt=0, lt=1, description="控制生成文本的随机性")
+    top_p: Optional[float] = Field(
+        default=1.0, gt=0, lt=1, description="top_p")
     n: Optional[int] = 1
-    max_tokens: Optional[int] = 512
-    stop: Optional[Union[str, List[str]]] = Field(default=[])
-    stream: Optional[bool] = False
+    max_tokens: Optional[int] = Field(default=512, description="生成文本的最大长度")
+    stop: Optional[Union[str, List[str]]] = Field(
+        default=[], description="停止生成文本的标志")
+    stream: Optional[bool] = Field(default=False, description="是否流式输出")
     presence_penalty: Optional[float] = Field(
         default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     frequency_penalty: Optional[float] = Field(
@@ -127,23 +130,27 @@ class ChatCompletionRequest(BaseModel):
 
 
 class CompletionRequest(BaseModel):
-    model: str = "chatglm3-6b"
+    model: str = Field(..., description="模型名称")
     # a string, array of strings, array of tokens, or array of token arrays
-    prompt: Union[str, List[str]] = "hi"
+    prompt: str = Field(..., description="输入提示词")
     suffix: Optional[str] = None
-    max_tokens: Optional[int] = 16
-    temperature: Optional[float] = 1.0
-    top_p: Optional[float] = 1.0
+    max_tokens: Optional[int] = Field(
+        default=16, ge=0, description="生成文本的最大长度")
+    temperature: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0, description="控制生成文本的随机性")  # 设置最大值为2
+    top_p: Optional[float] = Field(
+        default=1.0, ge=0.0, le=1.0, description="top_p")
     n: Optional[int] = 1
-    stream: Optional[bool] = False
+    stream: Optional[bool] = Field(default=False, description="是否流式输出")
     # logprobs: Optional[int] = None
-    echo: Optional[bool] = False
-    stop: Optional[Union[str, List[str]]] = Field(default_factory=list)
+    # echo: Optional[bool] = Field(default=False, description="是否回显输入")
+    stop: Optional[Union[str, List[str]]] = Field(
+        default_factory=list, description="停止生成文本的标志")
     presence_penalty: Optional[float] = Field(
         default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     frequency_penalty: Optional[float] = Field(
         default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
-    best_of: Optional[int] = None
+    # best_of: Optional[int] = None
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
     # Additional parameters supported by vLLM
@@ -238,37 +245,37 @@ class ChatCompletionStreamResponse(BaseModel):
 
 
 class AudioSpeechRequest(BaseModel):
-    model: str
-    voice: str
-    input: str
-    clone_url: str = ""
+    model: str = Field(..., description="模型名称")
+    voice: str = Field(..., description="语音名称")
+    input: str = Field(..., description="输入文本")
+    clone_url: str = Field(..., description="克隆音色地址")
 
 
 class AudioTranscriptionsRequest(BaseModel):
-    model: str
-    file: UploadFile = File(...)
+    model: str = Field(..., description="模型名称")
+    file: UploadFile = File(..., description="音频文件")
 
 
 class EmbeddingsRequest(BaseModel):
-    model: str
-    input: Optional[List[str]] = []
+    model: str = Field(..., description="模型名称")
+    input: Optional[List[str]] = Field(..., description="输入文本")
 
 
 class RerankRequest(BaseModel):
-    model: str
-    query: str
-    documents: List[str]
-    top_n: Optional[int] = 2
-    return_documents: Optional[bool] = False
+    model: str = Field(..., description="模型名称")
+    query: str = Field(..., description="查询文本")
+    documents: List[str] = Field(..., description="文档列表")
+    top_n: Optional[int] = Field(2, ge=1,  description="返回的文档数量")
+    return_documents: Optional[bool] = Field(False, description="是否返回文档")
 
 
 class VideoGenerationsRequest(BaseModel):
-    model: str
-    prompt: str
-    seed: int = -1
-    width: int = 720
-    height: int = 480
-    num_frames: int = Field(8, ge=1, le=16)
+    model: str = Field(..., description="模型名称")
+    prompt: str = Field(..., description="输入文本")
+    seed: int = Field(123456, ge=-1,  description="随机种子")
+    width: int = Field(720, ge=64, le=1024, description="视频宽度")
+    height: int = Field(480, ge=64, le=1024, description="视频高度")
+    num_frames: int = Field(8, ge=1, le=48, description="视频帧数")
 
 
 class SamplerName(str, Enum):
@@ -391,31 +398,36 @@ class ControlnetResizeMode(str, Enum):
 
 
 class SD15ControlnetUnit(BaseModel):
-    image_url: str
-    mask_url: str = ""
-    module: ControlnetModule = ControlnetModule("none")
-    weight: float = 1.0
+    image_url: str = Field(default="", title="图片URL")
+    mask_url: str = Field(default="", title="遮罩URL")
+    module: ControlnetModule = Field(ControlnetModule("none"), title="控制器模块")
+    weight: float = Field(default=1.0, ge=0.0, le=1.0, title="权重")
     # resize_mode: ControlnetResizeMode = ControlnetResizeMode.RESIZE_AND_FILL.value
-    guidance_start: float = 0.0
-    guidance_end: float = 1.0
+    guidance_start: float = Field(0.0, ge=0.0, le=1.0, description="引导开始")
+    guidance_end: float = Field(1.0, ge=0.0, le=1.0, description="引导结束")
 
 
 class SD15MultiControlnetGenerateImageRequest(BaseModel):
-    model: str = "sd1.5/majicmixRealistic_betterV6.safetensors"
-    seed: int = 0
-    steps: int = 20
-    batch_size: int = 1
-    width: int = 512
-    height: int = 512
-    sampler_name: SamplerName = SamplerName("Euler")  # 使用枚举类型
-    cfg: int = 8
-    denoise_strength: float = 0.75
-    scheduler: Scheduler = Scheduler("Normal")  # 使用枚举类型
-    prompt: str = "beautiful scenery nature glass bottle landscape, purple galaxy bottle"
-    negative_prompt: str = "text, watermark"
-    image_url: str = ""
+    model: str = Field(
+        "sd1.5/majicmixRealistic_betterV6.safetensors", description="模型名称")
+    seed: int = Field(12345, description="随机种子")
+    steps: int = Field(20, description="生成步骤数")
+    batch_size: int = Field(1, ge=1, le=4, description="批量大小")
+    width: int = Field(512, ge=32, le=2048, description="生成图像的宽度")
+    height: int = Field(512, ge=32, le=2048, description="生成图像的高度")
+    sampler_name: SamplerName = Field(
+        SamplerName("Euler"), description="采样器名称")  # 使用枚举类型
+    cfg: int = Field(7.5, ge=1, le=30, description="CFG Scale")
+    denoise_strength: float = Field(0.75, ge=0, le=1, description="去噪强度")
+    scheduler: Scheduler = Field(
+        Scheduler("Normal"), description="调度器名称")  # 使用枚举类型
+    prompt: str = Field(
+        "beautiful scenery nature glass bottle landscape, purple galaxy bottle", description="提示词")
+    negative_prompt: str = Field("text, watermark", description="负面提示词")
+    image_url: str = Field("", description="参考图像URL:图生图")
     # style: list = []
-    controlnets: List[SD15ControlnetUnit] = []
+    controlnets: List[SD15ControlnetUnit] = Field(
+        [], description="控制图像生成: SD15ControlnetUnit")
 
 
 class SD15MultiControlnetGenerateImage(SD15MultiControlnetGenerateImageRequest):
@@ -477,17 +489,19 @@ class SD15MultiControlnetGenerateImage(SD15MultiControlnetGenerateImageRequest):
 
 
 class SolutionBaseGenerateImageRequest(BaseModel):
-    model: str = "sd1.5/majicmixRealistic_betterV6.safetensors"
-    seed: int = 0
-    steps: int = 20
-    batch_size: int = 1
-    width: int = 512
-    height: int = 512
-    cfg: int = 8
-    denoise_strength: float = 0.75
-    prompt: str = "beautiful scenery nature glass bottle landscape, purple galaxy bottle"
-    negative_prompt: str = "text, watermark"
-    image_url: str = ""
+    model: str = Field(
+        "sd1.5/majicmixRealistic_betterV6.safetensors", description="模型名称")
+    seed: int = Field(1234, description="随机种子")
+    steps: int = Field(20, description="生成步数")
+    batch_size: int = Field(1, ge=1, le=4, description="生成批次")
+    width: int = Field(512, ge=32, le=2048, description="生成图片宽度")
+    height: int = Field(512, ge=32, le=2048, description="生成图片高度")
+    cfg: int = Field(8, ge=1, le=30, description="控制生成细节")
+    denoise_strength: float = Field(0.75, ge=0.0, le=1.0, description="去噪强度")
+    prompt: str = Field(
+        "beautiful scenery nature glass bottle landscape, purple galaxy bottle", description="生成图片的描述")
+    negative_prompt: str = Field("text, watermark", description="生成图片的负面描述")
+    image_url: str = Field("", description="参考图像URL:图生图")
 
 
 ##############################
