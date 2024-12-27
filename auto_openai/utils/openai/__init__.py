@@ -52,19 +52,34 @@ class CompletionClient:
                     if chunk.strip() == "[DONE]":
                         return
                     chunk = json.loads(chunk)
-                    chunk["object"] = "text_completion"
-
+                    # chunk["object"] = "text_completion"
                     yield Response(**chunk)
                 except Exception as e:
                     logger.warning(str(e))
                     logger.warning(f"流式任务解析失败: {chunk}")
-                    if self.chat_flag is True:
-                        yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
-                                          'object': 'chat.completion.chunk', 'created': 1731385347, 'model': '',
-                                          'choices': [{'index': 0, 'delta': {'role': 'assistant', "content": ""}, 'logprobs': None, 'finish_reason': None}]})
+                    error = {
+                        "object": "chat.completion.chunk" if self.chat_flag else "text_completion",
+                        "message": "Error",
+                        "type": "BadRequestError",
+                        "param": None,
+                        "code": 400
+                    }
+                    if type(chunk) == dict:
+                        try:
+                            error_obj = ErrorResponse(**chunk)
+                            error_obj.update_max_tokens()
+                            yield error_obj
+                        except:
+                            yield ErrorResponse(**error)
                     else:
-                        yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
-                                          'object': 'text_completion', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'text': "Error", 'logprobs': None, 'finish_reason': "stop"}]})
+                        yield ErrorResponse(**error)
+                    # if self.chat_flag is True:
+                    #     yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
+                    #                       'object': 'chat.completion.chunk', 'created': 1731385347, 'model': '',
+                    #                       'choices': [{'index': 0, 'delta': {'role': 'assistant', "content": error_text}, 'logprobs': None, 'finish_reason': "stop"}]})
+                    # else:
+                    #     yield Response(**{'id': 'chat-ecc921188feb4e9993db49938580325c',
+                    #                       'object': 'text_completion', 'created': 1731385347, 'model': '', 'choices': [{'index': 0, 'text': error_text, 'logprobs': None, 'finish_reason': "stop"}]})
                     return
 
     def create_(self, **kwargs):

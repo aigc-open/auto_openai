@@ -25,7 +25,7 @@ import wget
 import os
 from auto_openai.utils.check_node import get_address_hostname
 from pydub import AudioSegment
-from auto_openai.utils.openai.openai_request import SD15MultiControlnetGenerateImage
+from auto_openai.utils.openai.openai_request import SD15MultiControlnetGenerateImage, ErrorResponse
 import webuiapi
 scheduler = Scheduler(redis_client=redis_client)
 root_path = os.path.dirname(os.path.abspath(__file__))
@@ -224,6 +224,23 @@ class VllmTask(BaseTask):
         logger.info(f"当前运行模型: {self.current_model}")
 
     def vllm_infer(self, llm_server, request_id, params, model_config):
+        error = self.llm_pipeline(llm_server, request_id, params, model_config)
+        if error is not None and type(error) == ErrorResponse and error.diff_max_tokens > 0:
+            new_max_tokens = params["max_tokens"] - error.diff_max_tokens
+            if new_max_tokens > 0:
+                params["max_tokens"] = new_max_tokens
+                error = self.llm_pipeline(
+                    llm_server, request_id, params, model_config)
+        if type(error) == ErrorResponse:
+            logger.error(f"大模型推理错误: {llm_server} {request_id} {params}")
+            scheduler.set_result(request_id=request_id,
+                                 value=RedisStreamInfer(
+                                     text=f"{error.message}",
+                                     finish=True,
+                                     usage=dict(prompt_tokens=0, total_tokens=0,
+                                                completion_tokens=0, tps=0)))
+
+    def llm_pipeline(self, llm_server, request_id, params, model_config):
         try:
             logger.info(f"处理大模型推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -265,6 +282,8 @@ class VllmTask(BaseTask):
                 pushed = False
                 for chunk in stream:
                     self.update_running_model()
+                    if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
+                        return chunk
                     if not pushed:
                         logger.info(
                             f"模型{params['model']}数据生成中...: {request_id}")

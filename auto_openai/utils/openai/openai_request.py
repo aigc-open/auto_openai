@@ -20,6 +20,18 @@ import requests
 from PIL import Image
 from io import BytesIO
 import webuiapi
+import re
+
+
+def extract_requested_tokens(text):
+    pattern = r"This model's maximum context length is (\d+) tokens. However, you requested (\d+) tokens"
+    match = re.search(pattern, text)
+    if match:
+        try:
+            return int(match.group(2)) - int(match.group(1))  # 返回提取到的数字
+        except:
+            return 0
+    return 0
 
 
 def random_uuid() -> str:
@@ -40,7 +52,11 @@ class ErrorResponse(BaseModel):
     message: str
     type: str
     param: Optional[str] = None
-    code: Optional[str] = None
+    code: Optional[int] = None
+    diff_max_tokens: int = 0
+
+    def update_max_tokens(self):
+        self.diff_max_tokens = extract_requested_tokens(text=self.message)
 
 
 class ModelPermission(BaseModel):
