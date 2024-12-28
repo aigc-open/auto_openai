@@ -103,12 +103,13 @@ class Inference:
                 if isinstance(message["content"], list):
                     image = None
                     query = None
+                    image_url = None
 
                     for content in message["content"]:
-                        if content["type"] == "image_url":
+                        if content.get("type") == "image_url":
                             # 提取图片 URL
                             image_url = content["image_url"]["url"]
-                        elif content["type"] == "text":
+                        elif content.get("type") == "text":
                             # 提取文本内容
                             query = content["text"]
 
@@ -117,6 +118,9 @@ class Inference:
                         choice, image = mode_load(image_url)
                         converted_messages.append(
                             {"role": message["role"], "image": image, "content": query})
+                    elif query:
+                        converted_messages.append(
+                            {"role": message["role"], "content": query})
                 elif isinstance(message["content"], str):
                     # 如果 content 是字符串，直接添加
                     converted_messages.append(
