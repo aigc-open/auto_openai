@@ -10,6 +10,15 @@ stream = client.chat.completions.create(
     model="glm-4v-9b",
     messages=[
         {
+            "role": "system",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "You are a helpful assistant"
+                }
+            ]
+        },
+        {
             "role": "user",
             "content": [
                     {
@@ -23,7 +32,7 @@ stream = client.chat.completions.create(
         }
     ],
     stream=True,
-    temperature=0.0,
+    temperature=0.1,
     max_tokens=128,
     presence_penalty=1.0,
     frequency_penalty=1.0
