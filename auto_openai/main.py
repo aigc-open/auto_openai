@@ -80,13 +80,13 @@ async def completion(
     # 处理模型最终需要完成的token数量
     data.prompt = cut_string(
         str=data.prompt, token_limit=int(model_max_tokens*4/5))
+    
+    current_token_count = string_token_count(
+        str=data.prompt) + 100  # 上浮100token误差
     # 针对coder 续写模型处理
     if get_combine_prompt_function(data.model) is not None:
         data.prompt = get_combine_prompt_function(data.model)(
             prompt=data.prompt, suffix=data.suffix)
-    current_token_count = string_token_count(
-        str=data.prompt) + 100  # 上浮100token误差
-
     max_tokens = min([data.max_tokens, model_max_tokens - current_token_count])
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
