@@ -52,7 +52,7 @@ def messages_token_count(messages, token_limit):
 def string_token_count(str):
     """Calculate and return the token count in a given string."""
     tiktoken_encoding = init_tiktoken()
-    tokens = tiktoken_encoding.encode(str)
+    tokens = tiktoken_encoding.encode(str, disallowed_special=())
     return len(tokens)
 
 

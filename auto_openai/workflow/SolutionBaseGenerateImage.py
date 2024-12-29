@@ -89,7 +89,7 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
                         "cfg": self.cfg,
                         "sampler_name": sampler_name,
                         "scheduler": scheduler_name,
-                        "denoise": self.denoise_strength,
+                        "denoise": self.denoising_strength,
                         "model": [
                             "177",
                             0
@@ -155,7 +155,7 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
                         "cfg": self.cfg,
                         "sampler_name": sampler_name,
                         "scheduler": scheduler_name,
-                        "denoise": self.denoise_strength,
+                        "denoise": self.denoising_strength,
                         "model": [
                             "4",
                             0

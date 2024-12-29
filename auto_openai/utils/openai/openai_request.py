@@ -418,7 +418,7 @@ class SD15MultiControlnetGenerateImageRequest(BaseModel):
     sampler_name: SamplerName = Field(
         SamplerName("Euler"), description="采样器名称")  # 使用枚举类型
     cfg: int = Field(7.5, ge=1, le=30, description="CFG Scale")
-    denoise_strengeh: float = Field(0.75, ge=0, le=1, description="去噪强度")
+    denoising_strength: float = Field(0.75, ge=0, le=1, description="去噪强度")
     scheduler: Scheduler = Field(
         Scheduler("Normal"), description="调度器名称")  # 使用枚举类型
     prompt: str = Field(
@@ -459,7 +459,7 @@ class SD15MultiControlnetGenerateImage(SD15MultiControlnetGenerateImageRequest):
             "seed": self.seed,
             "sampler_name": self.sampler_name.value,
             "cfg_scale": self.cfg,
-            "denoising_strengeh": self.denoise_strengeh,
+            "denoising_strength": self.denoising_strength,
             "steps": self.steps,
             "batch_size": self.batch_size,
             "width": self.width,
@@ -497,7 +497,7 @@ class SolutionBaseGenerateImageRequest(BaseModel):
     width: int = Field(512, ge=32, le=2048, description="生成图片宽度")
     height: int = Field(512, ge=32, le=2048, description="生成图片高度")
     cfg: int = Field(8, ge=1, le=30, description="控制生成细节")
-    denoise_strengeh: float = Field(0.75, ge=0.0, le=1.0, description="去噪强度")
+    denoising_strength: float = Field(0.75, ge=0.0, le=1.0, description="去噪强度")
     prompt: str = Field(
         "beautiful scenery nature glass bottle landscape, purple galaxy bottle", description="生成图片的描述")
     negative_prompt: str = Field("text, watermark", description="生成图片的负面描述")
