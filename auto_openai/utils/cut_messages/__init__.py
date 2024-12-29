@@ -33,13 +33,13 @@ def messages_token_count(messages, token_limit):
                 for item in value:
                     if isinstance(item, dict):
                         if item.get("type") == "text":
-                            num_tokens += len(encoding.encode(item["text"]))
+                            num_tokens += len(encoding.encode(item["text"], disallowed_special=()))
                         if item.get("type") == "image url":
                             num_tokens += (85+170*block_count)
             elif isinstance(value, str):
-                num_tokens += len(encoding.encode(value))
+                num_tokens += len(encoding.encode(value, disallowed_special=()))
             else:
-                num_tokens += len(encoding.encode(str(value)))
+                num_tokens += len(encoding.encode(str(value), disallowed_special=()))
             if key == "name":
                 num_tokens += tokens_per_name
             if num_tokens > token_limit:
