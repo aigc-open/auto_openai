@@ -277,12 +277,12 @@ class Scheduler:
         while True:
             if int(time.time()) % 3 == 0:
                 logger.info(f"排队中 {request_id}")
-            request_data: dict = request.json()
+            request_data: dict = request.dict()
             # 判断是否存在suffix 这个key
             if "suffix" in request_data:
                 del request_data["suffix"] # 
             self.set_request_params(
-                request_id=request_id, value=request_data)
+                request_id=request_id, value=json.dumps(request_data))
             await asyncio.sleep(0.1)
 
             if self.http_request is not None and await self.http_request.is_disconnected():
