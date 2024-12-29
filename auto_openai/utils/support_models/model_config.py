@@ -199,7 +199,7 @@ system_models_config.add(QwenCoderLLMConfig(name="Qwen2.5-Coder-14B-Instruct",
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(QwenCoderLLMConfig(name="deepseek-coder-6.7b-base",
+system_models_config.add(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-base",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=32768,
@@ -213,7 +213,7 @@ system_models_config.add(QwenCoderLLMConfig(name="deepseek-coder-6.7b-base",
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(QwenCoderLLMConfig(name="deepseek-coder-6.7b-instruct",
+system_models_config.add(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-instruct",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=32768,
@@ -227,7 +227,7 @@ system_models_config.add(QwenCoderLLMConfig(name="deepseek-coder-6.7b-instruct",
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(QwenCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=32768,
@@ -241,7 +241,7 @@ system_models_config.add(QwenCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruc
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(QwenCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=32768,
