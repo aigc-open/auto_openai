@@ -133,7 +133,7 @@ class CompletionRequest(BaseModel):
     model: str = Field(..., description="模型名称")
     # a string, array of strings, array of tokens, or array of token arrays
     prompt: str = Field(..., description="输入提示词")
-    suffix: Optional[str] = None
+    suffix: Optional[str] = Field("", description="生成文本的结尾")
     max_tokens: Optional[int] = Field(
         default=16, ge=0, description="生成文本的最大长度")
     temperature: Optional[float] = Field(

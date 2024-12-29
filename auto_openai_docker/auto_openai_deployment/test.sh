@@ -17,8 +17,8 @@ curl -X POST "$OPENAI_BASE_URL/completions" \
     -H "Content-Type: application/json" \
     -d '{
   "model": "deepseek-coder-6.7b-base",
-  "prompt": "# 打印冒泡排序 \ndef ",
-  "max_tokens": 128,
+  "prompt": "<｜fim▁begin｜># 打印冒泡排序 \ndef <｜fim▁hole｜>return sorted_list<｜fim▁end｜>",
+  "max_tokens": 1024,
   "temperature": 0.0,
   "stream": false
 }'

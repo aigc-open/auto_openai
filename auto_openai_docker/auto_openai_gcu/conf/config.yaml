@@ -21,202 +21,32 @@ MOCK: false
 GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 #######################################################
-MODELS:
-  # LLM_MODELS:
-  - name: "Qwen2.5-72B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "Qwen2.5-72B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 4
-  - name: "Qwen2.5-Coder-14B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-Coder-14B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 2
-  - name: "Qwen2.5-Coder-14B-Instruct-10k"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "Qwen2.5-Coder-14B-Instruct-10k"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 2
-  - name: "Qwen2.5-32B-Instruct-GPTQ-Int4"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-32B-Instruct-GPTQ-Int4"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    quantization: gptq
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-  - name: "Qwen2.5-7B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-7B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "Qwen2.5-Coder-7B-Instruct"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 32768
-    description: "Qwen2.5-Coder-7B-Instruct"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "codegeex4-all-9b"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 131072
-    description: "codegeex4-all-9b"
-    need_gpu_count: 1
-    template: template_glm4.jinja
-    stop: ["<|user|>", "<|assistant|>"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-  - name: "glm-4-9b-chat"
-    server_type: vllm
-    api_type: LLM
-    model_max_tokens: 131072
-    description: "glm-4-9b-chat"
-    need_gpu_count: 1
-    template: template_glm4.jinja
-    stop: ["<|user|>", "<|assistant|>"]
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 2
-      EF-S60:
-        need_gpu_count: 1
-
-  # VISION_MODELS:
-  - name: "glm-4v-9b"
-    server_type: llm-transformer-server
-    api_type: VLLM
-    model_max_tokens: 8192
-    description: "glm-4v-9b"
-    need_gpu_count: 1
-    template: template_glm4.jinja
-    stop: []
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-  # EMBEDDING_MODELS:
-  - name: "bge-base-zh-v1.5"
-    server_type: embedding
-    api_type: Embedding
-    need_gpu_count: 1
-    description: "bge-base-zh-v1.5"
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-      CPU:
-        need_gpu_count: 1
-  - name: "bge-m3"
-    server_type: embedding
-    api_type: Embedding
-    need_gpu_count: 1
-    description: "bge-m3"
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-      CPU:
-        need_gpu_count: 1
-
-  # RERANK_MODELS:
-  - name: "bge-reranker-base"
-    server_type: rerank
-    api_type: Rerank
-    need_gpu_count: 1
-    description: "bge-reranker-base"
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-      CPU:
-        need_gpu_count: 1
-  - name: "bge-reranker-v2-m3"
-    server_type: rerank
-    api_type: Rerank
-    need_gpu_count: 1
-    description: "bge-reranker-v2-m3"
-    gpu_types:
-      NV-A100:
-        need_gpu_count: 1
-      NV-4090:
-        need_gpu_count: 1
-      EF-S60:
-        need_gpu_count: 1
-      CPU:
-        need_gpu_count: 1
+SYSTEM_MODELS:
+  - Qwen2.5-72B-Instruct
+  # - Qwen2.5-32B-Instruct-GPTQ-Int4
+  - Qwen2.5-7B-Instruct
+  # - codegeex4-all-9b
+  # - glm-4-9b-chat
+  # - Qwen2.5-Coder-32B-GPTQ-Int4
+  # - Qwen2.5-Coder-32B-GPTQ-Int4-4k
+  # - Qwen2.5-Coder-32B-Instruct-GPTQ-Int4
+  # - Qwen2.5-Coder-32B-Instruct-GPTQ-Int4-4k
+  - Qwen2.5-Coder-7B
+  - Qwen2.5-Coder-7B-Instruct
+  - Qwen2.5-Coder-14B
+  - Qwen2.5-Coder-14B-Instruct
+  # - deepseek-coder-6.7b-base
+  # - deepseek-coder-6.7b-instruct
+  # - DeepSeek-Coder-V2-Lite-Instruct
+  # - DeepSeek-Coder-V2-Lite-Base
+  - glm-4v-9b
+  # - majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
+  # - SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
+  # - funasr
+  # - maskgct-tts-clone
+  - bge-base-zh-v1.5
+  - bge-m3
+  - bge-reranker-base
+  - bge-reranker-v2-m3
+  # - CogVideo/CogVideoX-5b
+CUSTOME_MODELS: [] 

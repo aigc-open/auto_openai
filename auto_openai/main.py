@@ -13,7 +13,7 @@ from enum import Enum
 from fastapi import FastAPI, Request, Body, Header, Query, File, UploadFile, Form
 from typing import Optional, Union, List
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string, cut_messages
-from auto_openai.utils.depends import get_model_config
+from auto_openai.utils.depends import get_model_config, get_combine_prompt_function
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
@@ -75,6 +75,9 @@ async def completion(
         request: Request,
         data: CompletionRequest):
     model_config = get_model_config(name=data.model)
+    if get_combine_prompt_function(data.model) is not None:
+        data.prompt = get_combine_prompt_function(data.model)(
+            prompt=data.prompt, suffix=data.suffix)
     model_max_tokens = model_config.get("model_max_tokens", 2048)
     # 处理模型最终需要完成的token数量
     data.prompt = cut_string(

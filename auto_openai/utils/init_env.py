@@ -6,21 +6,7 @@ try:
 except ImportError:
     from yaml import Loader
 from pydantic import BaseModel
-
-
-class LMConfig(BaseModel):
-    name: str
-    server_type: str
-    api_type: str
-    description: str
-    need_gpu_count: int
-    gpu_types: dict
-
-
-class LLMConfig(LMConfig):
-    model_max_tokens: int
-    template: str
-    stop: list
+from auto_openai.utils.support_models.model_config import system_models_config
 
 
 class GlobalConfig(BaseModel):
@@ -57,7 +43,9 @@ class GlobalConfig(BaseModel):
     MODELS: list = []
     AVAILABLE_MODELS: str = "ALL"
     LM_SERVER_BASE_PORT: int = 30000
-    LABEL:str="auto_openai_scheduler"
+    LABEL: str = "auto_openai_scheduler"
+    CUSTOME_MODELS: list = []
+    SYSTEM_MODELS: list = []
 
     def get_AVAILABLE_MODELS_LIST(self):
         return self.AVAILABLE_MODELS.split(",")
@@ -107,10 +95,11 @@ class GlobalConfig(BaseModel):
                 data[m["api_type"]] = data.get(m["api_type"], []) + [m]
         return data
 
-    def validate_models(self):
-        for m in self.MODELS:
-            if LMConfig(**m).api_type in ["LLM", "VLLM"]:
-                LLMConfig(**m)
+    def check_models(self):
+        self.MODELS.extend(self.CUSTOME_MODELS)
+        for m in system_models_config.list():
+            if m.name in self.SYSTEM_MODELS:
+                self.MODELS.append(m.dict())
 
 
 global_config = GlobalConfig()
@@ -118,4 +107,4 @@ AUTO_OPENAI_CONFIG_PATH = os.environ.get(
     "AUTO_OPENAI_CONFIG_PATH", "./conf/config.yaml")
 global_config.init_config(path=AUTO_OPENAI_CONFIG_PATH)
 global_config.init_env()
-global_config.validate_models()
+global_config.check_models()

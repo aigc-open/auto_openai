@@ -5,6 +5,7 @@ import yaml
 import time
 from loguru import logger
 from auto_openai.utils.init_env import global_config
+from auto_openai.utils.support_models.model_config import system_models_config
 
 
 def get_model_config(name):
@@ -12,3 +13,12 @@ def get_model_config(name):
         if i['name'] == name:
             return i
     raise HTTPException(status_code=404, detail="model not found")
+
+
+def get_combine_prompt_function(name):
+    for i in system_models_config.list():
+        if i.name == name:
+            if hasattr(i, 'combine_prompt'):
+                return i.combine_prompt
+            return None
+    return None

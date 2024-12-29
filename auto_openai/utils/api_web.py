@@ -90,7 +90,6 @@ def generate_api_documentation(schema: Dict[str, Any]):
         }
         # 将属性信息添加到列表中
         data.append(current_data)
-        print(current_data)
     df = pd.DataFrame(data)
     return df
 

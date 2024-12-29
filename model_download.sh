@@ -1,4 +1,3 @@
-
 # 存放零时数据的目录,图片等
 mkdir -p /root/share_models/tmp
 
@@ -11,15 +10,24 @@ cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/BAA
 # LLM
 LLM_path=/root/share_models/LLM
 mkdir -p $LLM_path
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git
-cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git
-cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git
-cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
-cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
-# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B.git
-# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B-Instruct.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/codegeex4-all-9b.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/glm-4-9b-chat.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/jackle/Qwen2.5-Coder-32B-GPTQ-Int4.git && ln -s $LLM_path/Qwen2.5-Coder-32B-GPTQ-Int4 $LLM_path/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4-4k
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4.git && ln -s $LLM_path/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4 $LLM_path/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4-4k
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-14B.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-14B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Base.git
+# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B.git
+# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B-Instruct.git
+
 # VISION
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2-VL-7B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/glm-4v-9b.git
@@ -41,7 +49,6 @@ mkdir -p $funasr_path
 # cd $funasr_path && git lfs install && git clone https://www.modelscope.cn/iic/speech_fsmn_vad_zh-cn-16k-common-pytorch.git
 # cd $funasr_path && git lfs install && git clone https://www.modelscope.cn/iic/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch.git
 
-
 # rerank
 rerank_path="/root/share_models/Rerank-models/"
 mkdir -p $rerank_path
@@ -49,15 +56,14 @@ cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/b
 cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
 cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/mixedbread-ai/mxbai-rerank-xsmall-v1.git
 
-
 # webui  && comfyui
-webui_path="/root/share_models/webui-models/" 
+webui_path="/root/share_models/webui-models/"
 mkdir -p $webui_path
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/chineking/adetailer.git
-cd $webui_path && git lfs install && git clone https://www.modelscope.cn/licyks/controlnet_v1.1_annotator.git  # for webui controlnet 处理器, 挂载目录: /workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads
-cd $webui_path && git lfs install && git clone https://www.modelscope.cn/jackle/comfyui_controlnet_aux_ckpts.git # for ComfyUI controlnet 处理器，挂载目录: /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts
+cd $webui_path && git lfs install && git clone https://www.modelscope.cn/licyks/controlnet_v1.1_annotator.git              # for webui controlnet 处理器, 挂载目录: /workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads
+cd $webui_path && git lfs install && git clone https://www.modelscope.cn/jackle/comfyui_controlnet_aux_ckpts.git           # for ComfyUI controlnet 处理器，挂载目录: /workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts
 cd $webui_path && git lfs install && git clone https://www.modelscope.cn/shareAI/lllyasviel-ControlNet-v1-1.git ControlNet # webui/comfyui 公用同一个controlnet
-cd $webui_path && git lfs install && git clone https://www.modelscope.cn/AI-ModelScope/clip-vit-large-patch14.git # webui 使用的clip,必须安装
+cd $webui_path && git lfs install && git clone https://www.modelscope.cn/AI-ModelScope/clip-vit-large-patch14.git          # webui 使用的clip,必须安装
 
 # checkpoint 下载
 # mkdir -p $webui_path/Stable-diffusion/svd
