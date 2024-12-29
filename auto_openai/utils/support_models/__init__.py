@@ -31,12 +31,18 @@ class CoderLLMConfig(LLMConfig):
 
 class QwenCoderLLMConfig(LLMConfig):
     def combine_prompt(self, prompt: str, suffix: str = "") -> str:
-        return f"""<|fim_prefix|>{prompt}<|fim_suffix|>{suffix}<|fim_middle|>"""
+        if suffix:
+            return f"""<|fim_prefix|>{prompt}<|fim_suffix|>{suffix}<|fim_middle|>"""
+        else:
+            return prompt
 
 
 class DeepseekCoderLLMConfig(LLMConfig):
     def combine_prompt(self, prompt: str, suffix: str = "") -> str:
-        return f"""<｜fim▁begin｜>{prompt}<｜fim▁hole｜>{suffix}<｜fim▁end｜>"""
+        if suffix:
+            return f"""<｜fim▁begin｜>{prompt}<｜fim▁hole｜>{suffix}<｜fim▁end｜>"""
+        else:
+            return prompt
 
 
 class VisionConfig(LMConfig):

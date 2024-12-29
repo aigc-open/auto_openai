@@ -22,3 +22,16 @@ curl -X POST "$OPENAI_BASE_URL/completions" \
   "temperature": 0.0,
   "stream": false
 }'
+
+# Coder 续写模式
+curl -X POST "$OPENAI_BASE_URL/completions" \
+  -H "Authorization: Bearer xxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "model": "deepseek-coder-6.7b-base",
+  "prompt": "# 打印冒泡排序 \ndef",
+  "max_tokens": 128,
+  "temperature": 0.0,
+  "suffix": "return sorted_list",
+  "stream": false
+}'

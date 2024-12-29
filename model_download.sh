@@ -10,7 +10,7 @@ cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/BAA
 # LLM
 LLM_path=/root/share_models/LLM
 mkdir -p $LLM_path
-cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git
+# cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/codegeex4-all-9b.git

@@ -1,5 +1,5 @@
 REDIS_CLIENT_CONFIG:
-  address: 10.12.110.149:6379
+  address: 192.168.6.200:6379
   username:
   password:
   cluster: False
