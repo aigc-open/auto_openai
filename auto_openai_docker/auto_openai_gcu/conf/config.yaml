@@ -22,8 +22,8 @@ GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 #######################################################
 SYSTEM_MODELS:
-  - Qwen2.5-72B-Instruct
-  # - Qwen2.5-32B-Instruct-GPTQ-Int4
+  # - Qwen2.5-72B-Instruct
+  - Qwen2.5-32B-Instruct-GPTQ-Int4
   - Qwen2.5-7B-Instruct
   # - codegeex4-all-9b
   # - glm-4-9b-chat
@@ -35,10 +35,10 @@ SYSTEM_MODELS:
   - Qwen2.5-Coder-7B-Instruct
   - Qwen2.5-Coder-14B
   - Qwen2.5-Coder-14B-Instruct
-  # - deepseek-coder-6.7b-base
-  # - deepseek-coder-6.7b-instruct
-  # - DeepSeek-Coder-V2-Lite-Instruct
-  # - DeepSeek-Coder-V2-Lite-Base
+  - deepseek-coder-6.7b-base
+  - deepseek-coder-6.7b-instruct
+  - DeepSeek-Coder-V2-Lite-Instruct
+  - DeepSeek-Coder-V2-Lite-Base
   - glm-4v-9b
   # - majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
   # - SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
