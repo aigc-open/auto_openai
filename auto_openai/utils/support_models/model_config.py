@@ -227,7 +227,7 @@ system_models_config.add(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-instru
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct-10k",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=10240,
@@ -241,7 +241,7 @@ system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Ins
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base-10k",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=10240,
