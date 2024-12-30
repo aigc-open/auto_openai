@@ -22,7 +22,7 @@ GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 #######################################################
 SYSTEM_MODELS:
-  # - Qwen2.5-72B-Instruct
+  - Qwen2.5-72B-Instruct
   - Qwen2.5-32B-Instruct-GPTQ-Int4
   - Qwen2.5-7B-Instruct
   # - codegeex4-all-9b
