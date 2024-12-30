@@ -38,8 +38,10 @@ SYSTEM_MODELS:
   - Qwen2.5-Coder-14B-Instruct
   - deepseek-coder-6.7b-base
   - deepseek-coder-6.7b-instruct
-  - DeepSeek-Coder-V2-Lite-Instruct
-  - DeepSeek-Coder-V2-Lite-Base
+  - DeepSeek-Coder-V2-Lite-Instruct-10k
+  - DeepSeek-Coder-V2-Lite-Base-10k
+  - DeepSeek-Coder-V2-Lite-Instruct-8k
+  - DeepSeek-Coder-V2-Lite-Base-8k
   - glm-4v-9b
   - majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
   - SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors

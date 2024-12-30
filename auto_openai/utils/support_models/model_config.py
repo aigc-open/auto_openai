@@ -227,7 +227,7 @@ system_models_config.add(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-instru
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct-10k",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=10240,
@@ -241,10 +241,38 @@ system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Ins
                                                 "EF-S60": GPUConfig(need_gpu_count=1)
                                             }
                                             ))
-system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base",
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base-10k",
                                             server_type="vllm",
                                             api_type="LLM",
                                             model_max_tokens=10240,
+                                            description="DeepSeek-Coder-V2-Lite-Base 16B",
+                                            need_gpu_count=1,
+                                            template="template_deepseek-coder.jinja",
+                                            stop=["User: ", "Assistant: "],
+                                            gpu_types={
+                                                "NV-A100": GPUConfig(need_gpu_count=1),
+                                                "NV-4090": GPUConfig(need_gpu_count=2),
+                                                "EF-S60": GPUConfig(need_gpu_count=1)
+                                            }
+                                            ))
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct-8k",
+                                            server_type="vllm",
+                                            api_type="LLM",
+                                            model_max_tokens=8*1024,
+                                            description="DeepSeek-Coder-V2-Lite-Instruct 16B",
+                                            need_gpu_count=1,
+                                            template="template_deepseek-coder.jinja",
+                                            stop=["User: ", "Assistant: "],
+                                            gpu_types={
+                                                "NV-A100": GPUConfig(need_gpu_count=1),
+                                                "NV-4090": GPUConfig(need_gpu_count=2),
+                                                "EF-S60": GPUConfig(need_gpu_count=1)
+                                            }
+                                            ))
+system_models_config.add(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base-8k",
+                                            server_type="vllm",
+                                            api_type="LLM",
+                                            model_max_tokens=8*1024,
                                             description="DeepSeek-Coder-V2-Lite-Base 16B",
                                             need_gpu_count=1,
                                             template="template_deepseek-coder.jinja",
