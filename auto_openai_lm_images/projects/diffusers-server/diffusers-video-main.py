@@ -36,6 +36,7 @@ def random_uuid() -> str:
 
 
 pipline = None
+data_dir = "/root/share_models/tmp"
 
 
 def load_model(model_path):
@@ -72,7 +73,7 @@ def infer(prompt, negative_prompt=None,
         guidance_scale=guidance_scale,
         generator=torch.Generator(device=device).manual_seed(seed),
     ).frames[0]
-    save_dir = "/root/share_models/tmp"
+    save_dir = data_dir
     os.makedirs(save_dir, exist_ok=True)
     path = f"{save_dir}/{random_uuid()}.mp4"
     export_to_video(video, path, fps=fps)
@@ -120,7 +121,7 @@ def ui():
 def run(port: int = 9000, model_path=""):
     import uvicorn
     load_model(model_path)
-    ui().launch(server_name="0.0.0.0", server_port=port, share=False)
+    ui().launch(server_name="0.0.0.0", server_port=port, share=False,allowed_paths=[data_dir])
 
 
 if __name__ == "__main__":
