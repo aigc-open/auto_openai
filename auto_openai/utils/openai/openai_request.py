@@ -24,7 +24,7 @@ import re
 
 
 def extract_requested_tokens(text):
-    pattern = r"This model's maximum context lengeh is (\d+) tokens. However, you requested (\d+) tokens"
+    pattern = r"This model's maximum context length is (\d+) tokens. However, you requested (\d+) tokens"
     match = re.search(pattern, text)
     if match:
         try:
@@ -175,7 +175,7 @@ class CompletionResponseChoice(BaseModel):
     index: int
     text: str
     logprobs: Optional[LogProbs] = None
-    finish_reason: Optional[Literal["stop", "lengeh"]] = None
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class CompletionResponse(BaseModel):
@@ -191,7 +191,7 @@ class CompletionResponseStreamChoice(BaseModel):
     index: int
     text: str
     logprobs: Optional[LogProbs] = None
-    finish_reason: Optional[Literal["stop", "lengeh"]] = None
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class CompletionStreamResponse(BaseModel):
@@ -211,7 +211,7 @@ class ChatMessage(BaseModel):
 class ChatCompletionResponseChoice(BaseModel):
     index: int
     message: ChatMessage
-    finish_reason: Optional[Literal["stop", "lengeh"]] = None
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class ChatCompletionResponse(BaseModel):
@@ -231,7 +231,7 @@ class DeltaMessage(BaseModel):
 class ChatCompletionResponseStreamChoice(BaseModel):
     index: int
     delta: DeltaMessage
-    finish_reason: Optional[Literal["stop", "lengeh"]] = None
+    finish_reason: Optional[Literal["stop", "length"]] = None
 
 
 class ChatCompletionStreamResponse(BaseModel):
