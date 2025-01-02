@@ -5,10 +5,10 @@ REDIS_CLIENT_CONFIG:
   cluster: False
 
 OSS_CLIENT_CONFIG:
-  endpoint_url: http://oss-cnsq01.cdsgss.com
-  aws_access_key_id: ef55cb62ff7511edb70f46ae5a5d3b50
-  aws_secret_access_key: cb78ddb9646518e554799c0f5ff1a3bd
-  bucket_name: maas-1
+  endpoint_url: https://boto3-oss.cpolar.cn
+  aws_access_key_id: admin
+  aws_secret_access_key: admin123
+  bucket_name: api-platform
   region_name:
 #######################################################
 QUEUE_TIMEOUT: 600

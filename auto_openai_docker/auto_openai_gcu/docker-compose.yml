@@ -10,7 +10,7 @@ services:
   openai-api:
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     ports:
-      - "9000:9000"
+      - "9001:9000"
     command:
       - /bin/sh
       - -c
