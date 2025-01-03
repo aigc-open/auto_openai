@@ -1,4 +1,4 @@
-curl -X POST "http://127.0.0.1:9000/openai/v1/images/generate" \
+curl -X POST "http://127.0.0.1:9000/openai/v1/images/generations" \
     -H "Authorization: Bearer xxxx" \
     -H "Content-Type: application/json" \
     -d '{
