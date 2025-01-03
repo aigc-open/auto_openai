@@ -14,8 +14,10 @@ for model in [
 
     data = {"model": model,
             "messages": [
-                {"role": "user", "content": "What are some fun things to do in New York?"*100000}],
+                {"role": "user", "content": "What are some fun things to do in New York?"*100}],
             "max_tokens": 8192,
+            # "presence_penalty": 1.0,
+            # "frequency_penalty": 1.0,
             "temperature": 0.0,
             "stream": False}
     resp = requests.post(base_url + "/chat/completions", json=data)
