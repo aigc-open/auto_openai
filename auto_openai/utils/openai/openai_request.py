@@ -418,7 +418,7 @@ class SD15MultiControlnetGenerateImageRequest(BaseModel):
     height: int = Field(512, ge=32, le=2048, description="生成图像的高度")
     sampler_name: SamplerName = Field(
         SamplerName("Euler"), description="采样器名称")  # 使用枚举类型
-    cfg: int = Field(7.5, ge=1, le=30, description="CFG Scale")
+    cfg: float = Field(7.5, ge=1, le=30, description="CFG Scale")
     denoising_strength: float = Field(0.75, ge=0, le=1, description="去噪强度")
     scheduler: Scheduler = Field(
         Scheduler("Normal"), description="调度器名称")  # 使用枚举类型
