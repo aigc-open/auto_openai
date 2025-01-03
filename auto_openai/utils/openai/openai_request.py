@@ -497,7 +497,7 @@ class SolutionBaseGenerateImageRequest(BaseModel):
     batch_size: int = Field(1, ge=1, le=4, description="生成批次")
     width: int = Field(512, ge=32, le=2048, description="生成图片宽度")
     height: int = Field(512, ge=32, le=2048, description="生成图片高度")
-    cfg: int = Field(8, ge=1, le=30, description="控制生成细节")
+    cfg: float = Field(7.5, ge=1, le=30, description="CFG Scale")
     denoising_strength: float = Field(0.75, ge=0.0, le=1.0, description="去噪强度")
     prompt: str = Field(
         "beautiful scenery nature glass bottle landscape, purple galaxy bottle", description="生成图片的描述")
