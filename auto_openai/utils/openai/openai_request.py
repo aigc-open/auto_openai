@@ -110,9 +110,9 @@ class ChatCompletionRequest(BaseModel):
         default=[], description="停止生成文本的标志")
     stream: Optional[bool] = Field(default=False, description="是否流式输出")
     presence_penalty: Optional[float] = Field(
-        default=2.0, ge=0.0, le=2.0)  # 设置最大值为2
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     frequency_penalty: Optional[float] = Field(
-        default=2.0, ge=0.0, le=2.0)  # 设置最大值为2
+        default=1.0, ge=0.0, le=2.0)  # 设置最大值为2
     # logit_bias: Optional[Dict[str, float]] = None
     # user: Optional[str] = None
     # Additional parameters supported by vLLM
@@ -137,7 +137,7 @@ class CompletionRequest(BaseModel):
     max_tokens: Optional[int] = Field(
         default=16, ge=0, description="生成文本的最大长度")
     temperature: Optional[float] = Field(
-        default=1.0, ge=0.0, le=2.0, description="控制生成文本的随机性")  # 设置最大值为2
+        default=0.01, ge=0.0, le=1.0, description="控制生成文本的随机性")  # 设置最大值为1
     top_p: Optional[float] = Field(
         default=1.0, ge=0.0, le=1.0, description="top_p")
     n: Optional[int] = 1
@@ -160,7 +160,8 @@ class CompletionRequest(BaseModel):
     # stop_token_ids: Optional[List[int]] = Field(default_factory=list)
     # skip_special_tokens: Optional[bool] = True
     # spaces_between_special_tokens: Optional[bool] = True
-    # repetition_penalty: Optional[float] = 1.0
+    repetition_penalty: Optional[float] = Field(
+        default=1.0, ge=0.0, le=2.0)
     # min_p: Optional[float] = 0.0
 
 
