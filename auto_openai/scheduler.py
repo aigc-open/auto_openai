@@ -1004,7 +1004,7 @@ class RerankTask(BaseTask):
                                          text=f"{json.dumps(result)}",
                                          finish=True))
                 end_time = time.time()
-                if documents:
+                if input_:
                     model_name = self.model_config["name"]
                     self.profiler_collector(
                         model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(input_), description="每个输入的推理时间")
