@@ -3,7 +3,7 @@ curl -X POST "$OPENAI_BASE_URL/chat/completions" \
     -H "Authorization: Bearer xxxx" \
     -H "Content-Type: application/json" \
     -d '{
-  "model": "Qwen2.5-Coder-7B-Instruct",
+  "model": "Qwen2.5-7B-Instruct",
   "messages": [
     {"role": "user", "content": "What are some fun things to do in New York?"}
   ],

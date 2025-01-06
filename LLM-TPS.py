@@ -7,7 +7,7 @@ base_url = os.environ.get("OPENAI_BASE_URL", "http://127.0.0.1:9000/openai/v1")
 for model in [
     # "Qwen2.5-32B-Instruct-GPTQ-Int4",
     # "Qwen2.5-Coder-14B-Instruct",
-    # "DeepSeek-Coder-V2-Lite-Instruct-8k",
+    # "DeepSeek-Coder-V2-Lite-Instruct:8k",
     # "deepseek-coder-6.7b-instruct",
     "Qwen2.5-7B-Instruct"
 ]:
