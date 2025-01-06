@@ -24,14 +24,11 @@ LLM_path=/root/share_models/LLM
 mkdir -p $LLM_path
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4.git 
-ln_model Qwen2.5-32B-Instruct-GPTQ-Int4 4k
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/codegeex4-all-9b.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/ZhipuAI/glm-4-9b-chat.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/jackle/Qwen2.5-Coder-32B-GPTQ-Int4.git 
-# ln_model Qwen2.5-Coder-32B-GPTQ-Int4 4k
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4.git 
-# ln_model Qwen2.5-Coder-32B-Instruct-GPTQ-Int4 4k
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-14B.git
@@ -39,9 +36,7 @@ cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git 
-ln_model DeepSeek-Coder-V2-Lite-Instruct 8k
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Base.git 
-ln_model DeepSeek-Coder-V2-Lite-Base 8k
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B.git
 # cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-1.5B-Instruct.git
 

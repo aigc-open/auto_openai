@@ -11,8 +11,13 @@ class LMConfig(BaseModel):
     server_type: str
     api_type: str
     description: str
-    need_gpu_count: int
-    gpu_types: Dict[str, GPUConfig]
+    need_gpu_count: int = 1
+    gpu_types: Dict[str, GPUConfig] = {}
+
+
+class MultiGPUS(BaseModel):
+    model_max_tokens: int
+    gpu_types: Dict[str, GPUConfig] = {}
 
 
 class LLMConfig(LMConfig):
@@ -21,6 +26,19 @@ class LLMConfig(LMConfig):
     stop: List[str]
     server_type: str = "vllm"
     api_type: str = "LLM"
+
+    def extend(self, gpus: List[MultiGPUS]):
+        _model_configs_ = []
+        if self.gpu_types:
+            _model_configs_.append(self)
+        for gpu in gpus:
+            tmp_config = self.copy()
+            tmp_config.model_max_tokens = gpu.model_max_tokens
+            tmp_config.gpu_types = gpu.gpu_types
+            
+            tmp_config.name = f"{tmp_config.name}:{int(gpu.model_max_tokens/1024)}k"
+            _model_configs_.append(tmp_config)
+        return _model_configs_
 
 
 class CoderLLMConfig(LLMConfig):
@@ -45,10 +63,8 @@ class DeepseekCoderLLMConfig(LLMConfig):
             return prompt
 
 
-class VisionConfig(LMConfig):
-    model_max_tokens: int
-    template: str
-    stop: List[str]
+class VisionConfig(LLMConfig):
+    pass
 
 
 class SDConfig(LMConfig):
@@ -81,6 +97,9 @@ class ModelsConfig:
 
     def add(self, model: LMConfig):
         self._models.append(model)
+
+    def extend(self, models: LMConfig):
+        self._models.extend(models)
 
     def list(self) -> List[LMConfig]:
         return self._models

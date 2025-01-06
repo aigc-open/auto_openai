@@ -319,7 +319,7 @@ class VllmTask(BaseTask):
                                 model_name=model_name, key=MODEL_PROF_KEY, value=tps, description="每秒生成token的数量")
                     send_text += text
                     all_text += text
-                    if len(send_text) > 5 or finish is True:
+                    if len(send_text) > 2 or finish is True:
                         if finish is True:
                             send_text = send_text.replace("<|", "\n")
                         scheduler.set_result(request_id=request_id,
@@ -1070,7 +1070,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 # 如果没有该模型配置，则跳过该模型
                 continue
             # 检测模型文件是否存在,如果不存在就直接跳过该模型
-            if self.model_config["server_type"] == "vllm" and not os.path.exists(os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name)):
+            if self.model_config["server_type"] == "vllm" and not os.path.exists(os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name.split(":")[0])):
                 continue
             elif self.model_config["server_type"] == "embedding" and not os.path.exists(os.path.join(global_config.EMBEDDING_MODEL_ROOT_PATH, model_name)):
                 continue
