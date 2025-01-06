@@ -9,8 +9,8 @@ BASE_PORT = 30000
 
 image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
 generate_dir = "auto_openai_gcu"
-# image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
-# generate_dir = "auto_openai_deployment"
+image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
+generate_dir = "auto_openai_deployment"
 
 
 class Gen:
@@ -78,6 +78,7 @@ Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=4)
 Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=8)
 Gen.run(gpu=[0, 1, 2, 3], split_size=1)
 Gen.run(gpu=[0, 1, 2], split_size=1)
+Gen.run(gpu=[0, 1], split_size=1)
 Gen.run(gpu=[0, 1, 2, 3], split_size=2)
 Gen.run(gpu=[0, 1, 2, 3], split_size=4)
 Gen.run(gpu=[4, 4, 4, 4], split_size=1,

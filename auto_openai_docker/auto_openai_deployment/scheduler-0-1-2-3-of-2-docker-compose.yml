@@ -1,5 +1,5 @@
 services:
-  scheduler-0-of-0:
+  scheduler-0_1-of-0:
     command: &id001
     - /bin/sh
     - -c
@@ -7,9 +7,9 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1736148045-45702818
-      LM_SERVER_BASE_PORT: 30160
-      NODE_GPU_TOTAL: '0'
+      LABEL: lm-server-1736148045-1249530196
+      LM_SERVER_BASE_PORT: 30200
+      NODE_GPU_TOTAL: 0,1
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
@@ -20,28 +20,14 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-2_3-of-1:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1736148045-1025748644
-      LM_SERVER_BASE_PORT: 30168
-      NODE_GPU_TOTAL: '1'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
-    network_mode: host
-    privileged: true
-    restart: always
-    shm_size: 8gb
-    volumes: *id002
-  scheduler-2-of-2:
-    command: *id001
-    environment:
-      AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1736148045-484763578
-      LM_SERVER_BASE_PORT: 30176
-      NODE_GPU_TOTAL: '2'
+      LABEL: lm-server-1736148045-560752408
+      LM_SERVER_BASE_PORT: 30208
+      NODE_GPU_TOTAL: 2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true

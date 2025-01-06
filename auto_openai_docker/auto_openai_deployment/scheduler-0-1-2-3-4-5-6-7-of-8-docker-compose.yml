@@ -1,5 +1,5 @@
 services:
-  scheduler-0_1_2_3-of-0:
+  scheduler-0_1_2_3_4_5_6_7-of-0:
     command:
     - /bin/sh
     - -c
@@ -7,9 +7,9 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1736148045-756983854
-      LM_SERVER_BASE_PORT: 30216
-      NODE_GPU_TOTAL: 0,1,2,3
+      LABEL: lm-server-1736148045-611178500
+      LM_SERVER_BASE_PORT: 30120
+      NODE_GPU_TOTAL: 0,1,2,3,4,5,6,7
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
