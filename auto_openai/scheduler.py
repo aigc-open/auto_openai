@@ -989,9 +989,11 @@ class RerankTask(BaseTask):
                 documents = params.get("documents", [])
                 if type(documents) == str:
                     input_ = [documents]
+                else:
+                    input_ = documents
                 # inputs: list, query, model_name: str, top_k=3
                 result = client.predict(
-                    inputs=params.get("documents", []),
+                    inputs=input_,
                     query=params.get("query"),
                     top_k=params.get("top_n", 3),
                     model_name=params.get("model"),
