@@ -53,8 +53,13 @@ python3 -m auto_openai.lm_server.install_models tiktoken
 
 - 这些配置可以通过环境变量进行修改
   [`conf/config.yaml`](conf/config.yaml)
+- 获取支持的模型列表
+```bash
+python3 -m auto_openai.utils.support_models.model_config
+```
 
 ## [模型下载请参考](./model_download.sh)
+
 
 ## 启动服务
 

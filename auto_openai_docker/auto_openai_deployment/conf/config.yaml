@@ -68,8 +68,8 @@ SYSTEM_MODELS:
   - bge-m3
   - bge-reranker-base
   - bge-reranker-v2-m3
-  # - CogVideo/CogVideoX-5b
+  - CogVideo/CogVideoX-5b
   # - majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
-  # - SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
+  - SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors
   # - funasr
   # - maskgct-tts-clone
