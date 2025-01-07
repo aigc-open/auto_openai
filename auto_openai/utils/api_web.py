@@ -52,7 +52,6 @@ def format_constraints(constraints):
 def generate_api_documentation(schema: Dict[str, Any]):
     # 创建一个空列表来存储每个属性的信息
     data = []
-    print(schema)
     # 处理属性
     properties = schema.get('properties', {})
     for prop_name, prop_details in properties.items():
