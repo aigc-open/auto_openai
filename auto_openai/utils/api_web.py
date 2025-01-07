@@ -411,10 +411,10 @@ class DemoWebApp(APIDocsApp):
             gr.Markdown("""
             ## 模型性能
             - 模型性能是指模型在处理请求时的性能指标。
-            - 大语言模型: 使用TPS衡量，每秒生成token的数量。
-            - 图像生成: 使用SPI衡量，每张图像生成所需时间。
-            - 语音识别：使用SPS衡量，每秒处理音频帧的所需时间。
-            - 语音合成：使用SPC衡量，每秒处理音频帧的所需时间。
+            - 大语言模型: 每秒生成token的数量。
+            - 图像生成: 每张图像生成所需时间。
+            - 语音识别：每秒处理音频帧的所需时间。
+            - 语音合成：每秒处理音频帧的所需时间。
             """)
             df2 = gr.DataFrame(tps_spi_df, label="模型性能")
             fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df1, df2])

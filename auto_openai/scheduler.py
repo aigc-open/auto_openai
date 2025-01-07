@@ -1,4 +1,4 @@
-from auto_openai.utils.public import redis_client
+from auto_openai.utils.public import scheduler
 from auto_openai.utils.openai import Scheduler, RedisStreamInfer, VLLMOpenAI
 from typing import Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field
@@ -27,7 +27,7 @@ from auto_openai.utils.check_node import get_address_hostname
 from pydub import AudioSegment
 from auto_openai.utils.openai.openai_request import SD15MultiControlnetGenerateImage, ErrorResponse
 import webuiapi
-scheduler = Scheduler(redis_client=redis_client)
+from auto_openai.utils.support_models.model_config import system_models_config
 root_path = os.path.dirname(os.path.abspath(__file__))
 
 
@@ -39,8 +39,7 @@ class BaseTask:
     worker_start_port = global_config.LM_SERVER_BASE_PORT
     model_config = {}
     useful_times = global_config.USERFULL_TIMES_PER_MODEL
-    node_gpu_total: list = list([int(x.strip())
-                                for x in global_config.NODE_GPU_TOTAL.split(',')])
+    node_gpu_total = global_config.get_gpu_list()
     unuseful_times = global_config.UNUSERFULL_TIMES_PER_MODEL
 
     def split_gpu(self):
@@ -102,12 +101,23 @@ class BaseTask:
 
     def report_models(self):
         while True:
-            pass
+            try:
+                for m in system_models_config.list():
+                    if m.is_available() is True:
+                        scheduler.set_available_model(
+                            model_name=m.name, value=json.dumps(m.dict()))
+                time.sleep(2)
+            except Exception as e:
+                pass
 
     def loop(self):
         self.kill_model_server()
         import threading
+        logger.info("上报节点...")
         threading.Thread(target=self.report_node).start()
+        logger.info("上报模型...")
+        threading.Thread(target=self.report_models).start()
+        logger.info("开始调度...")
         while True:
             try:
                 self.run()
@@ -1076,11 +1086,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 # 如果没有该模型配置，则跳过该模型
                 continue
             # 检测模型文件是否存在,如果不存在就直接跳过该模型
-            if self.model_config["server_type"] == "vllm" and not os.path.exists(os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name.split(":")[0])):
-                continue
-            elif self.model_config["server_type"] == "embedding" and not os.path.exists(os.path.join(global_config.EMBEDDING_MODEL_ROOT_PATH, model_name)):
-                continue
-            elif self.model_config["server_type"] == "rerank" and not os.path.exists(os.path.join(global_config.RERANK_MODEL_ROOT_PATH, model_name)):
+            if not system_models_config.get(model_name).is_available():
                 continue
             self.set_infer_fn()
             if model_name not in global_config.get_AVAILABLE_MODELS_LIST() and "ALL" not in global_config.get_AVAILABLE_MODELS_LIST():

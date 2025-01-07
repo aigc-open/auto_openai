@@ -6,7 +6,6 @@ try:
 except ImportError:
     from yaml import Loader
 from pydantic import BaseModel
-from auto_openai.utils.support_models.model_config import system_models_config
 
 
 class GlobalConfig(BaseModel):
@@ -44,8 +43,6 @@ class GlobalConfig(BaseModel):
     AVAILABLE_MODELS: str = "ALL"
     LM_SERVER_BASE_PORT: int = 30000
     LABEL: str = "auto_openai_scheduler"
-    CUSTOME_MODELS: list = []
-    SYSTEM_MODELS: list = []
 
     def get_AVAILABLE_MODELS_LIST(self):
         return self.AVAILABLE_MODELS.split(",")
@@ -89,17 +86,17 @@ class GlobalConfig(BaseModel):
         return env_
 
     def get_MODELS_MAPS(self):
+        from auto_openai.utils.depends import get_models_config_list
         data = {}
-        for m in self.MODELS:
+        for m in get_models_config_list():
             if "api_type" in m:
                 data[m["api_type"]] = data.get(m["api_type"], []) + [m]
         return data
 
-    def check_models(self):
-        self.MODELS.extend(self.CUSTOME_MODELS)
-        for m in system_models_config.list():
-            if m.name in self.SYSTEM_MODELS:
-                self.MODELS.append(m.dict())
+    def get_gpu_list(self):
+        node_gpu_total: list = list([int(x.strip())
+                                     for x in self.NODE_GPU_TOTAL.split(',')])
+        return node_gpu_total
 
 
 global_config = GlobalConfig()
@@ -107,4 +104,3 @@ AUTO_OPENAI_CONFIG_PATH = os.environ.get(
     "AUTO_OPENAI_CONFIG_PATH", "./conf/config.yaml")
 global_config.init_config(path=AUTO_OPENAI_CONFIG_PATH)
 global_config.init_env()
-global_config.check_models()

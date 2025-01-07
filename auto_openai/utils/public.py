@@ -25,3 +25,4 @@ s3_client = OSSManager(endpoint_url=global_config.OSS_CLIENT_CONFIG['endpoint_ur
                 aws_access_key_id=global_config.OSS_CLIENT_CONFIG['aws_access_key_id'],
                 aws_secret_access_key=global_config.OSS_CLIENT_CONFIG['aws_secret_access_key'],
                 region_name=global_config.OSS_CLIENT_CONFIG['region_name'])
+scheduler = Scheduler(redis_client=redis_client)
