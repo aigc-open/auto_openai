@@ -100,6 +100,10 @@ class BaseTask:
             except:
                 pass
 
+    def report_models(self):
+        while True:
+            pass
+
     def loop(self):
         self.kill_model_server()
         import threading

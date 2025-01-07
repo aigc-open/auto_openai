@@ -1,7 +1,11 @@
 import socket
+import os
 
 
 def get_address_hostname():
+    ip_address = "0.0.0.0"
+    hostname = "host"
+    id_ = os.environ.get("LM_SERVER_BASE_PORT", 30000)
     try:
         # 创建一个 socket 对象
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -11,4 +15,4 @@ def get_address_hostname():
         hostname = socket.gethostname()
     finally:
         s.close()  # 关闭 socket
-    return {"ip": ip_address, "hostname": hostname}
+    return {"ip": ip_address, "hostname": f"{ip_address}@{hostname}-{id_}"}
