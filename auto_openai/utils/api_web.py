@@ -140,15 +140,21 @@ class UILayout:
                     df = pd.DataFrame(
                         data=model_list, columns=model_headers_desc)
                     
-                    # 使用卡片网格布局替代表格
+                    # 添加数据统计卡片
+                    with ui.row().classes('gap-4 p-4 mb-2'):
+                        with ui.card().classes('flex-1 p-4 bg-blue-50 rounded-xl'):
+                            ui.label('模型总数').classes('text-sm text-gray-600 mb-1')
+                            ui.label(str(len(df))).classes('text-2xl font-bold text-blue-600')
+                        
+                    # 模型卡片网格
                     with ui.grid(columns=3).classes('gap-4 p-4'):
                         for _, row in df.iterrows():
                             with ui.card().classes('p-4 hover:shadow-lg transition-all duration-300 bg-white border rounded-xl h-full'):
                                 # 模型名称 - 使用 column 布局来处理长名称
                                 with ui.column().classes('gap-2 mb-3 w-full'):
                                     with ui.row().classes('items-center gap-2 mb-1'):
-                                        ui.icon('model_training').classes('text-2xl text-purple-600 shrink-0')  # 添加 shrink-0
-                                    ui.label(row['名称']).classes('text-lg font-bold text-gray-800 break-all')  # 使用 break-all
+                                        ui.icon('model_training').classes('text-2xl text-purple-600 shrink-0')
+                                    ui.label(row['名称']).classes('text-lg font-bold text-gray-800 break-all')
                                 
                                 # 最大支持tokens（如果存在）
                                 if '最大支持tokens' in row:
