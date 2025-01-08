@@ -20,3 +20,4 @@ gradio==5.10.0
 together
 pandas
 docker
+nicegui==2.9.1

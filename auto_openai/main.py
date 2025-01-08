@@ -20,7 +20,7 @@ from fastapi.responses import FileResponse
 from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
     ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest, VideoGenerationsRequest
 
-from auto_openai.utils.api_web import DemoWebApp
+from auto_openai.utils.api_web import UIWeb
 
 
 app = FastAPI(root_path="/openai")
@@ -283,15 +283,14 @@ async def get_nodes(request: Request):
     return scheduler.get_running_node()
 
 ########################### web html ############################
-demo_web = DemoWebApp(title="Openai-本地大模型API文档")
-app = gr.mount_gradio_app(app, demo_web.app, path="/")
+UIWeb.register_ui(app, mount_path="/")
 
 
 def run(port: int = 9000, workers=2):
     import uvicorn
     os.environ["MAINPORT"] = str(port)
     uvicorn.run("auto_openai.main:app", host="0.0.0.0",
-                port=port, workers=workers)
+                port=port, workers=workers, limit_concurrency=10000)
 
 
 if __name__ == "__main__":

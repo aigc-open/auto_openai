@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Request, Body, Header, Query
+
 import os
 import gradio as gr
 from auto_openai.utils.init_env import global_config
@@ -10,7 +10,19 @@ from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
 from openai import OpenAI
-import os
+from fastapi import FastAPI, Request, Body, Header, Query
+from nicegui import ui
+from pathlib import Path
+from urllib.parse import urlparse
+
+web_prefix = ""
+
+
+# @app.on_connect
+# def handle_connect(socket):
+#     request = socket.request
+#     url_info = urlparse(str(request.url))
+#     print(url_info)
 
 
 def format_constraints(constraints):
@@ -93,81 +105,54 @@ def generate_api_documentation(schema: Dict[str, Any]):
     return df
 
 
-class APIDocsApp():
-    def __init__(self, title="Demo"):
-        self.title = title
-        self.custom_css = """
-        .navbar {
-            background: linear-gradient(90deg, #1a1a1a, #4a4a4a);
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        
-        .content-container {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 20px;
-            box-shadow: 0 4px 6px 0 rgba(31, 38, 135, 0.37);
-        }
-        
-        .title {
-            background: linear-gradient(45deg, #FF6B6B, #4ECDC4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 2.5em;
-            text-align: center;
-            margin-bottom: 20px;
-            font-weight: bold;
-        }
-        
-        .gradio-dropdown {
-            background: transparent !important;
-            border: 2px solid #ffffff3d !important;
-            color: white !important;
-            font-size: 1.2em !important;
-            transition: all 0.3s ease;
-        }
-        
-        .gradio-dropdown:hover {
-            border-color: #fff !important;
-            box-shadow: 0 0 10px rgba(255,255,255,0.2);
-        }
-        """
+class UILayout:
+    home_readme = os.path.join(project_path, "README.md")
+    demo_path = os.path.join(project_path, "web/tests")
 
-    @property
-    def config(self):
-        return {}
+    def _content_page_(self, model_config, model_type,
+                       model_headers=["name", "description"],
+                       model_headers_desc=["名称", "描述"],
+                       RequestBaseModel=[]):
+        if not model_config:
+            ui.markdown("# 努力开发中...")
+            return
+        with ui.tabs() as tabs:
+            ui.tab("支持的模型列表", label="支持的模型列表")
+            ui.tab("文档参数说明", label="文档参数说明")
+            ui.tab("python 示例", label="python 示例")
+            ui.tab("curl 示例", label="curl 示例")
 
-    def layout(self):
-        with gr.Blocks(css=self.custom_css, theme=gr.themes.Soft()) as demo:
-            with gr.Column(elem_classes="navbar", scale=1):
-                gr.Markdown(self.title, elem_classes="title")
-                compatibility = gr.Dropdown(
-                    choices=list(self.config.keys()),
-                    value="首页",
-                    label="",
-                    container=False
-                )
+        model_list = []
+        for m in model_config:
+            h_ = []
+            for i in model_headers:
+                h_.append(m[i])
+            model_list.append(h_)
 
-            @gr.render(inputs=compatibility)
-            def compatibility_change(compatibility):
-                self.config.get(compatibility)()
+        with ui.tab_panels(tabs, value='支持的模型列表').classes('w-full'):
+            with ui.tab_panel('支持的模型列表').classes('w-full'):
+                ui.table.from_pandas(pd.DataFrame(data=model_list, columns=model_headers_desc), pagination=10).classes(
+                    'w-full h-full flex justify-start')
 
-        return demo
+        with ui.tab_panels(tabs, value='文档参数说明').classes('w-full'):
+            with ui.tab_panel('文档参数说明').classes('w-full'):
+                for r_basemodel in RequestBaseModel:
+                    ui.markdown(f"# {r_basemodel.__name__}")
+                    data = generate_api_documentation(
+                        r_basemodel.model_json_schema())
+                    ui.table.from_pandas(pd.DataFrame(data=data)).classes(
+                        'w-full h-full flex justify-start')
 
-    @property
-    def app(self):
-        return self.layout()
+        with ui.tab_panels(tabs, value='python 示例').classes('w-full'):
+            with ui.tab_panel('python 示例').classes('w-full'):
+                py_path = os.path.join(self.demo_path, f"{model_type}.py")
+                ui.code(self.read_file(py_path), language="python")
 
-    def run(self, server_name="0.0.0.0", port=50001, auth=None):
-        self.app.launch(
-            server_name=server_name,
-            server_port=port,
-            auth=auth
-        )
+        with ui.tab_panels(tabs, value='curl 示例').classes('w-full'):
+            with ui.tab_panel('curl 示例').classes('w-full'):
+                curl_path = os.path.join(
+                    self.demo_path, f"{model_type}.sh")
+                ui.code(self.read_file(curl_path), language="shell")
 
     def read_file(self, file):
         if os.path.exists(file):
@@ -176,219 +161,93 @@ class APIDocsApp():
         else:
             return "# 努力开发中..."
 
+    def header(self):
+        with ui.header().classes('bg-blue-500 text-white flex items-center p-4'):
+            ui.button('首页', on_click=lambda: ui.navigate.to(
+                '/')).classes('mr-2')
+            ui.button('模型广场', on_click=lambda: ui.navigate.to(
+                f'{web_prefix}/docs-models')).classes('mr-2')
+            ui.button('性能查看', on_click=lambda: ui.navigate.to(
+                f'{web_prefix}/docs-performance')).classes('mr-2')
+            ui.button('系统分布式虚拟节点', on_click=lambda: ui.navigate.to(
+                f'{web_prefix}/docs-distributed_nodes'))
 
-class DemoWebApp(APIDocsApp):
-    home_readme = os.path.join(project_path, "README.md")
-    demo_path = os.path.join(project_path, "web/tests")
+    def home_page(self):
+        ui.markdown(self.read_file(self.home_readme))
 
-    def get_client(self):
-        port = int(os.environ.get("MAINPORT"))
-        OPENAI_BASE_URL = f"http://127.0.0.1:{port}/openai/v1"
-        return OpenAI(base_url=OPENAI_BASE_URL, api_key="EMPTY")
-
-    def LLM_playgournd(self, model_list):
-        self.client = self.get_client()
-        model_params = {}
-        for m_ in model_list:
-            model_params[m_[0]] = m_[1]
-        with gr.Accordion(label="⚙️ 点我设置", open=False):
-            with gr.Row():
-                model = gr.Dropdown(
-                    choices=model_params.keys(),
-                    label="Model",
-                )
-                temperature = gr.Slider(
-                    minimum=0.1,
-                    maximum=1.0,
-                    step=0.1,
-                    value=0.0,
-                    label="Temperature",
-                )
-
-        chatbot = gr.Chatbot(
-            elem_id="chatbot", bubble_full_width=False, type="messages")
-
-        chat_input = gr.MultimodalTextbox(
-            interactive=True,
-            file_count="multiple",
-            placeholder="Enter message or upload file...",
-            show_label=False,
-            file_types=[".txt", ".md", ".MD"]
-        )
-
-        def add_message(history, message):
-            for x in message["files"]:
-                # history.append({"role": "system", "content": {"path": x}})
-                with open(x, "r") as f:
-                    history.append({"role": "system", "content": f.read()})
-            if message["text"] is not None:
-                history.append({"role": "user", "content": message["text"]})
-            return history, gr.MultimodalTextbox(value=None, interactive=False)
-
-        def bot(history: list, model, temperature):
-            messages = [
-                {"role": "system", "content": "you are a helpful assistant"}]
-            history_ = []
-            if len(history) >= 10:
-                history_ = history[-10:]
-            else:
-                history_ = history
-            for msg in history_:
-                messages.append(
-                    {"role": msg["role"], "content": msg["content"]})
-            history.append({"role": "assistant", "content": ""})
-            response = self.client.chat.completions.create(
-                model=model,
-                messages=messages,
-                max_tokens=model_params[model],
-                temperature=float(temperature),
-                stream=True,
-                presence_penalty=2.0,
-                frequency_penalty=2.0
-            )
-
-            for chunk in response:
-                chunk_content = chunk.choices[0].delta.content
-                chunk_content = chunk_content if chunk_content else ""
-                history[-1]["content"] += chunk_content
-                yield history
-
-        chat_msg = chat_input.submit(
-            add_message, [chatbot, chat_input], [chatbot, chat_input]
-        )
-        bot_msg = chat_msg.then(
-            bot, [chatbot, model, temperature], chatbot, api_name="bot_response")
-        bot_msg.then(lambda: gr.MultimodalTextbox(
-            interactive=True), None, [chat_input])
-
-    def _content_page_(self, model_config, model_type,
-                       model_headers=["name", "description"],
-                       model_headers_desc=["名称", "描述"],
-                       RequestBaseModel=[]):
-        with gr.Column(elem_classes="content-container"):
-            if not model_config:
-                gr.Markdown("# 努力开发中...")
-                return
-            model_list = []
-            for m in model_config:
-                h_ = []
-                for i in model_headers:
-                    h_.append(m[i])
-                model_list.append(h_)
-
-            with gr.Tabs():
-                with gr.Tab("支持的模型列表"):
-                    gr.DataFrame(
-                        model_list,
-                        headers=model_headers_desc
-                    )
-                if RequestBaseModel is not None:
-                    with gr.Tab("文档参数说明"):
-                        for r_basemodel in RequestBaseModel:
-                            gr.Markdown(f"# {r_basemodel.__name__}")
-                            data = generate_api_documentation(
-                                r_basemodel.model_json_schema())
-                            gr.DataFrame(data)
-                with gr.Tab("python 示例"):
-                    py_path = os.path.join(self.demo_path, f"{model_type}.py")
-                    gr.Code(self.read_file(py_path),
-                            language="python")
-                with gr.Tab("curl 示例"):
-                    curl_path = os.path.join(
-                        self.demo_path, f"{model_type}.sh")
-                    gr.Code(self.read_file(curl_path), language="shell")
-                # with gr.Tab("PlayGround"):
-                #     if model_type == "LLM":
-                #         self.LLM_playgournd(model_list=model_list)
-                #     else:
-                #         gr.Markdown("# 努力开发中...")
-
-    def Home_page(self):
-        with gr.Column(elem_classes="content-container"):
-            gr.Markdown(self.read_file(self.home_readme))
-
-    def None_page(self):
-        with gr.Column(elem_classes="content-container"):
-            gr.Markdown("# 努力开发中...")
-
-    def Models_pages(self):
+    def model_plaza(self):
         data = global_config.get_MODELS_MAPS()
-        with gr.Column():
-            with gr.Tabs():
-                if data.get("LLM"):
-                    with gr.Tab("LLM"):
-                        self._content_page_(
-                            model_config=data.get("LLM"),
-                            model_type="LLM",
-                            model_headers=[
-                                "name", "model_max_tokens", "description"],
-                            model_headers_desc=["名称", "最大支持tokens", "描述"],
-                            RequestBaseModel=[
-                                ChatCompletionRequest, CompletionRequest]
-                    )
-                if data.get("VLLM"):
-                    with gr.Tab("VLLM"):
-                        self._content_page_(
-                            model_config=data.get("VLLM"),
-                            model_type="VLLM",
-                            model_headers=[
-                                "name", "model_max_tokens", "description"],
-                            model_headers_desc=["名称", "最大支持tokens", "描述"],
-                            RequestBaseModel=[ChatCompletionRequest]
-                        )
-                if data.get("SD15MultiControlnetGenerateImage"):
-                    with gr.Tab("SD15MultiControlnetGenerateImage"):
-                        self._content_page_(
-                            model_config=data.get(
-                                "SD15MultiControlnetGenerateImage"),
-                            model_type="SD15MultiControlnetGenerateImage",
-                            RequestBaseModel=[
-                                SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
-                        )
-                if data.get("SolutionBaseGenerateImage"):
-                    with gr.Tab("SolutionBaseGenerateImage"):
-                        self._content_page_(
-                            model_config=data.get("SolutionBaseGenerateImage"),
-                            model_type="SolutionBaseGenerateImage",
-                            RequestBaseModel=[SolutionBaseGenerateImageRequest]
-                        )
-                if data.get("Embedding"):
-                    with gr.Tab("Embedding"):
-                        self._content_page_(
-                            model_config=data.get("Embedding"),
-                            model_type="Embedding",
-                            RequestBaseModel=[EmbeddingsRequest]
-                        )
-                if data.get("Rerank"):
-                    with gr.Tab("Rerank"):
-                        self._content_page_(
-                            model_config=data.get("Rerank"),
-                            model_type="Rerank",
-                            RequestBaseModel=[RerankRequest]
-                        )
-                if data.get("TTS"):
-                    with gr.Tab("TTS"):
-                        self._content_page_(
-                            model_config=data.get("TTS"),
-                            model_type="TTS",
-                            RequestBaseModel=[AudioSpeechRequest]
-                        )
-                if data.get("ASR"):
-                    with gr.Tab("ASR"):
-                        self._content_page_(
-                            model_config=data.get("ASR"),
-                            model_type="ASR",
-                            RequestBaseModel=[AudioTranscriptionsRequest]
-                        )
-                if data.get("Video"):
-                    with gr.Tab("视频生成"):
-                        self._content_page_(
-                            model_config=data.get("Video"),
-                            model_type="Video",
-                            RequestBaseModel=[VideoGenerationsRequest]
-                        )
+        with ui.tabs() as tabs:
+            for model_type in data:
+                ui.tab(model_type, label=model_type)
 
-    def Performance_pages(self):
+        with ui.tab_panels(tabs, value='LLM').classes('w-full'):
+            with ui.tab_panel('LLM'):
+                self._content_page_(
+                    model_config=data.get("LLM"),
+                    model_type="LLM",
+                    model_headers=[
+                        "name", "model_max_tokens", "description"],
+                    model_headers_desc=["名称", "最大支持tokens", "描述"],
+                    RequestBaseModel=[
+                        ChatCompletionRequest, CompletionRequest]
+                )
+            with ui.tab_panel('VLLM'):
+                self._content_page_(
+                    model_config=data.get("VLLM"),
+                    model_type="VLLM",
+                    model_headers=[
+                        "name", "model_max_tokens", "description"],
+                    model_headers_desc=["名称", "最大支持tokens", "描述"],
+                    RequestBaseModel=[ChatCompletionRequest]
+                )
+            with ui.tab_panel('SD15MultiControlnetGenerateImage'):
+                self._content_page_(
+                    model_config=data.get(
+                        "SD15MultiControlnetGenerateImage"),
+                    model_type="SD15MultiControlnetGenerateImage",
+                    RequestBaseModel=[
+                        SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
+                )
+            with ui.tab_panel('SolutionBaseGenerateImage'):
+                with gr.Tab("SolutionBaseGenerateImage"):
+                    self._content_page_(
+                        model_config=data.get("SolutionBaseGenerateImage"),
+                        model_type="SolutionBaseGenerateImage",
+                        RequestBaseModel=[SolutionBaseGenerateImageRequest]
+                    )
+            with ui.tab_panel('Embedding'):
+                self._content_page_(
+                    model_config=data.get("Embedding"),
+                    model_type="Embedding",
+                    RequestBaseModel=[EmbeddingsRequest]
+                )
+            with ui.tab_panel('Rerank'):
+                self._content_page_(
+                    model_config=data.get("Rerank"),
+                    model_type="Rerank",
+                    RequestBaseModel=[RerankRequest]
+                )
+            with ui.tab_panel('TTS'):
+                self._content_page_(
+                    model_config=data.get("TTS"),
+                    model_type="TTS",
+                    RequestBaseModel=[AudioSpeechRequest]
+                )
+            with ui.tab_panel('ASR'):
+                self._content_page_(
+                    model_config=data.get("ASR"),
+                    model_type="ASR",
+                    RequestBaseModel=[AudioTranscriptionsRequest]
+                )
+            with ui.tab_panel('Video'):
+                self._content_page_(
+                    model_config=data.get("Video"),
+                    model_type="Video",
+                    RequestBaseModel=[VideoGenerationsRequest]
+                )
+
+    def performance_view(self):
         def convert_to_dataframe():
             scheduler = Scheduler(redis_client=redis_client, http_request=None,
                                   queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
@@ -410,52 +269,78 @@ class DemoWebApp(APIDocsApp):
 
             return start_server_time_df, tps_spi_df
         start_server_time_df, tps_spi_df = convert_to_dataframe()
-        with gr.Column(elem_classes="content-container"):
-            fresh = gr.Button("刷新", elem_id="refresh-button",
-                              variant="primary")
-            gr.Markdown("""
-            ## 模型加载时间
-            > 注意：模型加载时间是指模型从加载到可以开始处理请求的时间。""")
-            df1 = gr.DataFrame(start_server_time_df, label="模型加载时间")
-            gr.Markdown("""
-            ## 模型性能
-            - 模型性能是指模型在处理请求时的性能指标。
-            - 大语言模型: 每秒生成token的数量。
-            - 图像生成: 每张图像生成所需时间。
-            - 语音识别：每秒处理音频帧的所需时间。
-            - 语音合成：每秒处理音频帧的所需时间。
-            """)
-            df2 = gr.DataFrame(tps_spi_df, label="模型性能")
-            fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df1, df2])
+        ui.markdown("""
+        ## 模型加载时间
+        > 注意：模型加载时间是指模型从加载到可以开始处理请求的时间。""")
+        ui.table.from_pandas(start_server_time_df).classes('w-full text-left')
+        ui.markdown("""
+        ## 模型性能
+        - 模型性能是指模型在处理请求时的性能指标。
+        - 大语言模型: 每秒生成token的数量。
+        - 图像生成: 每张图像生成所需时间。
+        - 语音识别：每秒处理音频帧的所需时间。
+        - 语音合成：每秒处理音频帧的所需时间。
+        """)
 
-    def vnode_pages(self):
+        ui.table.from_pandas(tps_spi_df).classes('w-full text-left')
+
+    def distributed_nodes(self):
         def convert_to_dataframe():
             scheduler = Scheduler(redis_client=redis_client, http_request=None)
             data = scheduler.get_running_node()
             if data:
-                return pd.DataFrame(data)
+                df = pd.DataFrame(data)
+                df['device-ids'] = df['device-ids'].apply(
+                    lambda x: ','.join(map(str, x)) if isinstance(x, list) else str(x))
+                return df
             else:
                 return pd.DataFrame([])
         node_df = convert_to_dataframe()
-        with gr.Column(elem_classes="content-container"):
-            fresh = gr.Button("刷新", elem_id="refresh-button",
-                              variant="primary")
-            gr.Markdown("""
-            ## 虚拟节点
-            > 注意：真实的物理节点可能被虚拟成多个虚拟节点，每个虚拟节点可以处理一个请求。
-            - 每个虚拟节点独占自己的卡，不会被其他卡获取""")
-            df = gr.DataFrame(node_df, label="节点信息")
-            fresh.click(fn=convert_to_dataframe, inputs=[], outputs=[df])
-
-    @property
-    def config(self):
-        return {
-            "首页": self.Home_page,
-            "模型广场": self.Models_pages,
-            "性能查看": self.Performance_pages,
-            "系统分布式虚拟节点": self.vnode_pages
-        }
+        ui.markdown("""
+        ## 虚拟节点
+        > 注意：真实的物理节点可能被虚拟成多个虚拟节点，每个虚拟节点可以处理一个请求。
+        - 每个虚拟节点独占自己的卡，不会被其他卡获取
+        """)
+        ui.table.from_pandas(node_df).classes('w-full text-left')
 
 
-if __name__ == "__main__":
-    DemoWebApp(title="Openai-本地大模型API文档").run()
+layout = UILayout()
+
+
+class UIWeb:
+
+    @ui.page('/')
+    @staticmethod
+    def index():
+        layout.header()
+        layout.home_page()
+
+    @ui.page(f'{web_prefix}/docs-models')
+    @staticmethod
+    def models():
+        layout.header()
+        layout.model_plaza()
+
+    @ui.page(f'{web_prefix}/docs-performance')
+    @staticmethod
+    def performance():
+        layout.header()
+        layout.performance_view()
+
+    @ui.page(f'{web_prefix}/docs-distributed_nodes')
+    @staticmethod
+    def distributed_nodes():
+        layout.header()
+        layout.distributed_nodes()
+
+    @classmethod
+    def register_ui(cls, fastapi_app, mount_path='/'):
+        ui.run_with(
+            fastapi_app,
+            title="AutoOpenai 本地大模型",
+            binding_refresh_interval=10,
+            # NOTE this can be omitted if you want the paths passed to @ui.page to be at the root
+            mount_path=mount_path,
+            # NOTE setting a secret is optional but allows for persistent storage per user
+            storage_secret='pick your private secret here',
+        )
