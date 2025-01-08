@@ -80,7 +80,7 @@ async def completion(
     # 处理模型最终需要完成的token数量
     data.prompt = cut_string(
         str=data.prompt, token_limit=int(model_max_tokens*4/5))
-    
+
     current_token_count = string_token_count(
         str=data.prompt) + 100  # 上浮100token误差
     # 针对coder 续写模型处理
@@ -108,7 +108,8 @@ async def completion(
 
 @app.get("/v1/models")
 async def get_model(request: Request):
-    model_list = global_config.get_MODELS_MAPS()["LLM"] + global_config.get_MODELS_MAPS()["VLLM"]
+    model_list = global_config.get_MODELS_MAPS().get(
+        "LLM", []) + global_config.get_MODELS_MAPS().get("VLLM", [])
     out = []
     for model in model_list:
         out.append({

@@ -1087,14 +1087,10 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 continue
             # 检测模型文件是否存在,如果不存在就直接跳过该模型
             if not system_models_config.get(model_name).is_available():
+                # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
+                # 服务类型不在范围内得也要跳过
                 continue
             self.set_infer_fn()
-            if model_name not in global_config.get_AVAILABLE_MODELS_LIST() and "ALL" not in global_config.get_AVAILABLE_MODELS_LIST():
-                # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
-                continue
-            # 服务类型不在范围内得也要跳过
-            if self.model_config["server_type"] not in global_config.get_SERVER_TYPES_LIST() and "ALL" not in global_config.get_SERVER_TYPES_LIST():
-                continue
             # 更新当前设备的gpu count
             if self.model_config.get("gpu_types", {}).get(global_config.GPU_TYPE):
                 self.model_config["need_gpu_count"] = self.model_config.get(
