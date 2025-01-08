@@ -164,7 +164,9 @@ class UILayout:
     def header(self):
         with ui.header().classes('bg-blue-500 text-white flex items-center p-4'):
             ui.button('首页', on_click=lambda: ui.navigate.to(
-                '/')).classes('mr-2')
+                f'/')).classes('mr-2')
+            ui.button('设计', on_click=lambda: ui.navigate.to(
+                f'{web_prefix}/docs-README')).classes('mr-2')
             ui.button('模型广场', on_click=lambda: ui.navigate.to(
                 f'{web_prefix}/docs-models')).classes('mr-2')
             ui.button('性能查看', on_click=lambda: ui.navigate.to(
@@ -172,8 +174,89 @@ class UILayout:
             ui.button('系统分布式虚拟节点', on_click=lambda: ui.navigate.to(
                 f'{web_prefix}/docs-distributed_nodes'))
 
-    def home_page(self):
+
+    def readme_page(self):
         ui.markdown(self.read_file(self.home_readme))
+
+    def home_page(self):
+        # 顶部横幅
+        with ui.header().classes('w-full bg-blue-600 text-white p-4 flex items-center justify-between'):
+            ui.label('AI 大模型调度系统').classes('text-2xl font-bold')
+            with ui.row().classes('gap-4'):
+                ui.button('文档', on_click=lambda: ui.open('/docs')).classes('bg-white text-blue-600')
+                ui.button('GitHub', on_click=lambda: ui.open('https://github.com')).classes('bg-white text-blue-600')
+
+        # 主要内容区
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            # hero section
+            with ui.card().classes('w-full p-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white'):
+                ui.label('下一代 AI 计算调度系统').classes('text-4xl font-bold mb-4')
+                ui.label('基于 vllm 和 ComfyUI 的高效 AI 计算调度解决方案').classes('text-xl mb-4')
+                with ui.row().classes('gap-4'):
+                    ui.button('快速开始', on_click=lambda: ui.open('/docs/quickstart')).classes('bg-white text-blue-600')
+                    ui.button('查看演示', on_click=lambda: ui.open('/demo')).classes('border border-white')
+
+            # 特性展示
+            with ui.grid(columns=3).classes('gap-4'):
+                for title, desc, icon in [
+                    ('高效推理', '利用 vllm 优化推理速度', '⚡'),
+                    ('智能调度', '自动分配计算资源', '🔄'),
+                    ('弹性扩展', '动态适应工作负载', '📈'),
+                    ('API 兼容', '支持 OpenAI API', '🔌'),
+                    ('多模型支持', '支持多种类型的 AI 模型', '🤖'),
+                    ('分布式计算', '提供分布式计算能力', '🌐'),
+                ]:
+                    with ui.card().classes('p-4'):
+                        ui.label(icon).classes('text-4xl mb-2')
+                        ui.label(title).classes('text-xl font-bold mb-2')
+                        ui.label(desc).classes('text-gray-600')
+
+            # 支持的模型展示
+            with ui.card().classes('w-full p-6'):
+                ui.label('支持的模型类型').classes('text-2xl font-bold mb-4')
+                
+                # 创建饼图展示模型分布
+                fig = go.Figure(data=[go.Pie(
+                    labels=['大语言模型', '多模态', '图像生成', 'Embedding', 'Rerank', 'TTS/ASR', '视频生成'],
+                    values=[40, 10, 15, 10, 10, 10, 5],
+                    hole=.3
+                )])
+                fig.update_layout(
+                    showlegend=True,
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    height=300
+                )
+                ui.plotly(fig).classes('w-full')
+
+            # 技术架构
+            with ui.card().classes('w-full p-6'):
+                ui.label('技术架构').classes('text-2xl font-bold mb-4')
+                with ui.row().classes('gap-4 justify-center'):
+                    for tech in ['VLLM', 'ComfyUI', 'Transformers', 'SD WebUI']:
+                        with ui.card().classes('p-4 text-center'):
+                            ui.label(tech).classes('font-bold')
+
+            # 性能指标
+            with ui.card().classes('w-full p-6'):
+                ui.label('性能指标').classes('text-2xl font-bold mb-4')
+                # 创建性能对比图
+                fig = go.Figure()
+                fig.add_trace(go.Bar(
+                    x=['推理速度', '资源利用率', '并发处理能力'],
+                    y=[90, 85, 95],
+                    name='本系统'
+                ))
+                fig.add_trace(go.Bar(
+                    x=['推理速度', '资源利用率', '并发处理能力'],
+                    y=[60, 55, 65],
+                    name='传统系统'
+                ))
+                fig.update_layout(
+                    barmode='group',
+                    margin=dict(t=0, b=0, l=0, r=0),
+                    height=300
+                )
+                ui.plotly(fig).classes('w-full')
 
     def model_plaza(self):
         data = global_config.get_MODELS_MAPS()
@@ -314,6 +397,12 @@ class UIWeb:
     def index():
         layout.header()
         layout.home_page()
+
+    @ui.page(f'{web_prefix}/docs-README')
+    @staticmethod
+    def readme():
+        layout.header()
+        layout.readme_page()
 
     @ui.page(f'{web_prefix}/docs-models')
     @staticmethod
