@@ -1,4 +1,3 @@
-
 import os
 import gradio as gr
 from auto_openai.utils.init_env import global_config
@@ -14,6 +13,7 @@ from fastapi import FastAPI, Request, Body, Header, Query
 from nicegui import ui
 from pathlib import Path
 from urllib.parse import urlparse
+import plotly.graph_objects as go
 
 web_prefix = ""
 
@@ -114,45 +114,67 @@ class UILayout:
                        model_headers_desc=["名称", "描述"],
                        RequestBaseModel=[]):
         if not model_config:
-            ui.markdown("# 努力开发中...")
+            with ui.card().classes('w-full p-8 bg-white rounded-xl shadow-lg'):
+                ui.markdown("# 努力开发中...").classes(
+                    'text-2xl font-bold text-gray-400')
             return
-        with ui.tabs() as tabs:
-            ui.tab("支持的模型列表", label="支持的模型列表")
-            ui.tab("文档参数说明", label="文档参数说明")
-            ui.tab("python 示例", label="python 示例")
-            ui.tab("curl 示例", label="curl 示例")
 
-        model_list = []
-        for m in model_config:
-            h_ = []
-            for i in model_headers:
-                h_.append(m[i])
-            model_list.append(h_)
+        with ui.card().classes('w-full bg-white'):
+            # Tab navigation
+            with ui.tabs().classes('w-full bg-gray-50 border-b') as tabs:
+                tab_items = [
+                    ("支持的模型列表", "view_list"),
+                    ("文档参数说明", "description"),
+                    ("python 示例", "code"),
+                    ("curl 示例", "terminal")
+                ]
 
-        with ui.tab_panels(tabs, value='支持的模型列表').classes('w-full'):
-            with ui.tab_panel('支持的模型列表').classes('w-full'):
-                ui.table.from_pandas(pd.DataFrame(data=model_list, columns=model_headers_desc), pagination=10).classes(
-                    'w-full h-full flex justify-start')
+                for label, icon in tab_items:
+                    ui.tab(name=label, icon=icon)
+            # Tab content panels
+            with ui.tab_panels(tabs, value="支持的模型列表").classes('w-full'):
+                # Models list panel
+                with ui.tab_panel('支持的模型列表'):
+                    model_list = [[m[i] for i in model_headers]
+                                  for m in model_config]
+                    df = pd.DataFrame(
+                        data=model_list, columns=model_headers_desc)
 
-        with ui.tab_panels(tabs, value='文档参数说明').classes('w-full'):
-            with ui.tab_panel('文档参数说明').classes('w-full'):
-                for r_basemodel in RequestBaseModel:
-                    ui.markdown(f"# {r_basemodel.__name__}")
-                    data = generate_api_documentation(
-                        r_basemodel.model_json_schema())
-                    ui.table.from_pandas(pd.DataFrame(data=data)).classes(
-                        'w-full h-full flex justify-start')
+                    # 优化表格样式
+                    ui.table.from_pandas(
+                        df,
+                        pagination=10,
+                    ).classes('w-full')
 
-        with ui.tab_panels(tabs, value='python 示例').classes('w-full'):
-            with ui.tab_panel('python 示例').classes('w-full'):
-                py_path = os.path.join(self.demo_path, f"{model_type}.py")
-                ui.code(self.read_file(py_path), language="python")
+                # API documentation panel
+                with ui.tab_panel('文档参数说明'):
+                    for r_basemodel in RequestBaseModel:
+                        with ui.card().classes('mb-6'):
+                            ui.markdown(f"# {r_basemodel.__name__}").classes(
+                                'p-4 bg-gradient-to-r from-gray-50 to-gray-100 font-bold border-b'
+                            )
+                            data = generate_api_documentation(
+                                r_basemodel.model_json_schema())
+                            # 优化文档表格样式
+                            ui.table.from_pandas(
+                                pd.DataFrame(data=data),
+                            ).classes('w-full')
 
-        with ui.tab_panels(tabs, value='curl 示例').classes('w-full'):
-            with ui.tab_panel('curl 示例').classes('w-full'):
-                curl_path = os.path.join(
-                    self.demo_path, f"{model_type}.sh")
-                ui.code(self.read_file(curl_path), language="shell")
+                # Python example panel
+                with ui.tab_panel('python 示例'):
+                    with ui.card().classes('overflow-hidden rounded-xl border'):
+                        py_path = os.path.join(
+                            self.demo_path, f"{model_type}.py")
+                        ui.code(self.read_file(py_path),
+                                language="python").classes('w-full')
+
+                # CURL example panel
+                with ui.tab_panel('curl 示例'):
+                    with ui.card().classes('overflow-hidden rounded-xl border'):
+                        curl_path = os.path.join(
+                            self.demo_path, f"{model_type}.sh")
+                        ui.code(self.read_file(curl_path),
+                                language="shell").classes('w-full')
 
     def read_file(self, file):
         if os.path.exists(file):
@@ -162,101 +184,115 @@ class UILayout:
             return "# 努力开发中..."
 
     def header(self):
-        with ui.header().classes('bg-blue-500 text-white flex items-center p-4'):
-            ui.button('首页', on_click=lambda: ui.navigate.to(
-                f'/')).classes('mr-2')
-            ui.button('设计', on_click=lambda: ui.navigate.to(
-                f'{web_prefix}/docs-README')).classes('mr-2')
-            ui.button('模型广场', on_click=lambda: ui.navigate.to(
-                f'{web_prefix}/docs-models')).classes('mr-2')
-            ui.button('性能查看', on_click=lambda: ui.navigate.to(
-                f'{web_prefix}/docs-performance')).classes('mr-2')
-            ui.button('系统分布式虚拟节点', on_click=lambda: ui.navigate.to(
-                f'{web_prefix}/docs-distributed_nodes'))
-
+        with ui.header().classes('bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg p-4'):
+            with ui.row().classes('w-full max-w-7xl mx-auto flex justify-between items-center'):
+                # Logo section
+                with ui.row().classes('flex items-center gap-3'):
+                    ui.icon('auto_awesome').classes('text-3xl text-yellow-300')
+                    ui.label('AI 调度系统').classes('text-2xl font-bold tracking-wide')
+                
+                # Navigation section
+                with ui.row().classes('flex items-center gap-2 ml-auto'):
+                    nav_items = [
+                        ('首页', '/', 'home'),
+                        ('设计', f'{web_prefix}/docs-README', 'architecture'),
+                        ('模型广场', f'{web_prefix}/docs-models', 'apps'),
+                        ('性能查看', f'{web_prefix}/docs-performance', 'speed'),
+                        ('系统分布式虚拟节点', f'{web_prefix}/docs-distributed_nodes', 'hub')
+                    ]
+                    
+                    for label, path, icon in nav_items:
+                        # 检查当前页面路径是否匹配
+                        is_active = ui.page.path == path
+                        
+                        # 根据是否激活设置不同的样式
+                        btn_classes = (
+                            'px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ' +
+                            (
+                                'bg-white text-purple-700 shadow-lg font-medium' 
+                                if is_active else 
+                                'hover:bg-white/20 text-white'
+                            )
+                        )
+                        
+                        with ui.button(on_click=lambda p=path: ui.navigate.to(p)).classes(btn_classes):
+                            ui.icon(icon).classes('text-lg')
+                            ui.label(label)
 
     def readme_page(self):
-        ui.markdown(self.read_file(self.home_readme))
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            ui.markdown(self.read_file(self.home_readme))
 
     def home_page(self):
-        # 顶部横幅
-        with ui.header().classes('w-full bg-blue-600 text-white p-4 flex items-center justify-between'):
-            ui.label('AI 大模型调度系统').classes('text-2xl font-bold')
-            with ui.row().classes('gap-4'):
-                ui.button('文档', on_click=lambda: ui.open('/docs')).classes('bg-white text-blue-600')
-                ui.button('GitHub', on_click=lambda: ui.open('https://github.com')).classes('bg-white text-blue-600')
-
         # 主要内容区
-        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
-            # hero section
-            with ui.card().classes('w-full p-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white'):
-                ui.label('下一代 AI 计算调度系统').classes('text-4xl font-bold mb-4')
-                ui.label('基于 vllm 和 ComfyUI 的高效 AI 计算调度解决方案').classes('text-xl mb-4')
-                with ui.row().classes('gap-4'):
-                    ui.button('快速开始', on_click=lambda: ui.open('/docs/quickstart')).classes('bg-white text-blue-600')
-                    ui.button('查看演示', on_click=lambda: ui.open('/demo')).classes('border border-white')
+        # hero section
+        with ui.card().classes('w-full p-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white'):
+            ui.label('下一代 AI 计算调度系统').classes('text-4xl font-bold mb-4')
+            ui.label('基于 vllm 和 ComfyUI 的高效 AI 计算调度解决方案').classes(
+                'text-xl mb-4')
 
-            # 特性展示
-            with ui.grid(columns=3).classes('gap-4'):
-                for title, desc, icon in [
-                    ('高效推理', '利用 vllm 优化推理速度', '⚡'),
-                    ('智能调度', '自动分配计算资源', '🔄'),
-                    ('弹性扩展', '动态适应工作负载', '📈'),
-                    ('API 兼容', '支持 OpenAI API', '🔌'),
-                    ('多模型支持', '支持多种类型的 AI 模型', '🤖'),
-                    ('分布式计算', '提供分布式计算能力', '🌐'),
-                ]:
-                    with ui.card().classes('p-4'):
-                        ui.label(icon).classes('text-4xl mb-2')
-                        ui.label(title).classes('text-xl font-bold mb-2')
-                        ui.label(desc).classes('text-gray-600')
+        # 特性展示
+        with ui.grid(columns=6).classes('gap-4'):
+            for title, desc, icon in [
+                ('高效推理', '利用 vllm 优化推理速度', '⚡'),
+                ('智能调度', '自动分配计算资源', '🔄'),
+                ('弹性扩展', '动态适应工作负载', '📈'),
+                ('API 兼容', '支持 OpenAI API', '🔌'),
+                ('多模型支持', '支持多种类型的 AI 模型', '🤖'),
+                ('分布式计算', '提供分布式计算能力', '🌐'),
+            ]:
+                with ui.card().classes('p-3'):
+                    ui.label(icon).classes('text-4xl mb-2')
+                    ui.label(title).classes('text-xl font-bold mb-2')
+                    ui.label(desc).classes('text-gray-600')
 
-            # 支持的模型展示
-            with ui.card().classes('w-full p-6'):
-                ui.label('支持的模型类型').classes('text-2xl font-bold mb-4')
-                
-                # 创建饼图展示模型分布
-                fig = go.Figure(data=[go.Pie(
-                    labels=['大语言模型', '多模态', '图像生成', 'Embedding', 'Rerank', 'TTS/ASR', '视频生成'],
-                    values=[40, 10, 15, 10, 10, 10, 5],
-                    hole=.3
-                )])
-                fig.update_layout(
-                    showlegend=True,
-                    margin=dict(t=0, b=0, l=0, r=0),
-                    height=300
-                )
-                ui.plotly(fig).classes('w-full')
+        # 支持的模型展示
+        with ui.card().classes('w-full p-6'):
+            ui.label('支持的模型类型').classes('text-2xl font-bold mb-4')
 
-            # 技术架构
-            with ui.card().classes('w-full p-6'):
-                ui.label('技术架构').classes('text-2xl font-bold mb-4')
-                with ui.row().classes('gap-4 justify-center'):
-                    for tech in ['VLLM', 'ComfyUI', 'Transformers', 'SD WebUI']:
-                        with ui.card().classes('p-4 text-center'):
-                            ui.label(tech).classes('font-bold')
+            # 创建饼图展示模型分布
+            fig = go.Figure(data=[go.Pie(
+                labels=['大语言模型', '多模态', '图像生成', 'Embedding',
+                        'Rerank', 'TTS/ASR', '视频生成'],
+                values=[40, 10, 15, 10, 10, 10, 5],
+                hole=.3
+            )])
+            fig.update_layout(
+                showlegend=True,
+                margin=dict(t=0, b=0, l=0, r=0),
+                height=300
+            )
+            ui.plotly(fig).classes('w-full')
 
-            # 性能指标
-            with ui.card().classes('w-full p-6'):
-                ui.label('性能指标').classes('text-2xl font-bold mb-4')
-                # 创建性能对比图
-                fig = go.Figure()
-                fig.add_trace(go.Bar(
-                    x=['推理速度', '资源利用率', '并发处理能力'],
-                    y=[90, 85, 95],
-                    name='本系统'
-                ))
-                fig.add_trace(go.Bar(
-                    x=['推理速度', '资源利用率', '并发处理能力'],
-                    y=[60, 55, 65],
-                    name='传统系统'
-                ))
-                fig.update_layout(
-                    barmode='group',
-                    margin=dict(t=0, b=0, l=0, r=0),
-                    height=300
-                )
-                ui.plotly(fig).classes('w-full')
+        # 技术架构
+        with ui.card().classes('w-full p-6'):
+            ui.label('技术架构').classes('text-2xl font-bold mb-4')
+            with ui.row().classes('gap-4 justify-center'):
+                for tech in ['VLLM', 'ComfyUI', 'Transformers', 'SD WebUI']:
+                    with ui.card().classes('p-4 text-center'):
+                        ui.label(tech).classes('font-bold')
+
+        # 性能指标
+        with ui.card().classes('w-full p-6'):
+            ui.label('性能指标').classes('text-2xl font-bold mb-4')
+            # 创建性能对比图
+            fig = go.Figure()
+            fig.add_trace(go.Bar(
+                x=['推理速度', '资源利用率', '并发处理能力'],
+                y=[90, 85, 95],
+                name='本系统'
+            ))
+            fig.add_trace(go.Bar(
+                x=['推理速度', '资源利用率', '并发处理能力'],
+                y=[60, 55, 65],
+                name='传统系统'
+            ))
+            fig.update_layout(
+                barmode='group',
+                margin=dict(t=0, b=0, l=0, r=0),
+                height=300
+            )
+            ui.plotly(fig).classes('w-full')
 
     def model_plaza(self):
         data = global_config.get_MODELS_MAPS()
@@ -351,21 +387,43 @@ class UILayout:
                                   'Min', 'New', "Description"]
 
             return start_server_time_df, tps_spi_df
-        start_server_time_df, tps_spi_df = convert_to_dataframe()
-        ui.markdown("""
-        ## 模型加载时间
-        > 注意：模型加载时间是指模型从加载到可以开始处理请求的时间。""")
-        ui.table.from_pandas(start_server_time_df).classes('w-full text-left')
-        ui.markdown("""
-        ## 模型性能
-        - 模型性能是指模型在处理请求时的性能指标。
-        - 大语言模型: 每秒生成token的数量。
-        - 图像生成: 每张图像生成所需时间。
-        - 语音识别：每秒处理音频帧的所需时间。
-        - 语音合成：每秒处理音频帧的所需时间。
-        """)
 
-        ui.table.from_pandas(tps_spi_df).classes('w-full text-left')
+        start_server_time_df, tps_spi_df = convert_to_dataframe()
+
+        # 模型加载时间卡片
+        with ui.card().classes('w-full p-6 mb-6 bg-white rounded-xl shadow-lg'):
+            with ui.row().classes('items-center mb-4'):
+                ui.icon('timer').classes('text-3xl text-blue-600 mr-2')
+                ui.markdown('## 模型加载时间').classes(
+                    'text-xl font-bold text-gray-800')
+
+            ui.markdown("""
+            > 注意：模型加载时间是指模型从加载到可以开始处理请求的时间。
+            """).classes('mb-4 text-gray-600 bg-blue-50 p-4 rounded-lg')
+
+            with ui.element('div').classes('w-full overflow-x-auto'):
+                ui.table.from_pandas(
+                    start_server_time_df
+                ).classes('w-full border-collapse min-w-full')
+
+        # 模型性能卡片
+        with ui.card().classes('w-full p-6 bg-white rounded-xl shadow-lg'):
+            with ui.row().classes('items-center mb-4'):
+                ui.icon('speed').classes('text-3xl text-green-600 mr-2')
+                ui.markdown('## 模型性能').classes(
+                    'text-xl font-bold text-gray-800')
+
+            with ui.element('div').classes('mb-4 bg-green-50 p-4 rounded-lg'):
+                ui.markdown("**性能指标说明：**").classes('text-gray-600')
+                ui.markdown("- 大语言模型: 每秒生成token的数量").classes('text-gray-600')
+                ui.markdown("- 图像生成: 每张图像生成所需时间").classes('text-gray-600')
+                ui.markdown("- 语音识别：每秒处理音频帧的所需时间").classes('text-gray-600')
+                ui.markdown("- 语音合成：每秒处理音频帧的所需时间").classes('text-gray-600')
+
+            with ui.element('div').classes('w-full overflow-x-auto'):
+                ui.table.from_pandas(
+                    tps_spi_df
+                ).classes('w-full border-collapse min-w-full')
 
     def distributed_nodes(self):
         def convert_to_dataframe():
@@ -378,13 +436,52 @@ class UILayout:
                 return df
             else:
                 return pd.DataFrame([])
+
         node_df = convert_to_dataframe()
-        ui.markdown("""
-        ## 虚拟节点
-        > 注意：真实的物理节点可能被虚拟成多个虚拟节点，每个虚拟节点可以处理一个请求。
-        - 每个虚拟节点独占自己的卡，不会被其他卡获取
-        """)
-        ui.table.from_pandas(node_df).classes('w-full text-left')
+
+        # 虚拟节点卡片
+        with ui.card().classes('w-full p-6 bg-white rounded-xl shadow-lg'):
+            # 标题部分
+            with ui.row().classes('items-center mb-4'):
+                ui.icon('hub').classes('text-3xl text-purple-600 mr-2')
+                ui.markdown('## 系统虚拟节点').classes(
+                    'text-xl font-bold text-gray-800')
+
+            # 说明部分
+            with ui.element('div').classes('mb-6 bg-purple-50 p-4 rounded-lg'):
+                ui.markdown(
+                    """> **注意：** 真实的物理节点可能被虚拟成多个虚拟节点，每个虚拟节点可以处理一个请求。""").classes('text-gray-600')
+                ui.markdown('**节点特性：**').classes('text-gray-600')
+                ui.markdown('- 每个虚拟节点独占自己的显卡资源').classes('text-gray-600')
+                ui.markdown('- 节点间资源隔离，互不影响').classes('text-gray-600')
+                ui.markdown('- 支持动态扩缩容').classes('text-gray-600')
+                ui.markdown('- 自动负载均衡').classes('text-gray-600')
+
+            # 节点状态统计
+            if not node_df.empty:
+                with ui.row().classes('gap-4 mb-6'):
+                    with ui.card().classes('flex-1 p-4 bg-green-50 rounded-lg'):
+                        ui.label('活跃节点数').classes('text-sm text-gray-600')
+                        ui.label(str(len(node_df))).classes(
+                            'text-2xl font-bold text-green-600')
+
+                    with ui.card().classes('flex-1 p-4 bg-blue-50 rounded-lg'):
+                        ui.label('总GPU数').classes('text-sm text-gray-600')
+                        total_gpus = node_df['device-ids'].str.count(',') + 1
+                        ui.label(str(total_gpus.sum())).classes(
+                            'text-2xl font-bold text-blue-600')
+
+            # 节点列表表格
+            with ui.element('div').classes('w-full overflow-x-auto'):
+                if node_df.empty:
+                    with ui.element('div').classes('text-center py-8 bg-gray-50 rounded-lg'):
+                        ui.icon('warning').classes(
+                            'text-4xl text-yellow-500 mb-2')
+                        ui.label('暂无运行中的节点').classes('text-gray-500')
+                else:
+                    ui.table.from_pandas(
+                        node_df
+                    ).classes('w-full border-collapse min-w-full')
 
 
 layout = UILayout()
@@ -396,31 +493,36 @@ class UIWeb:
     @staticmethod
     def index():
         layout.header()
-        layout.home_page()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.home_page()
 
     @ui.page(f'{web_prefix}/docs-README')
     @staticmethod
     def readme():
         layout.header()
-        layout.readme_page()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.readme_page()
 
     @ui.page(f'{web_prefix}/docs-models')
     @staticmethod
     def models():
         layout.header()
-        layout.model_plaza()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.model_plaza()
 
     @ui.page(f'{web_prefix}/docs-performance')
     @staticmethod
     def performance():
         layout.header()
-        layout.performance_view()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.performance_view()
 
     @ui.page(f'{web_prefix}/docs-distributed_nodes')
     @staticmethod
     def distributed_nodes():
         layout.header()
-        layout.distributed_nodes()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.distributed_nodes()
 
     @classmethod
     def register_ui(cls, fastapi_app, mount_path='/'):
