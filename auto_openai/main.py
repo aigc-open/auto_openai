@@ -286,7 +286,7 @@ async def get_nodes(request: Request):
 UIWeb.register_ui(app, mount_path="/")
 
 
-def run(port: int = 9000, workers=2):
+def run(port: int = 9000, workers=1, limit_concurrency=10000):
     import uvicorn
     os.environ["MAINPORT"] = str(port)
     uvicorn.run("auto_openai.main:app", host="0.0.0.0",

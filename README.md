@@ -64,7 +64,7 @@ python3 -m auto_openai.utils.support_models.model_config
 ## 启动服务
 
 ```bash
-AUTO_OPENAI_CONFIG_PATH=./conf/config.yaml python3 -m auto_openai.main --port=9000 --workers=2
+AUTO_OPENAI_CONFIG_PATH=./conf/config.yaml python3 -m auto_openai.main --port=9000
 ```
 
 ## 分布式部署算力调度器

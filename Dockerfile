@@ -29,7 +29,7 @@ ENTRYPOINT []
 WORKDIR /app
 
 
-CMD "python3 -m auto_openai.main --port=9000 --workers=1 "
+CMD "python3 -m auto_openai.main --port=9000 "
 
 
 
