@@ -315,69 +315,78 @@ class DemoWebApp(APIDocsApp):
         data = global_config.get_MODELS_MAPS()
         with gr.Column():
             with gr.Tabs():
-                with gr.Tab("LLM"):
-                    self._content_page_(
-                        model_config=data.get("LLM"),
-                        model_type="LLM",
-                        model_headers=[
-                            "name", "model_max_tokens", "description"],
-                        model_headers_desc=["名称", "最大支持tokens", "描述"],
-                        RequestBaseModel=[
-                            ChatCompletionRequest, CompletionRequest]
+                if data.get("LLM"):
+                    with gr.Tab("LLM"):
+                        self._content_page_(
+                            model_config=data.get("LLM"),
+                            model_type="LLM",
+                            model_headers=[
+                                "name", "model_max_tokens", "description"],
+                            model_headers_desc=["名称", "最大支持tokens", "描述"],
+                            RequestBaseModel=[
+                                ChatCompletionRequest, CompletionRequest]
                     )
-                with gr.Tab("VLLM"):
-                    self._content_page_(
-                        model_config=data.get("VLLM"),
-                        model_type="VLLM",
-                        model_headers=[
-                            "name", "model_max_tokens", "description"],
-                        model_headers_desc=["名称", "最大支持tokens", "描述"],
-                        RequestBaseModel=[ChatCompletionRequest]
-                    )
-                with gr.Tab("SD15MultiControlnetGenerateImage"):
-                    self._content_page_(
-                        model_config=data.get(
-                            "SD15MultiControlnetGenerateImage"),
-                        model_type="SD15MultiControlnetGenerateImage",
-                        RequestBaseModel=[
-                            SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
-                    )
-                with gr.Tab("SolutionBaseGenerateImage"):
-                    self._content_page_(
-                        model_config=data.get("SolutionBaseGenerateImage"),
-                        model_type="SolutionBaseGenerateImage",
-                        RequestBaseModel=[SolutionBaseGenerateImageRequest]
-                    )
-                with gr.Tab("Embedding"):
-                    self._content_page_(
-                        model_config=data.get("Embedding"),
-                        model_type="Embedding",
-                        RequestBaseModel=[EmbeddingsRequest]
-                    )
-                with gr.Tab("Rerank"):
-                    self._content_page_(
-                        model_config=data.get("Rerank"),
-                        model_type="Rerank",
-                        RequestBaseModel=[RerankRequest]
-                    )
-                with gr.Tab("TTS"):
-                    self._content_page_(
-                        model_config=data.get("TTS"),
-                        model_type="TTS",
-                        RequestBaseModel=[AudioSpeechRequest]
-                    )
-                with gr.Tab("ASR"):
-                    self._content_page_(
-                        model_config=data.get("ASR"),
-                        model_type="ASR",
-                        RequestBaseModel=[AudioTranscriptionsRequest]
-                    )
-                with gr.Tab("视频生成"):
-                    self._content_page_(
-                        model_config=data.get("Video"),
-                        model_type="Video",
-                        RequestBaseModel=[VideoGenerationsRequest]
-                    )
+                if data.get("VLLM"):
+                    with gr.Tab("VLLM"):
+                        self._content_page_(
+                            model_config=data.get("VLLM"),
+                            model_type="VLLM",
+                            model_headers=[
+                                "name", "model_max_tokens", "description"],
+                            model_headers_desc=["名称", "最大支持tokens", "描述"],
+                            RequestBaseModel=[ChatCompletionRequest]
+                        )
+                if data.get("SD15MultiControlnetGenerateImage"):
+                    with gr.Tab("SD15MultiControlnetGenerateImage"):
+                        self._content_page_(
+                            model_config=data.get(
+                                "SD15MultiControlnetGenerateImage"),
+                            model_type="SD15MultiControlnetGenerateImage",
+                            RequestBaseModel=[
+                                SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
+                        )
+                if data.get("SolutionBaseGenerateImage"):
+                    with gr.Tab("SolutionBaseGenerateImage"):
+                        self._content_page_(
+                            model_config=data.get("SolutionBaseGenerateImage"),
+                            model_type="SolutionBaseGenerateImage",
+                            RequestBaseModel=[SolutionBaseGenerateImageRequest]
+                        )
+                if data.get("Embedding"):
+                    with gr.Tab("Embedding"):
+                        self._content_page_(
+                            model_config=data.get("Embedding"),
+                            model_type="Embedding",
+                            RequestBaseModel=[EmbeddingsRequest]
+                        )
+                if data.get("Rerank"):
+                    with gr.Tab("Rerank"):
+                        self._content_page_(
+                            model_config=data.get("Rerank"),
+                            model_type="Rerank",
+                            RequestBaseModel=[RerankRequest]
+                        )
+                if data.get("TTS"):
+                    with gr.Tab("TTS"):
+                        self._content_page_(
+                            model_config=data.get("TTS"),
+                            model_type="TTS",
+                            RequestBaseModel=[AudioSpeechRequest]
+                        )
+                if data.get("ASR"):
+                    with gr.Tab("ASR"):
+                        self._content_page_(
+                            model_config=data.get("ASR"),
+                            model_type="ASR",
+                            RequestBaseModel=[AudioTranscriptionsRequest]
+                        )
+                if data.get("Video"):
+                    with gr.Tab("视频生成"):
+                        self._content_page_(
+                            model_config=data.get("Video"),
+                            model_type="Video",
+                            RequestBaseModel=[VideoGenerationsRequest]
+                        )
 
     def Performance_pages(self):
         def convert_to_dataframe():

@@ -21,8 +21,12 @@ class CustomRequestMiddleware(BaseHTTPMiddleware):
 
 
 redis_client = RedisClient(config=global_config.REDIS_CLIENT_CONFIG)
-s3_client = OSSManager(endpoint_url=global_config.OSS_CLIENT_CONFIG['endpoint_url'],
-                aws_access_key_id=global_config.OSS_CLIENT_CONFIG['aws_access_key_id'],
-                aws_secret_access_key=global_config.OSS_CLIENT_CONFIG['aws_secret_access_key'],
-                region_name=global_config.OSS_CLIENT_CONFIG['region_name'])
+if global_config.OSS_CLIENT_CONFIG:
+    s3_client: OSSManager = OSSManager(endpoint_url=global_config.OSS_CLIENT_CONFIG['endpoint_url'],
+                                       aws_access_key_id=global_config.OSS_CLIENT_CONFIG['aws_access_key_id'],
+                                       aws_secret_access_key=global_config.OSS_CLIENT_CONFIG[
+                                           'aws_secret_access_key'],
+                                       region_name=global_config.OSS_CLIENT_CONFIG['region_name'])
+else:
+    s3_client: OSSManager = None
 scheduler = Scheduler(redis_client=redis_client)
