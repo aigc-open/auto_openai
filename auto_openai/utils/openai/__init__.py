@@ -345,7 +345,7 @@ class Scheduler:
                 else:
                     await asyncio.sleep(0.5)
         self.set_request_status_ing(
-            request_id=request_id, value="ing", pexpire=0.01*1000)  # 10ms
+            request_id=request_id, pexpire=0.01*1000)  # 10ms
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         async for data_ in self.stream(request=request, request_id=request_id):
