@@ -13,7 +13,7 @@ from enum import Enum
 from fastapi import FastAPI, Request, Body, Header, Query, File, UploadFile, Form
 from typing import Optional, Union, List
 from auto_openai.utils.cut_messages import messages_token_count, string_token_count, cut_string, cut_messages
-from auto_openai.utils.depends import get_model_config, get_combine_prompt_function
+from auto_openai.utils.depends import get_model_config, get_combine_prompt_function, get_running_models
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from pydantic import BaseModel
 from fastapi.responses import FileResponse
@@ -256,17 +256,7 @@ async def get_queue_length(request: Request, request_id: str = gen_request_id())
 
 @app.get("/v1/running_models")
 async def running_models(request: Request):
-    scheduler = Scheduler(redis_client=redis_client, http_request=request)
-    # scheduler.set_running_model(model_name="Llama-2-13b-chat-hf")
-    result = []
-    for model_name in scheduler.get_running_model():
-        model_config = scheduler.get_model_config(model_name=model_name)
-        if model_config:
-            result.append(model_config)
-    return {
-        "count": len(result),
-        "results": result
-    }
+    return get_running_models()
 
 
 @app.get("/v1/profiler")

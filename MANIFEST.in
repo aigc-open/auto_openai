@@ -3,4 +3,5 @@ include *.txt
 
 # 包含特定的文件夹及其内容
 recursive-include auto_openai/lm_server *
+recursive-include auto_openai/statics *
 

@@ -172,6 +172,15 @@ class Scheduler:
             out.insert(0, str(id_.decode()))
         return out
 
+    def get_request_queue_all_length(self):
+        """大模型任务队列长度"""
+        keys = self.redis_client.keys(pattern=f"lm-request-queue-*")
+        length = 0
+        for key in keys:
+            length += self.redis_client.llen(name=key)
+        return length
+        
+
     def get_request_queue_names(self):
         """大模型任务队列有请求的模型用于轮询遍历"""
         keys = self.redis_client.keys(pattern=f"lm-request-queue-*")
@@ -202,6 +211,10 @@ class Scheduler:
         if data is not None:
             return data.decode()
         return ""
+
+    def get_request_status_ing_total(self):
+        keys = self.redis_client.keys(pattern=f"lm-request-status-*")
+        return len(keys)
 
     def set_result(self, request_id, value: RedisStreamInfer):
         """将推理结果推向数据库"""
@@ -286,7 +299,7 @@ class Scheduler:
             return json.loads(data.decode())
         return {}
 
-    async def stream(self, request: ChatCompletionRequest, request_id=gen_request_id()) -> RedisStreamInfer:
+    async def stream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         self.set_request_queue(model_name=request.model, request_id=request_id)
         # 排队
         start_time = time.time()
@@ -296,7 +309,7 @@ class Scheduler:
             request_data: dict = request.dict()
             # 判断是否存在suffix 这个key
             if "suffix" in request_data:
-                del request_data["suffix"] # 
+                del request_data["suffix"]
             self.set_request_params(
                 request_id=request_id, value=json.dumps(request_data))
             await asyncio.sleep(0.1)
@@ -331,6 +344,8 @@ class Scheduler:
                     break
                 else:
                     await asyncio.sleep(0.5)
+        self.set_request_status_ing(
+            request_id=request_id, value="ing", pexpire=0.01*1000)  # 10ms
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         async for data_ in self.stream(request=request, request_id=request_id):

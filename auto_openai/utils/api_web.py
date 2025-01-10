@@ -4,17 +4,22 @@ from auto_openai.utils.init_env import global_config
 from auto_openai import project_path
 import pandas as pd
 from typing import Dict, Any
-from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  AudioSpeechRequest, \
-    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, SolutionBaseGenerateImageRequest, VideoGenerationsRequest, SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit
+from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  \
+    AudioSpeechRequest, \
+    EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, \
+    SolutionBaseGenerateImageRequest, VideoGenerationsRequest, \
+    SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
+from auto_openai.utils.depends import get_running_models
+from auto_openai.utils.public import scheduler
 from openai import OpenAI
 from fastapi import FastAPI, Request, Body, Header, Query
 from nicegui import ui
 from pathlib import Path
 from urllib.parse import urlparse
 import plotly.graph_objects as go
-
+from PIL import Image
 web_prefix = ""
 
 
@@ -109,6 +114,42 @@ class UILayout:
     home_readme = os.path.join(project_path, "README.md")
     demo_path = os.path.join(project_path, "web/tests")
 
+    def _stat_card_(self, label: str, value: int):
+        with ui.row().classes('gap-4 p-4 mb-2'):
+            with ui.card().classes('flex-1 p-4 bg-blue-50 rounded-xl'):
+                ui.label(label).classes(
+                    'text-sm text-gray-600 mb-1')
+                ui.label(str(value)).classes(
+                    'text-2xl font-bold text-blue-600')
+
+    def _models_card_(self, data: pd.DataFrame):
+        with ui.grid(columns=3).classes('gap-4 p-4'):
+            for _, row in data.iterrows():
+                with ui.card().classes('p-4 hover:shadow-lg transition-all duration-300 bg-white border rounded-xl h-full'):
+                    # 模型名称 - 使用 column 布局来处理长名称
+                    with ui.column().classes('gap-2 mb-3 w-full'):
+                        with ui.row().classes('items-center gap-2 mb-1'):
+                            ui.icon('model_training').classes(
+                                'text-2xl text-purple-600 shrink-0')
+                        ui.label(row['名称']).classes(
+                            'text-lg font-bold text-gray-800 break-all')
+
+                    # 最大支持tokens（如果存在）
+                    if '最大支持tokens' in row:
+                        with ui.row().classes('items-center gap-2 mb-2'):
+                            ui.icon('data_array').classes(
+                                'text-blue-500 shrink-0')
+                            ui.label(f"最大支持: {row['最大支持tokens']}").classes(
+                                'text-sm text-gray-600')
+
+                    # 描述
+                    if '描述' in row:
+                        with ui.row().classes('items-start gap-2'):
+                            ui.icon('description').classes(
+                                'text-gray-400 mt-1 shrink-0')
+                            ui.label(row['描述']).classes(
+                                'text-sm text-gray-600 break-words')
+
     def _content_page_(self, model_config, model_type,
                        model_headers=["name", "description"],
                        model_headers_desc=["名称", "描述"],
@@ -139,34 +180,11 @@ class UILayout:
                                   for m in model_config]
                     df = pd.DataFrame(
                         data=model_list, columns=model_headers_desc)
-                    
+
                     # 添加数据统计卡片
-                    with ui.row().classes('gap-4 p-4 mb-2'):
-                        with ui.card().classes('flex-1 p-4 bg-blue-50 rounded-xl'):
-                            ui.label('模型总数').classes('text-sm text-gray-600 mb-1')
-                            ui.label(str(len(df))).classes('text-2xl font-bold text-blue-600')
-                        
+                    self._stat_card_(label="模型总数", value=len(df))
                     # 模型卡片网格
-                    with ui.grid(columns=3).classes('gap-4 p-4'):
-                        for _, row in df.iterrows():
-                            with ui.card().classes('p-4 hover:shadow-lg transition-all duration-300 bg-white border rounded-xl h-full'):
-                                # 模型名称 - 使用 column 布局来处理长名称
-                                with ui.column().classes('gap-2 mb-3 w-full'):
-                                    with ui.row().classes('items-center gap-2 mb-1'):
-                                        ui.icon('model_training').classes('text-2xl text-purple-600 shrink-0')
-                                    ui.label(row['名称']).classes('text-lg font-bold text-gray-800 break-all')
-                                
-                                # 最大支持tokens（如果存在）
-                                if '最大支持tokens' in row:
-                                    with ui.row().classes('items-center gap-2 mb-2'):
-                                        ui.icon('data_array').classes('text-blue-500 shrink-0')
-                                        ui.label(f"最大支持: {row['最大支持tokens']}").classes('text-sm text-gray-600')
-                                
-                                # 描述
-                                if '描述' in row:
-                                    with ui.row().classes('items-start gap-2'):
-                                        ui.icon('description').classes('text-gray-400 mt-1 shrink-0')
-                                        ui.label(row['描述']).classes('text-sm text-gray-600 break-words')
+                    self._models_card_(data=df)
 
                 # API documentation panel
                 with ui.tab_panel('文档参数说明'):
@@ -211,32 +229,36 @@ class UILayout:
                 # Logo section
                 with ui.row().classes('flex items-center gap-3'):
                     ui.icon('auto_awesome').classes('text-3xl text-yellow-300')
-                    ui.label('AI 调度系统').classes('text-2xl font-bold tracking-wide')
-                
+                    ui.label('AI 调度系统').classes(
+                        'text-2xl font-bold tracking-wide')
+
                 # Navigation section
                 with ui.row().classes('flex items-center gap-2 ml-auto'):
                     nav_items = [
                         ('首页', '/', 'home'),
                         ('设计', f'{web_prefix}/docs-README', 'architecture'),
                         ('模型广场', f'{web_prefix}/docs-models', 'apps'),
+                        ("运行时", f'{web_prefix}/docs-runtime', 'terminal'),
                         ('性能查看', f'{web_prefix}/docs-performance', 'speed'),
-                        ('系统分布式虚拟节点', f'{web_prefix}/docs-distributed_nodes', 'hub')
+                        ('系统分布式虚拟节点',
+                         f'{web_prefix}/docs-distributed_nodes', 'hub'),
+                        ('Cursor接入', f'{web_prefix}/docs-cursor', 'mouse')
                     ]
-                    
+
                     for label, path, icon in nav_items:
                         # 检查当前页面路径是否匹配
                         is_active = ui.page.path == path
-                        
+
                         # 根据是否激活设置不同的样式
                         btn_classes = (
                             'px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ' +
                             (
-                                'bg-white text-purple-700 shadow-lg font-medium' 
-                                if is_active else 
+                                'bg-white text-purple-700 shadow-lg font-medium'
+                                if is_active else
                                 'hover:bg-white/20 text-white'
                             )
                         )
-                        
+
                         with ui.button(on_click=lambda p=path: ui.navigate.to(p)).classes(btn_classes):
                             ui.icon(icon).classes('text-lg')
                             ui.label(label)
@@ -254,7 +276,7 @@ class UILayout:
                 'text-xl mb-4')
 
         # 特性展示
-        with ui.grid(columns=6).classes('gap-4'):
+        with ui.grid(columns=7).classes('gap-4'):
             for title, desc, icon in [
                 ('高效推理', '利用 vllm 优化推理速度', '⚡'),
                 ('智能调度', '自动分配计算资源', '🔄'),
@@ -262,6 +284,7 @@ class UILayout:
                 ('API 兼容', '支持 OpenAI API', '🔌'),
                 ('多模型支持', '支持多种类型的 AI 模型', '🤖'),
                 ('分布式计算', '提供分布式计算能力', '🌐'),
+                ('异构算力支持', '支持 GPU、CPU、GCU 等多种算力', '🚀')
             ]:
                 with ui.card().classes('p-3'):
                     ui.label(icon).classes('text-4xl mb-2')
@@ -505,6 +528,105 @@ class UILayout:
                         node_df
                     ).classes('w-full border-collapse min-w-full')
 
+    def cursor_view(self):
+        cursor_settings = Image.open(os.path.join(
+            project_path, "statics", 'cursor-settings.png'))
+        cursor_code_generate = Image.open(os.path.join(
+            project_path, "statics", 'cursor-code-generate.png'))
+        cursor_code_chat = Image.open(os.path.join(
+            project_path, "statics", 'cursor-code-chat.png'))
+
+        with ui.column().classes('w-full max-w-7xl mx-auto p-8 space-y-12'):
+            # 标题部分
+            with ui.card().classes('w-full bg-gradient-to-r from-blue-50 to-indigo-50 p-6'):
+                ui.markdown('# Cursor 代码编程助手').classes(
+                    'text-3xl font-bold text-gray-800 mb-4')
+                ui.markdown(
+                    "Cursor 是一个基于大语言模型（LLM）的智能代码生成工具，能显著提升您的开发效率。"
+                ).classes('text-lg text-gray-600')
+
+            # 下载部分
+            with ui.card().classes('w-full p-6 shadow-lg hover:shadow-xl transition-shadow'):
+                ui.markdown("### 🚀 快速开始").classes(
+                    'text-xl font-semibold text-gray-800 mb-4')
+                with ui.row().classes('items-center gap-4'):
+                    ui.link(
+                        '下载 Cursor',
+                        'https://www.cursor.com/'
+                    ).classes('px-6 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors')
+                    ui.markdown(
+                        "访问 [Cursor 官网](https://www.cursor.com/) 了解更多").classes('text-gray-600')
+
+            # 设置指南
+            with ui.card().classes('w-full'):
+                ui.markdown("### ⚙️ 代理设置").classes(
+                    'text-xl font-semibold text-gray-800')
+                ui.image(cursor_settings).classes(
+                    'w-full max-w-2xl rounded-lg shadow-md mx-auto')
+
+                # 代码生成
+            with ui.card().classes('w-full p-6 space-y-6'):
+                ui.markdown("### 💡 代码生成").classes(
+                    'text-xl font-semibold text-gray-800')
+                ui.image(cursor_code_generate).classes(
+                    'w-full rounded-lg shadow-md')
+
+            # 代码聊天
+            with ui.card().classes('w-full p-6 space-y-6'):
+                ui.markdown("### 💬 代码聊天").classes(
+                    'text-xl font-semibold text-gray-800')
+                ui.image(cursor_code_chat).classes(
+                    'w-full rounded-lg shadow-md')
+
+    def runtime_view(self):
+        with ui.column().classes('w-full max-w-7xl mx-auto p-8 space-y-8'):
+            # 状态统计卡片组
+            with ui.row().classes('gap-6 w-full'):
+                # 处理中的任务
+                with ui.card().classes('flex-1 p-6 bg-blue-50 rounded-xl hover:shadow-lg transition-shadow'):
+                    with ui.column().classes('space-y-2'):
+                        ui.label('处理中的任务').classes('text-lg text-gray-600')
+                        with ui.row().classes('items-center gap-2'):
+                            ui.icon('pending').classes(
+                                'text-2xl text-blue-600')
+                            ui.label(str(scheduler.get_request_status_ing_total())).classes(
+                                'text-3xl font-bold text-blue-600')
+
+                # 排队中的任务
+                with ui.card().classes('flex-1 p-6 bg-orange-50 rounded-xl hover:shadow-lg transition-shadow'):
+                    with ui.column().classes('space-y-2'):
+                        ui.label('排队中的任务').classes('text-lg text-gray-600')
+                        with ui.row().classes('items-center gap-2'):
+                            ui.icon('queue').classes(
+                                'text-2xl text-orange-600')
+                            ui.label(str(scheduler.get_request_queue_all_length())).classes(
+                                'text-3xl font-bold text-orange-600')
+
+            # 运行中的模型列表
+            with ui.card().classes('w-full p-6'):
+                with ui.row().classes('items-center gap-4 mb-6'):
+                    ui.icon('model_training').classes(
+                        'text-2xl text-purple-600')
+                    ui.markdown('## 运行中的模型').classes(
+                        'text-2xl font-bold text-gray-800')
+
+                # 获取并展示模型数据
+                data = get_running_models().get("results", [])
+                if not data or len(data) == 0:
+                    with ui.column().classes('w-full items-center py-12 space-y-4'):
+                        ui.icon('error_outline').classes(
+                            'text-4xl text-gray-400')
+                        ui.label('暂无运行中的模型').classes('text-xl text-gray-400')
+                else:
+                    model_headers = [
+                        "name", "model_max_tokens", "description"]
+                    model_headers_desc = ["名称", "最大支持tokens", "描述"]
+                    model_list = [[m[i] for i in model_headers]
+                                  for m in data]
+                    df = pd.DataFrame(
+                        data=model_list, columns=model_headers_desc)
+                    self._models_card_(df)
+
 
 layout = UILayout()
 
@@ -532,6 +654,13 @@ class UIWeb:
         with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
             layout.model_plaza()
 
+    @ui.page(f'{web_prefix}/docs-runtime')
+    @staticmethod
+    def runtime():
+        layout.header()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.runtime_view()
+
     @ui.page(f'{web_prefix}/docs-performance')
     @staticmethod
     def performance():
@@ -545,6 +674,13 @@ class UIWeb:
         layout.header()
         with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
             layout.distributed_nodes()
+
+    @ui.page(f'{web_prefix}/docs-cursor')
+    @staticmethod
+    def cursor():
+        layout.header()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.cursor_view()
 
     @classmethod
     def register_ui(cls, fastapi_app, mount_path='/'):

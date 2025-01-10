@@ -20,6 +20,18 @@ def get_models_config_list():
     return scheduler.get_available_model()
 
 
+def get_running_models():
+    result = []
+    for model_name in scheduler.get_running_model():
+        model_config = scheduler.get_model_config(model_name=model_name)
+        if model_config:
+            result.append(model_config)
+    return {
+        "count": len(result),
+        "results": result
+    }
+
+
 def get_combine_prompt_function(name):
     for i in system_models_config.list():
         if i.name == name:
