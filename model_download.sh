@@ -33,6 +33,8 @@ cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-14B.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-14B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git 

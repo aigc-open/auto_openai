@@ -191,52 +191,53 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-7B-Instruct",
                                                        "EF-S60": GPUConfig(need_gpu_count=1)
                                                    })
                                                ]))
-system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-14B",
+system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
-                                               description="Qwen2.5-Coder-14B",
+                                               description="Qwen2.5-Coder-32B",
                                                need_gpu_count=1,
                                                template="template_qwen.jinja",
                                                stop=["<|im_start", "<|",
                                                      "<|im_end|>", "<|endoftext|>"],
                                                gpu_types={
-                                                   "NV-A100": GPUConfig(need_gpu_count=1),
-                                                   "NV-4090": GPUConfig(need_gpu_count=2),
-                                                   "NV-A30": GPUConfig(need_gpu_count=2),
-                                                   "EF-S60": GPUConfig(need_gpu_count=1)
+                                                   "NV-A100": GPUConfig(need_gpu_count=2),
+                                                   "NV-4090": GPUConfig(need_gpu_count=4),
+                                                   "NV-A30": GPUConfig(need_gpu_count=4),
+                                                   "EF-S60": GPUConfig(need_gpu_count=2)
                                                }
                                                ).extend([
                                                    MultiGPUS(model_max_tokens=10*1024, gpu_types={
-                                                       "NV-A100": GPUConfig(need_gpu_count=1),
-                                                       "NV-4090": GPUConfig(need_gpu_count=2),
-                                                       "NV-A30": GPUConfig(need_gpu_count=2),
-                                                       "EF-S60": GPUConfig(need_gpu_count=1)
+                                                       "NV-A100": GPUConfig(need_gpu_count=2),
+                                                       "NV-4090": GPUConfig(need_gpu_count=4),
+                                                       "NV-A30": GPUConfig(need_gpu_count=4),
+                                                       "EF-S60": GPUConfig(need_gpu_count=2)
                                                    })
                                                ]))
-system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-14B-Instruct",
+system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
-                                               description="Qwen2.5-Coder-14B-Instruct",
+                                               description="Qwen2.5-Coder-32B-Instruct",
                                                need_gpu_count=1,
                                                template="template_qwen.jinja",
                                                stop=["<|im_start", "<|",
                                                      "<|im_end|>", "<|endoftext|>"],
                                                gpu_types={
-                                                   "NV-A100": GPUConfig(need_gpu_count=1),
-                                                   "NV-4090": GPUConfig(need_gpu_count=2),
-                                                   "NV-A30": GPUConfig(need_gpu_count=2),
-                                                   "EF-S60": GPUConfig(need_gpu_count=1)
+                                                   "NV-A100": GPUConfig(need_gpu_count=2),
+                                                   "NV-4090": GPUConfig(need_gpu_count=4),
+                                                   "NV-A30": GPUConfig(need_gpu_count=4),
+                                                   "EF-S60": GPUConfig(need_gpu_count=2)
                                                }
                                                ).extend([
                                                    MultiGPUS(model_max_tokens=10*1024, gpu_types={
-                                                       "NV-A100": GPUConfig(need_gpu_count=1),
-                                                       "NV-4090": GPUConfig(need_gpu_count=2),
-                                                       "NV-A30": GPUConfig(need_gpu_count=2),
-                                                       "EF-S60": GPUConfig(need_gpu_count=1)
+                                                       "NV-A100": GPUConfig(need_gpu_count=2),
+                                                       "NV-4090": GPUConfig(need_gpu_count=4),
+                                                       "NV-A30": GPUConfig(need_gpu_count=4),
+                                                       "EF-S60": GPUConfig(need_gpu_count=2)
                                                    })
                                                ]))
+
 system_models_config.extend(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-base",
                                                    server_type="vllm",
                                                    api_type="LLM",
