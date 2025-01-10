@@ -619,8 +619,8 @@ class UILayout:
                         ui.label('暂无运行中的模型').classes('text-xl text-gray-400')
                 else:
                     model_headers = [
-                        "name", "model_max_tokens", "description"]
-                    model_headers_desc = ["名称", "最大支持tokens", "描述"]
+                        "name", "description"]
+                    model_headers_desc = ["名称", "描述"]
                     model_list = [[m[i] for i in model_headers]
                                   for m in data]
                     df = pd.DataFrame(
