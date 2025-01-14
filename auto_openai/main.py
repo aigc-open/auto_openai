@@ -272,6 +272,11 @@ async def get_nodes(request: Request):
     scheduler = Scheduler(redis_client=redis_client, http_request=request)
     return scheduler.get_running_node()
 
+
+@app.get("/v1/get_available_model")
+async def get_available_model(request: Request):
+    return global_config.get_MODELS_MAPS()
+
 ########################### web html ############################
 UIWeb.register_ui(app, mount_path="/")
 
@@ -280,7 +285,7 @@ def run(port: int = 9000, workers=1, limit_concurrency=10000):
     import uvicorn
     os.environ["MAINPORT"] = str(port)
     uvicorn.run("auto_openai.main:app", host="0.0.0.0",
-                port=port, workers=workers, limit_concurrency=10000)
+                port=port, workers=1, limit_concurrency=10000)
 
 
 if __name__ == "__main__":
