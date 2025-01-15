@@ -382,6 +382,9 @@ system_models_config.add(TTSConfig(name="maskgct-tts-clone",
                                    gpu_types=get_gpu_types_count(24)
                                    ))
 
+########################################## 定制化模型 ###########################################
+for m in global_config.CUSTOM_MODLES:
+    system_models_config.add(LLMConfig(**m))
 # usage
 # python3 -m auto_openai.utils.support_models.model_config
 

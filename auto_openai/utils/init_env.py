@@ -43,6 +43,7 @@ class GlobalConfig(BaseModel):
     AVAILABLE_MODELS: str = "ALL"
     LM_SERVER_BASE_PORT: int = 30000
     LABEL: str = "auto_openai_scheduler"
+    CUSTOM_MODLES: list = []
 
     def get_AVAILABLE_MODELS_LIST(self):
         return self.AVAILABLE_MODELS.split(",")
