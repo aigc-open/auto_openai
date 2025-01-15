@@ -23,7 +23,7 @@ from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, S
 from auto_openai.utils.api_web import UIWeb
 
 
-app = FastAPI(root_path="/openai")
+app = FastAPI(root_path="/openai", title="Auto Openai")
 
 app.add_middleware(
     CORSMiddleware,

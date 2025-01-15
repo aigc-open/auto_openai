@@ -4,6 +4,45 @@ from math import ceil
 # 24*2=48
 # 24*3=72
 # 40*4=160
+# 设备显存
+supported_device = {
+    "NV-A100": {
+        "mem": 40,
+        "bandwidth": "1555GB/s",
+    },
+    "NV-4090": {
+        "mem": 24,
+        "bandwidth": "1008GB/s",
+    },
+    "NV-A30": {
+        "mem": 24,
+        "bandwidth": "933GB/s",
+    },
+    "NV-3090": {
+        "mem": 24,
+        "bandwidth": "936GB/s"
+    },
+    "EF-S60": {
+        "mem": 48,
+        "bandwidth": "650GB"
+    },
+    "NV-4060": {
+        "mem": 8,
+        "bandwidth": "288GB/s"
+    },
+    "NV-P40": {
+        "mem": 24,
+        "bandwidth": "346GB/s"
+    },
+    "NV-3060": {
+        "mem": 12,
+        "bandwidth": "360GB/s"
+    },
+    "CPU": {
+        "mem": 99999,
+        "bandwidth": "0GB"
+    },
+}
 
 
 def get_gpu_types_count(mem: int):
@@ -11,23 +50,11 @@ def get_gpu_types_count(mem: int):
     valid_counts = [1, 2, 4, 8]
     result = {}
 
-    gpu_counts = {
-        "NV-A100": ceil(mem / 40),
-        "NV-4090": ceil(mem / 24),
-        "NV-A30": ceil(mem / 24),
-        "NV-3090": ceil(mem / 24),
-        "EF-S60": ceil(mem / 48),
-        "NV-4060": ceil(mem / 16),
-        "NV-P40": ceil(mem / 24),
-        "NV-3060": ceil(mem / 12),
-        "CPU": 1,
-    }
-
-    for gpu_type, count in gpu_counts.items():
-        # 找到最小的有效值（大于等于计算出的count）
+    for k, v in supported_device.items():
+        count = ceil(mem / v.get("mem", 99999))
         valid_count = next((x for x in valid_counts if x >= count), None)
         if valid_count is not None and valid_count <= 8:
-            result[gpu_type] = GPUConfig(need_gpu_count=valid_count)
+            result[k] = GPUConfig(need_gpu_count=valid_count)
 
     return result
 

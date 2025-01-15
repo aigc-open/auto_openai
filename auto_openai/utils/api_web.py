@@ -11,8 +11,9 @@ from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  
     SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit
 from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_client
 from auto_openai.utils.openai import Scheduler
-from auto_openai.utils.depends import get_running_models
+from auto_openai.utils.depends import get_running_models, get_models_config_list
 from auto_openai.utils.public import scheduler
+from auto_openai.utils.support_models.model_config import supported_device, system_models_config
 from openai import OpenAI
 from fastapi import FastAPI, Request, Body, Header, Query
 from nicegui import ui
@@ -122,8 +123,8 @@ class UILayout:
                 ui.label(str(value)).classes(
                     'text-2xl font-bold text-blue-600')
 
-    def _models_card_(self, data: pd.DataFrame):
-        with ui.grid(columns=3).classes('gap-4 p-4'):
+    def _models_card_(self, data: pd.DataFrame, columns=3):
+        with ui.grid(columns=columns).classes('gap-4 p-4'):
             for _, row in data.iterrows():
                 with ui.card().classes('p-4 hover:shadow-lg transition-all duration-300 bg-white border rounded-xl h-full'):
                     # 模型名称 - 使用 column 布局来处理长名称
@@ -131,8 +132,8 @@ class UILayout:
                         with ui.row().classes('items-center gap-2 mb-1'):
                             ui.icon('model_training').classes(
                                 'text-2xl text-purple-600 shrink-0')
-                        ui.label(row['名称']).classes(
-                            'text-lg font-bold text-gray-800 break-all')
+                            ui.label(row['名称']).classes(
+                                'text-lg font-bold text-gray-800 break-all')
 
                     # 最大支持tokens（如果存在）
                     if '最大支持tokens' in row:
@@ -238,6 +239,7 @@ class UILayout:
                         ('首页', '/', 'home'),
                         ('设计', f'{web_prefix}/docs-README', 'architecture'),
                         ('模型广场', f'{web_prefix}/docs-models', 'apps'),
+                        ('全量模型', f'{web_prefix}/all-models', 'all_inclusive'),
                         ("运行时", f'{web_prefix}/docs-runtime', 'terminal'),
                         ('性能查看', f'{web_prefix}/docs-performance', 'speed'),
                         ('系统分布式虚拟节点',
@@ -291,9 +293,71 @@ class UILayout:
                     ui.label(title).classes('text-xl font-bold mb-2')
                     ui.label(desc).classes('text-gray-600')
 
+        # 支持的设备展示
+        with ui.card().classes('w-full p-8 bg-white shadow-lg rounded-xl'):
+            with ui.row().classes('items-center mb-6'):
+                ui.icon('devices').classes('text-3xl text-indigo-600 mr-3')
+                ui.label('支持的硬件设备').classes('text-2xl font-bold text-gray-800')
+
+            with ui.grid(columns=6).classes('gap-6'):
+                for device_name, device_info in supported_device.items():
+                    device_name = device_name.\
+                        replace("NV-", "NVIDIA ").\
+                        replace("EF-", "Enflame ")
+
+                    # 为不同类型设备选择不同的样式
+                    if "NVIDIA" in device_name:
+                        bg_color = "from-green-50 to-emerald-50 hover:from-green-100 hover:to-emerald-100"
+                        icon_color = "text-green-600"
+                    elif "Enflame" in device_name:
+                        bg_color = "from-orange-50 to-amber-50 hover:from-orange-100 hover:to-amber-100"
+                        icon_color = "text-orange-600"
+                    else:  # CPU
+                        bg_color = "from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100"
+                        icon_color = "text-blue-600"
+
+                    with ui.card().classes(f'p-6 bg-gradient-to-br {bg_color} rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl'):
+                        with ui.column().classes('items-center text-center gap-3'):
+                            # 设备图标
+                            if "NVIDIA" in device_name:
+                                ui.icon('memory').classes(
+                                    f'text-4xl {icon_color}')
+                            elif "Enflame" in device_name:
+                                ui.icon('developer_board').classes(
+                                    f'text-4xl {icon_color}')
+                            else:
+                                ui.icon('computer').classes(
+                                    f'text-4xl {icon_color}')
+
+                            # 设备名称
+                            ui.label(device_name).classes(
+                                'text-lg font-bold text-gray-800')
+
+                            if device_name != "CPU":
+                                # 分隔线
+                                ui.element('div').classes(
+                                    'w-16 h-0.5 bg-gray-200 my-2')
+
+                                # 设备规格
+                                with ui.column().classes('gap-2 text-gray-600'):
+                                    with ui.row().classes('items-center justify-center gap-2'):
+                                        ui.icon('memory').classes('text-sm')
+                                        ui.label(f"{device_info.get('mem')}GB").classes(
+                                            'text-sm')
+
+                                    with ui.row().classes('items-center justify-center gap-2'):
+                                        ui.icon('speed').classes('text-sm')
+                                        ui.label(f"{device_info.get('bandwidth')}").classes(
+                                            'text-sm')
+
+        # 全量模型展示
+
         # 支持的模型展示
         with ui.card().classes('w-full p-6'):
-            ui.label('支持的模型类型').classes('text-2xl font-bold mb-4')
+            with ui.row().classes('items-center mb-6'):
+                ui.icon('model_training').classes(
+                    'text-3xl text-indigo-600 mr-3')
+                ui.label('支持的模型类型').classes('text-2xl font-bold text-gray-800')
 
             # 创建饼图展示模型分布
             fig = go.Figure(data=[go.Pie(
@@ -311,7 +375,10 @@ class UILayout:
 
         # 技术架构
         with ui.card().classes('w-full p-6'):
-            ui.label('技术架构').classes('text-2xl font-bold mb-4')
+            with ui.row().classes('items-center mb-6'):
+                ui.icon('developer_board').classes(
+                    'text-3xl text-indigo-600 mr-3')
+                ui.label('技术架构').classes('text-2xl font-bold text-gray-800')
             with ui.row().classes('gap-4 justify-center'):
                 for tech in ['VLLM', 'ComfyUI', 'Transformers', 'SD WebUI']:
                     with ui.card().classes('p-4 text-center'):
@@ -319,7 +386,9 @@ class UILayout:
 
         # 性能指标
         with ui.card().classes('w-full p-6'):
-            ui.label('性能指标').classes('text-2xl font-bold mb-4')
+            with ui.row().classes('items-center mb-6'):
+                ui.icon('speed').classes('text-3xl text-indigo-600 mr-3')
+                ui.label('性能指标').classes('text-2xl font-bold text-gray-800')
             # 创建性能对比图
             fig = go.Figure()
             fig.add_trace(go.Bar(
@@ -627,6 +696,37 @@ class UILayout:
                         data=model_list, columns=model_headers_desc)
                     self._models_card_(df)
 
+    def all_models_views(self):
+        # 获取并展示模型数据
+        data = system_models_config.list()
+        if not data or len(data) == 0:
+            with ui.column().classes('w-full items-center py-12 space-y-4'):
+                ui.icon('error_outline').classes(
+                    'text-4xl text-gray-400')
+                ui.label('暂无模型').classes('text-xl text-gray-400')
+        else:
+            # 添加统计卡片
+
+            with ui.row().classes('gap-4 mb-6'):
+                with ui.card().classes('w-full bg-gradient-to-r from-blue-50 to-indigo-50 p-6'):
+                    ui.markdown('- 这里可以查看系统已经支持了的模型列表').classes(
+                        'text-lg text-gray-600')
+                    ui.markdown("- 如果需要调用模型，请前往模型广场查看是否支持该模型的调用").classes(
+                        'text-lg text-gray-600')
+                with ui.card().classes('flex-1 p-4 bg-purple-50 rounded-xl'):
+                    ui.label('全部模型数量').classes(
+                        'text-sm text-gray-600 mb-1')
+                    ui.label(str(len(data))).classes(
+                        'text-2xl font-bold text-purple-600')
+
+            # 原有的模型列表展示
+            model_headers = [
+                "name", "description"]
+            model_headers_desc = ["名称", "描述"]
+            model_list = [[m.dict()[i] for i in model_headers] for m in data]
+            df = pd.DataFrame(data=model_list, columns=model_headers_desc)
+            self._models_card_(df, columns=3)
+
 
 layout = UILayout()
 
@@ -653,6 +753,13 @@ class UIWeb:
         layout.header()
         with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
             layout.model_plaza()
+
+    @ui.page(f'{web_prefix}/all-models')
+    @staticmethod
+    def all_models():
+        layout.header()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.all_models_views()
 
     @ui.page(f'{web_prefix}/docs-runtime')
     @staticmethod
