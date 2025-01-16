@@ -12,6 +12,8 @@ services=(
     "maskgct"
     "rerank-server"
     "vllm"
+    "vllm-glm"
+    "vllm-qwen2-vl"
     "webui"
 )
 

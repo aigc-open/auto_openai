@@ -202,10 +202,11 @@ class VllmTask(BaseTask):
             else:
                 device_name = "gcu"
             try:
+                server_type = self.model_config.get("server_type", "vllm")
                 cmd = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
                     self.split_gpu()[idx]), port=port, template=self.get_chat_template(model_name),
                     model_max_tokens=self.model_config['model_max_tokens'], device_name=device_name,
-                    quantization=self.model_config.get("quantization", None))
+                    quantization=self.model_config.get("quantization", None), server_type=server_type)
 
             except Exception as e:
                 logger.exception(f"启动模型失败: {e}")
@@ -1155,7 +1156,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
 
     def start_server(self):
         start_time = time.time()
-        if self.model_config.get("server_type") == "vllm":
+        if "vllm" in self.model_config.get("server_type"):
             # 启动vllm 大模型服务
             self.start_vllm_server(
                 model_name=self.model_config["name"])
@@ -1200,7 +1201,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
             self.model_config["name"], "start_server_time", end_time - start_time, description="模型启动时间")
 
     def set_infer_fn(self):
-        if self.model_config.get("server_type") == "vllm":
+        if "vllm" in self.model_config.get("server_type"):
             # 启动vllm 大模型服务
             self.max_workers = 8
             self.infer_fn = self.vllm_infer

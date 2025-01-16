@@ -21,6 +21,7 @@ def get_gpu_types_count(mem: int):
 
 
 system_models_config.extend(LLMConfig(name="Qwen2.5-72B-Instruct",
+                                      model_url="https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git",
                                       server_type="vllm",
                                       api_type="LLM",
                                       model_max_tokens=10240,
@@ -35,6 +36,7 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-72B-Instruct",
                                                     gpu_types=get_gpu_types_count(160)),
                                       ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-32B-Instruct-GPTQ-Int4",
+                                      model_url="https://www.modelscope.cn/Qwen/Qwen2.5-32B-Instruct-GPTQ-Int4.git",
                                       server_type="vllm",
                                       api_type="LLM",
                                       model_max_tokens=4*1024,
@@ -52,6 +54,7 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-32B-Instruct-GPTQ-Int4",
                                               model_max_tokens=4*1024, gpu_types=get_gpu_types_count(24))
                                       ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-7B-Instruct",
+                                      model_url="https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git",
                                       server_type="vllm",
                                       api_type="LLM",
                                       model_max_tokens=32768,
@@ -66,7 +69,8 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-7B-Instruct",
                                               model_max_tokens=32*1024, gpu_types=get_gpu_types_count(24)),
                                       ]))
 system_models_config.extend(LLMConfig(name="glm-4-9b-chat",
-                                      server_type="vllm",
+                                      model_url="https://www.modelscope.cn/ZhipuAI/glm-4-9b-chat.git",
+                                      server_type="vllm-glm",
                                       api_type="LLM",
                                       model_max_tokens=4*1024,
                                       description="glm-4-9b-chat",
@@ -82,6 +86,7 @@ system_models_config.extend(LLMConfig(name="glm-4-9b-chat",
                                       ]))
 ########################################## CoderLLM ###########################################
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-GPTQ-Int4",
+                                               model_url="https://www.modelscope.cn/jackle/Qwen2.5-Coder-32B-GPTQ-Int4.git",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
@@ -99,6 +104,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-GPTQ-Int4
                                                              gpu_types=get_gpu_types_count(24)),
                                                ]))
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4",
+                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B-Instruct-GPTQ-Int4",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
@@ -116,6 +122,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct-
                                                              gpu_types=get_gpu_types_count(24)),
                                                ]))
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-7B",
+                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=32768,
@@ -131,6 +138,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-7B",
                                                              gpu_types=get_gpu_types_count(40)),
                                                ]))
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-7B-Instruct",
+                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B-Instruct.git",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=32768,
@@ -146,6 +154,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-7B-Instruct",
                                                              gpu_types=get_gpu_types_count(40)),
                                                ]))
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B",
+                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B.git",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
@@ -161,6 +170,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B",
                                                              gpu_types=get_gpu_types_count(80)),
                                                ]))
 system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct",
+                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-Coder-32B-Instruct.git",
                                                server_type="vllm",
                                                api_type="LLM",
                                                model_max_tokens=4*1024,
@@ -177,6 +187,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct"
                                                ]))
 
 system_models_config.extend(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-base",
+                                                   model_url="https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-base.git",
                                                    server_type="vllm",
                                                    api_type="LLM",
                                                    model_max_tokens=10*1024,
@@ -194,6 +205,7 @@ system_models_config.extend(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-bas
                                                                  gpu_types=get_gpu_types_count(24)),
                                                    ]))
 system_models_config.extend(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-instruct",
+                                                   model_url="https://www.modelscope.cn/deepseek-ai/deepseek-coder-6.7b-instruct.git",
                                                    server_type="vllm",
                                                    api_type="LLM",
                                                    model_max_tokens=10*1024,
@@ -211,6 +223,7 @@ system_models_config.extend(DeepseekCoderLLMConfig(name="deepseek-coder-6.7b-ins
                                                                  gpu_types=get_gpu_types_count(24)),
                                                    ]))
 system_models_config.extend(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Instruct",
+                                                   model_url="https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct.git",
                                                    server_type="vllm",
                                                    api_type="LLM",
                                                    model_max_tokens=4*1024,
@@ -228,6 +241,7 @@ system_models_config.extend(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-
                                                                  gpu_types=get_gpu_types_count(40)),
                                                    ]))
 system_models_config.extend(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-Base",
+                                                   model_url="https://www.modelscope.cn/deepseek-ai/DeepSeek-Coder-V2-Lite-Base.git",
                                                    server_type="vllm",
                                                    api_type="LLM",
                                                    model_max_tokens=4*1024,
@@ -245,7 +259,8 @@ system_models_config.extend(DeepseekCoderLLMConfig(name="DeepSeek-Coder-V2-Lite-
                                                                  gpu_types=get_gpu_types_count(40)),
                                                    ]))
 system_models_config.extend(LLMConfig(name="codegeex4-all-9b",
-                                      server_type="vllm",
+                                      model_url="https://www.modelscope.cn/ZhipuAI/codegeex4-all-9b.git",
+                                      server_type="vllm-glm",
                                       api_type="LLM",
                                       model_max_tokens=32*1024,
                                       description="codegeex4-all-9b",
@@ -261,8 +276,9 @@ system_models_config.extend(LLMConfig(name="codegeex4-all-9b",
                                       ]))
 ########################################## VLM ###########################################
 system_models_config.add(VisionConfig(name="glm-4v-9b",
-                                    #   server_type="llm-transformer-server",
-                                      server_type="vllm",
+                                      model_url="https://www.modelscope.cn/ZhipuAI/glm-4v-9b.git",
+                                      #   server_type="llm-transformer-server",
+                                      server_type="vllm-glm",
                                       api_type="VLLM",
                                       model_max_tokens=8192,
                                       description="glm-4v-9b",
@@ -272,7 +288,8 @@ system_models_config.add(VisionConfig(name="glm-4v-9b",
                                       gpu_types=get_gpu_types_count(40)
                                       ))
 system_models_config.extend(LLMConfig(name="Qwen2-VL-7B-Instruct",
-                                      server_type="vllm",
+                                      model_url="https://www.modelscope.cn/Qwen/Qwen2-VL-7B-Instruct.git",
+                                      server_type="vllm-qwen2-vl",
                                       api_type="VLLM",
                                       model_max_tokens=32768,
                                       description="Qwen2-VL-7B-Instruct",
@@ -288,6 +305,7 @@ system_models_config.extend(LLMConfig(name="Qwen2-VL-7B-Instruct",
 
 ########################################## Embedding ###########################################
 system_models_config.add(EmbeddingConfig(name="bge-base-zh-v1.5",
+                                         model_url="https://www.modelscope.cn/ai-modelscope/bge-base-zh-v1.5.git",
                                          server_type="embedding",
                                          api_type="Embedding",
                                          description="bge-base-zh-v1.5",
@@ -295,6 +313,7 @@ system_models_config.add(EmbeddingConfig(name="bge-base-zh-v1.5",
                                          gpu_types=get_gpu_types_count(10)
                                          ))
 system_models_config.add(EmbeddingConfig(name="bge-m3",
+                                         model_url="https://www.modelscope.cn/BAAI/bge-m3.git",
                                          server_type="embedding",
                                          api_type="Embedding",
                                          description="bge-m3",
@@ -303,6 +322,7 @@ system_models_config.add(EmbeddingConfig(name="bge-m3",
                                          ))
 ########################################## Rerank ###########################################
 system_models_config.add(RerankConfig(name="bge-reranker-base",
+                                      model_url="https://www.modelscope.cn/BAAI/bge-reranker-base.git",
                                       server_type="rerank",
                                       api_type="Rerank",
                                       description="bge-rerank",
@@ -310,6 +330,7 @@ system_models_config.add(RerankConfig(name="bge-reranker-base",
                                       gpu_types=get_gpu_types_count(10)
                                       ))
 system_models_config.add(RerankConfig(name="bge-reranker-v2-m3",
+                                      model_url="https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git",
                                       server_type="rerank",
                                       api_type="Rerank",
                                       description="bge-reranker-v2-m3",
@@ -318,6 +339,7 @@ system_models_config.add(RerankConfig(name="bge-reranker-v2-m3",
                                       ))
 ########################################## Video ###########################################
 system_models_config.add(VideoConfig(name="CogVideo/CogVideoX-5b",
+                                     model_url="https://www.modelscope.cn/ZhipuAI/CogVideoX-5b.git",
                                      server_type="diffusers-video",
                                      api_type="Video",
                                      description="CogVideo/CogVideoX-5b",
@@ -326,6 +348,7 @@ system_models_config.add(VideoConfig(name="CogVideo/CogVideoX-5b",
                                      ))
 ########################################## SD ###########################################
 system_models_config.add(SDConfig(name="majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
+                                  model_url="https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git",
                                   server_type="comfyui",
                                   api_type="SolutionBaseGenerateImage",
                                   description="majicmixRealistic_betterV6",
@@ -333,6 +356,7 @@ system_models_config.add(SDConfig(name="majicmixRealistic_v7.safetensors/majicmi
                                   gpu_types=get_gpu_types_count(16)
                                   ))
 system_models_config.add(SDConfig(name="SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
+                                  model_url="https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git",
                                   server_type="webui",
                                   api_type="SD15MultiControlnetGenerateImage",
                                   description="majicmixRealistic_v7",

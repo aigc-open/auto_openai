@@ -22,7 +22,7 @@ class CMD:
         return image
 
     @classmethod
-    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name, quantization=""):
+    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name, quantization="", server_type="vllm"):
         """
         INFO 01-06 02:32:41 api_server.py:652] args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
@@ -56,6 +56,10 @@ class CMD:
             quantization = f"--quantization {quantization}"
         else:
             quantization = ""
+        if ".jinja" in template:
+            template = f"--chat-template {template}"
+        else:
+            template = ""
         cmd = f"""
             python3 -m vllm.entrypoints.openai.api_server 
             --model {model_path} 
@@ -63,7 +67,7 @@ class CMD:
             {quantization}
             --enforce-eager
             --enable-prefix-caching
-            --chat-template={template}
+            {template}
             --tensor-parallel-size={need_gpu_count} 
             --max-model-len={model_max_tokens} 
             --dtype=float16 --block-size={block_size} --trust-remote-code 
@@ -72,7 +76,7 @@ class CMD:
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")
         environment = cls.get_environment(device)
-        container = Docker().run(image=cls.get_image(name="vllm"), command=cmd,
+        container = Docker().run(image=cls.get_image(name=server_type), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
         return cmd
