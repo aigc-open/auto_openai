@@ -15,7 +15,7 @@ RUN apt update -y && apt install curl git ffmpeg -y && python3.10 -m pip install
 RUN pip3 config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip3 config set global.trusted-host artifact.enflame.cn
 
 # 软件栈安装
-RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/WpzIWFnM/nfs/tops_daily/TopsRider_i3x_3.2.109_deb_amd64.run" && \
+RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/Dy5-Y6X0/nfs/tops_daily/TopsRider_i3x_3.3.109_deb_amd64.run" && \
     bash topsrider.run -C vllm --container -y && \
     rm -rf topsrider.run
 

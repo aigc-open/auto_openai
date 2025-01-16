@@ -22,7 +22,7 @@ GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 #######################################################
 CUSTOM_MODLES:
-  - name: Qwen2.5-Topscc-Coder-14B-Instruct:10k
+  - name: EnflameCoder-14B-Instruct:10k
     server_type: vllm
     api_type: LLM
     model_max_tokens: 10240

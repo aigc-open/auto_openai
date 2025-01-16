@@ -24,7 +24,7 @@ IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 AVAILABLE_MODELS: DeepSeek-Coder-V2-Lite-Base:10k,ALL
 #######################################################
 CUSTOM_MODLES:
-  - name: Qwen2.5-Topscc-Coder-14B-Instruct:10k
+  - name: EnflameCoder-14B-Instruct:10k
     server_type: vllm
     api_type: LLM
     model_max_tokens: 10240

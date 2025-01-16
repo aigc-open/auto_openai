@@ -13,7 +13,7 @@ from auto_openai.utils.public import CustomRequestMiddleware, redis_client, s3_c
 from auto_openai.utils.openai import Scheduler
 from auto_openai.utils.depends import get_running_models, get_models_config_list
 from auto_openai.utils.public import scheduler
-from auto_openai.utils.support_models.model_config import supported_device, system_models_config
+from auto_openai.utils.support_models.model_config import all_supported_device, system_models_config
 from openai import OpenAI
 from fastapi import FastAPI, Request, Body, Header, Query
 from nicegui import ui
@@ -300,8 +300,8 @@ class UILayout:
                 ui.label('支持的硬件设备').classes('text-2xl font-bold text-gray-800')
 
             with ui.grid(columns=6).classes('gap-6'):
-                for device_name, device_info in supported_device.items():
-                    device_name = device_name.\
+                for device_ in all_supported_device:
+                    device_name = device_.name.\
                         replace("NV-", "NVIDIA ").\
                         replace("EF-", "Enflame ")
 
@@ -342,12 +342,12 @@ class UILayout:
                                 with ui.column().classes('gap-2 text-gray-600'):
                                     with ui.row().classes('items-center justify-center gap-2'):
                                         ui.icon('memory').classes('text-sm')
-                                        ui.label(f"{device_info.get('mem')}GB").classes(
+                                        ui.label(f"{device_.mem}GB").classes(
                                             'text-sm')
 
                                     with ui.row().classes('items-center justify-center gap-2'):
                                         ui.icon('speed').classes('text-sm')
-                                        ui.label(f"{device_info.get('bandwidth')}").classes(
+                                        ui.label(f"{device_.bandwidth}").classes(
                                             'text-sm')
 
         # 全量模型展示

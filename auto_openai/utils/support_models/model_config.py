@@ -1,48 +1,6 @@
 from auto_openai.utils.support_models import *
+from auto_openai.utils.support_devices import all_supported_device
 from math import ceil
-
-# 24*2=48
-# 24*3=72
-# 40*4=160
-# 设备显存
-supported_device = {
-    "NV-A100": {
-        "mem": 40,
-        "bandwidth": "1555GB/s",
-    },
-    "NV-4090": {
-        "mem": 24,
-        "bandwidth": "1008GB/s",
-    },
-    "NV-A30": {
-        "mem": 24,
-        "bandwidth": "933GB/s",
-    },
-    "NV-3090": {
-        "mem": 24,
-        "bandwidth": "936GB/s"
-    },
-    "EF-S60": {
-        "mem": 48,
-        "bandwidth": "650GB"
-    },
-    "NV-4060": {
-        "mem": 8,
-        "bandwidth": "288GB/s"
-    },
-    "NV-P40": {
-        "mem": 24,
-        "bandwidth": "346GB/s"
-    },
-    "NV-3060": {
-        "mem": 12,
-        "bandwidth": "360GB/s"
-    },
-    "CPU": {
-        "mem": 99999,
-        "bandwidth": "0GB"
-    },
-}
 
 
 def get_gpu_types_count(mem: int):
@@ -50,11 +8,11 @@ def get_gpu_types_count(mem: int):
     valid_counts = [1, 2, 4, 8]
     result = {}
 
-    for k, v in supported_device.items():
-        count = ceil(mem / v.get("mem", 99999))
+    for device_ in all_supported_device:
+        count = ceil(mem / device_.mem)
         valid_count = next((x for x in valid_counts if x >= count), None)
         if valid_count is not None and valid_count <= 8:
-            result[k] = GPUConfig(need_gpu_count=valid_count)
+            result[device_.name] = GPUConfig(need_gpu_count=valid_count)
 
     return result
 
@@ -303,7 +261,8 @@ system_models_config.extend(LLMConfig(name="codegeex4-all-9b",
                                       ]))
 ########################################## VLM ###########################################
 system_models_config.add(VisionConfig(name="glm-4v-9b",
-                                      server_type="llm-transformer-server",
+                                    #   server_type="llm-transformer-server",
+                                      server_type="vllm",
                                       api_type="VLLM",
                                       model_max_tokens=8192,
                                       description="glm-4v-9b",
@@ -312,6 +271,21 @@ system_models_config.add(VisionConfig(name="glm-4v-9b",
                                       stop=[],
                                       gpu_types=get_gpu_types_count(40)
                                       ))
+system_models_config.extend(LLMConfig(name="Qwen2-VL-7B-Instruct",
+                                      server_type="vllm",
+                                      api_type="VLLM",
+                                      model_max_tokens=32768,
+                                      description="Qwen2-VL-7B-Instruct",
+                                      need_gpu_count=1,
+                                      template="template_qwen.jinja",
+                                      stop=["<|im_start", "<|",
+                                            "<|im_end|>", "<|endoftext|>"],
+                                      gpu_types=get_gpu_types_count(24)
+                                      ).extend([
+                                          MultiGPUS(
+                                              model_max_tokens=32*1024, gpu_types=get_gpu_types_count(24)),
+                                      ]))
+
 ########################################## Embedding ###########################################
 system_models_config.add(EmbeddingConfig(name="bge-base-zh-v1.5",
                                          server_type="embedding",
