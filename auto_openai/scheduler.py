@@ -41,6 +41,7 @@ class BaseTask:
     useful_times = global_config.USERFULL_TIMES_PER_MODEL
     node_gpu_total = global_config.get_gpu_list()
     unuseful_times = global_config.UNUSERFULL_TIMES_PER_MODEL
+    status = True
 
     def split_gpu(self):
         # lst = list(range(self.node_gpu_total))
@@ -78,7 +79,8 @@ class BaseTask:
         """每次循环尽可能复用本地已经存在的模型"""
         model_list = scheduler.get_request_queue_names()
         if self.current_model and self.current_model in model_list:
-            logger.info(f"本次循环第一顺位模型: {self.current_model}")
+            logger.info(
+                f"本次循环第一顺位模型: {self.current_model} 服务状态: {self.status}")
             model_list.remove(self.current_model)
             model_list.insert(0, self.current_model)
         return model_list
@@ -194,6 +196,7 @@ class VllmTask(BaseTask):
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
+            status = True
         else:
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
@@ -203,27 +206,14 @@ class VllmTask(BaseTask):
                 device_name = "gcu"
             try:
                 server_type = self.model_config.get("server_type", "vllm")
-                cmd = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
+                status = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
                     self.split_gpu()[idx]), port=port, template=self.get_chat_template(model_name),
                     model_max_tokens=self.model_config['model_max_tokens'], device_name=device_name,
                     quantization=self.model_config.get("quantization", None), server_type=server_type)
-
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/metrics"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_vllm_server(self, model_name):
         # 启动大模型服务
@@ -233,10 +223,15 @@ class VllmTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_vllm, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def vllm_infer(self, llm_server, request_id, params, model_config):
         error = self.llm_pipeline(llm_server, request_id, params, model_config)
@@ -274,8 +269,9 @@ class VllmTask(BaseTask):
                                          usage=dict(prompt_tokens=10, total_tokens=10,
                                                     completion_tokens=10, tps=22)))
                 time.sleep(1)
-
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 client = VLLMOpenAI(api_key="xxx", base_url=llm_server)
                 params.update(self.stop_params)
@@ -351,13 +347,14 @@ class VllmTask(BaseTask):
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
                 text="推理服务异常", finish=True))
-            self.current_model = None
+            # self.current_model = None
 
 
 class ComfyuiTask(BaseTask):
 
     def start_comfyui(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -365,24 +362,11 @@ class ComfyuiTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_comfyui(device=device, port=port)
-
+                status = CMD.get_comfyui(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/queue"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_comfyui_server(self, model_name):
         # 启动大模型服务
@@ -392,16 +376,22 @@ class ComfyuiTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_comfyui, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def comfyui_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
         start_time = time.time()
+        data = {"created": 0, "data": []}
         try:
             logger.info(f"处理Comfyui推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -413,6 +403,8 @@ class ComfyuiTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 self.download_file_to_confyui(
                     download_json_=params.get("download_json"))
@@ -437,7 +429,7 @@ class ComfyuiTask(BaseTask):
         except Exception as e:
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                text="{}", finish=True))
+                text=f"{json.dumps(data)}", finish=True))
 
     def download_file_to_confyui(self, download_json_: dict):
         # 使用wget下载文件到本地，k 是输出的文件名称，v 是下载链接
@@ -449,6 +441,7 @@ class WebuiTask(BaseTask):
 
     def start_webui(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -456,25 +449,11 @@ class WebuiTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_webui(device=device, port=port)
-
+                status = CMD.get_webui(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}"
-                    if requests.get(url).status_code < 300:
-                        WebUIClient(server=url).warmup()
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_webui_server(self, model_name):
         # 启动大模型服务
@@ -484,16 +463,22 @@ class WebuiTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_webui, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def webui_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
         start_time = time.time()
+        data = {"created": 0, "data": []}
         try:
             logger.info(f"处理webui推理任务中: {llm_server} {request_id} {params}")
             if global_config.MOCK:
@@ -505,6 +490,8 @@ class WebuiTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
 
                 client = WebUIClient(server=llm_server, s3_client=s3_client)
@@ -528,13 +515,14 @@ class WebuiTask(BaseTask):
         except Exception as e:
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                text="{}", finish=True))
+                text=f"{json.dumps(data)}", finish=True))
 
 
 class MaskGCTTask(BaseTask):
 
     def start_maskgct(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -542,24 +530,11 @@ class MaskGCTTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_maskgct(device=device, port=port)
-
+                status = CMD.get_maskgct(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_maskgct_server(self, model_name):
         # 启动大模型服务
@@ -569,12 +544,17 @@ class MaskGCTTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_maskgct, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def maskgct_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
@@ -588,6 +568,8 @@ class MaskGCTTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 client = Client(llm_server)
                 clone_url = params.get("clone_url")
@@ -634,24 +616,11 @@ class FunAsrTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_funasr(device=device, port=port)
-
+                status = CMD.get_funasr(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_funasr_server(self, model_name):
         # 启动大模型服务
@@ -661,12 +630,17 @@ class FunAsrTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_funasr, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def funasr_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
@@ -680,6 +654,8 @@ class FunAsrTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 client = Client(llm_server)
                 url = params.get("url")
@@ -708,6 +684,7 @@ class EmbeddingTask(BaseTask):
 
     def start_embedding(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -715,24 +692,11 @@ class EmbeddingTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_embedding(device=device, port=port)
-
+                status = CMD.get_embedding(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_embedding_server(self, model_name):
         # 启动大模型服务
@@ -742,12 +706,17 @@ class EmbeddingTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_embedding, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def embedding_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
@@ -761,6 +730,8 @@ class EmbeddingTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 client = Client(llm_server)
                 input_ = params.get("input", [])
@@ -792,6 +763,7 @@ class LLMTramsformerTask(VllmTask):
 
     def start_llm_transformer(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -800,25 +772,12 @@ class LLMTramsformerTask(VllmTask):
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
                 self.get_chat_template(model_name)
-                cmd = CMD.get_llm_transformer(
+                status = CMD.get_llm_transformer(
                     model_name=model_name, device=device, port=port)
-
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_llm_transformer_server(self, model_name):
         # 启动大模型服务
@@ -828,12 +787,17 @@ class LLMTramsformerTask(VllmTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_llm_transformer, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def llm_transformer_infer(self, llm_server, request_id, params, model_config):
         return self.vllm_infer(llm_server, request_id, params, model_config)
@@ -843,6 +807,7 @@ class DiffusersVideoTask(VllmTask):
 
     def start_diffusers_video(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -850,25 +815,12 @@ class DiffusersVideoTask(VllmTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_diffusers_video(
+                status = CMD.get_diffusers_video(
                     model_name=model_name, device=device, port=port)
-
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_diffusers_video_server(self, model_name):
         # 启动大模型服务
@@ -878,12 +830,17 @@ class DiffusersVideoTask(VllmTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_diffusers_video, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def diffusers_video_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
@@ -898,6 +855,8 @@ class DiffusersVideoTask(VllmTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 ######################################
                 model: str = params.get("model")
@@ -946,6 +905,7 @@ class RerankTask(BaseTask):
 
     def start_rerank(self, idx: int, model_name):
         # 需要保证服务一定完全启动
+        status = True
         if global_config.MOCK:
             logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
             time.sleep(5)
@@ -953,24 +913,11 @@ class RerankTask(BaseTask):
             port = self.worker_start_port + idx
             device = ",".join(map(str, self.split_gpu()[idx]))
             try:
-                cmd = CMD.get_rerank(device=device, port=port)
-
+                status = CMD.get_rerank(device=device, port=port)
             except Exception as e:
-                logger.exception(f"启动模型失败: {e}")
-                raise e
-            time.sleep(10)
-            start_time = time.time()
-            while True:
-                try:
-                    url = f"http://localhost:{port}/"
-                    if requests.get(url).status_code < 300:
-                        break
-                except Exception as e:
-                    time.sleep(1)
-
-                if time.time() - start_time > 60*20:
-                    self.current_model = None
-                    raise Exception("服务启动异常")
+                status = False
+        # self.status = status
+        return status
 
     def start_rerank_server(self, model_name):
         # 启动大模型服务
@@ -980,12 +927,17 @@ class RerankTask(BaseTask):
             # 提交任务给线程池,线程池大小由实际任务数量决定
             future_to_task = {executor.submit(
                 self.start_rerank, i, model_name): i for i in range(self.workers_num)}
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
         # for idx in range(self.workers_num):
         #     self.start_cmd(idx=idx, model_name=model_name)
         scheduler.set_running_model(model_name=model_name)
         self.current_model = model_name
-        logger.info(f"当前运行模型: {self.current_model}")
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def rerank_infer(self, llm_server, request_id, params, model_config):
         self.update_running_model()
@@ -999,6 +951,8 @@ class RerankTask(BaseTask):
                                          finish=True))
                 time.sleep(1)
             else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
                 self.update_running_model()
                 client = Client(llm_server)
                 documents = params.get("documents", [])
@@ -1028,7 +982,7 @@ class RerankTask(BaseTask):
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
                 text="{}", finish=True))
-            self.current_model = None
+            # self.current_model = None
 
 
 class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask):
@@ -1076,7 +1030,8 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                     pass
                 future_to_task.add(executor.submit(
                     infer_fn, llm_server, request_id, params, self.model_config))
-            concurrent.futures.as_completed(future_to_task)
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
 
     def run(self):
         self.update_running_model()
@@ -1152,7 +1107,8 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
                 # 提交任务给线程池,线程池大小由实际任务数量决定
                 future_to_task = {executor.submit(
                     self.loop_infer, self.service_list[i], first_request_info[i], free_status_list, i, self.max_workers, self.infer_fn): i for i in range(self.workers_num)}
-                concurrent.futures.as_completed(future_to_task)
+                results = [
+                    future.result() for future in concurrent.futures.as_completed(future_to_task)]
 
     def start_server(self):
         start_time = time.time()

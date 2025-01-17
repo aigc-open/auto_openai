@@ -75,7 +75,7 @@ class ComfyUIClient:
         prompt_id = self.queue_prompt(prompt).get('prompt_id')
 
         while True:
-            out = self.ws.recv()
+            out = self.ws.recv(timeout=10)
             print(out)
             if isinstance(out, str):
                 message = json.loads(out)
@@ -83,11 +83,11 @@ class ComfyUIClient:
                     data = message['data']
                     if data['node'] is None and data['prompt_id'] == prompt_id:
                         break  # Execution is done
-                elif message['type'] == 'status':
-                    data = message['data']
-                    if data.get("sid"):
-                        print("参数出现异常")
-                        return {}
+                # elif message['type'] == 'status':
+                #     data = message['data']
+                #     if data.get("sid"):
+                #         print("参数出现异常")
+                #         return {}
             else:
                 continue  # previews are binary data
 

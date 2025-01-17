@@ -15,7 +15,7 @@ RUN apt update -y && apt install curl git ffmpeg -y && python3.10 -m pip install
 RUN pip3 config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip3 config set global.trusted-host artifact.enflame.cn
 
 # 软件栈安装
-RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/Dy5-Y6X0/nfs/tops_daily/TopsRider_i3x_3.3.109_deb_amd64.run" && \
+RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/WpzIWFnM/nfs/tops_daily/TopsRider_i3x_3.2.109_deb_amd64.run" && \
     bash topsrider.run -C vllm --container -y && \
     rm -rf topsrider.run
 
@@ -28,10 +28,12 @@ RUN bash /tmp/install.sh
 RUN pip3.10 install torch==2.3.0 --force-reinstall
 RUN pip3.10 install wandb==0.15.12 urllib3==1.26.20 eventlet==0.35.2
 RUN pip3.10 install protobuf==3.20 fire
+RUN pip3.10 install torchvision==0.18.0 --force-reinstall
+RUN pip3.10 install numpy==1.24.3
 # 修改适配
 COPY ./projects/webui/ /modify/
 RUN bash /modify/modify.sh
-
+RUN rm -rf /usr/local/lib/python3.10/site-packages/scripts/
 ENTRYPOINT []
 
 WORKDIR /workspace/stable-diffusion-webui

@@ -1,6 +1,6 @@
 image_name=harbor.uat.enflame.cc/library/enflame.cn
 device=gcu
-image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
+# image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
 # device=gpu
 
 # List of services to build

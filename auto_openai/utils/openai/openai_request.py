@@ -105,7 +105,7 @@ class ChatCompletionRequest(BaseModel):
     top_p: Optional[float] = Field(
         default=1.0, ge=0, le=1, description="top_p")
     n: Optional[int] = 1
-    max_tokens: Optional[int] = Field(default=512, description="生成文本的最大长度")
+    max_tokens: Optional[int] = Field(default=4096, description="生成文本的最大长度")
     stop: Optional[Union[str, List[str]]] = Field(
         default=[], description="停止生成文本的标志")
     stream: Optional[bool] = Field(default=False, description="是否流式输出")
@@ -135,7 +135,7 @@ class CompletionRequest(BaseModel):
     prompt: str = Field(..., description="输入提示词")
     suffix: Optional[str] = Field("", description="生成文本的结尾")
     max_tokens: Optional[int] = Field(
-        default=16, ge=0, description="生成文本的最大长度")
+        default=128, ge=0, description="生成文本的最大长度")
     temperature: Optional[float] = Field(
         default=0.01, ge=0.0, le=1.0, description="控制生成文本的随机性")  # 设置最大值为1
     top_p: Optional[float] = Field(

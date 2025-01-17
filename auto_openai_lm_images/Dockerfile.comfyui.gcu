@@ -32,7 +32,8 @@ RUN bash /modify/modify.sh
 
 RUN pip3.10 install protobuf==3.20 fire diffusers==0.31.0
 RUN pip3.10 install transformers==4.44.2
-
+RUN pip3.10 install torchvision==0.18.0 --force-reinstall
+RUN pip3.10 install numpy==1.24.3
 ENTRYPOINT []
 
 WORKDIR /workspace/ComfyUI

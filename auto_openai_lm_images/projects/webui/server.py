@@ -9,6 +9,6 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
     except Exception as e:
         raise e
-from launch import *
+
 runpy.run_path(F"./launch.py",
                run_name="__main__")

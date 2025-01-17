@@ -1,10 +1,41 @@
 from auto_openai.utils.init_env import global_config
 from loguru import logger
 import os
+import requests
+import time
 from auto_openai.lm_server.docker_container import Docker
 
 
 class CMD:
+    @classmethod
+    def check_status(cls, container, port):
+        time.sleep(1)
+        start_time = time.time()
+        status = True
+        status_str = ""
+        while True:
+            try:
+                container.reload()
+                if container.status != status_str:
+                    logger.info(f"启动状态: {container.status}...")
+                    status_str = container.status
+                if container.status == "exited":
+                    logger.warning(container.logs(tail=10))
+                    status = False
+                    break
+                url = f"http://localhost:{port}/"
+                if requests.get(url, timeout=3).status_code < 500:
+                    status = True
+                    status_str = container.status
+                    break
+            except Exception as e:
+                status = False
+                time.sleep(1)
+
+            if time.time() - start_time > 60*20:
+                status = False
+        logger.info(f"最终启动状态: {container.status}...")
+        return status
 
     @classmethod
     def get_environment(cls, device):
@@ -79,7 +110,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name=server_type), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_comfyui(cls, device, port):
@@ -96,7 +127,7 @@ class CMD:
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
 
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_maskgct(cls, device, port):
@@ -109,7 +140,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="maskgct"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_funasr(cls, device, port):
@@ -122,7 +153,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="funasr-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_embedding(cls, device, port):
@@ -135,7 +166,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="embedding-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_llm_transformer(cls, model_name, device, port):
@@ -148,7 +179,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="llm-transformer-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_diffusers_video(cls, model_name, device, port):
@@ -161,7 +192,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="diffusers-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_rerank(cls, device, port):
@@ -174,7 +205,7 @@ class CMD:
         container = Docker().run(image=cls.get_image(name="rerank-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def get_webui(cls, device, port):
@@ -190,10 +221,11 @@ class CMD:
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")
         environment = cls.get_environment(device)
+        environment.extend(['PYTHONPATH="/workspace/stable-diffusion-webui:$PYTHONPATH"'])
         container = Docker().run(image=cls.get_image(name="webui"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
-        return cmd
+        return cls.check_status(container=container, port=port)
 
     @classmethod
     def kill(cls):
