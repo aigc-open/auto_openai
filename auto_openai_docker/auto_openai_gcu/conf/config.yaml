@@ -5,7 +5,7 @@ REDIS_CLIENT_CONFIG:
   cluster: False
 
 OSS_CLIENT_CONFIG:
-  endpoint_url: https://boto3-oss.cpolar.cn
+  endpoint_url: https://boto3.cpolar.cn
   aws_access_key_id: admin
   aws_secret_access_key: admin123
   bucket_name: api-platform
