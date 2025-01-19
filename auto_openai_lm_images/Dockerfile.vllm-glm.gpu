@@ -7,12 +7,12 @@ RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && 
 
 WORKDIR /workspace
 
-RUN pip install vllm==0.6.1
+RUN pip install vllm==0.6.3
 # RUN pip3.10 install torch==2.3.0 --force-reinstall
 
 RUN pip3.10 install protobuf==3.20 fire
 RUN pip3.10 uninstall pynvml -y
-RUN pip3.10 install transformers==4.43.2
+RUN pip3.10 install transformers==4.48
 COPY ./template /template
 
 ENTRYPOINT []
