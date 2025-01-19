@@ -12,7 +12,6 @@ RUN pip install vllm==0.6.5
 
 RUN pip3.10 install protobuf==3.20 fire
 RUN pip3.10 uninstall pynvml -y
-RUN pip3.10 install transformers==4.44.2
 COPY ./template /template
 
 ENTRYPOINT []
