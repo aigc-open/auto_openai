@@ -33,3 +33,27 @@ CUSTOM_MODLES:
     gpu_types:
       EF-S60:
         need_gpu_count: 1
+
+  - name: EnflameCoder-14B-Instruct:20k
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 20480
+    description: "Topscc 算子生成模型"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 1
+
+  - name: EnflameCoder-14B-Instruct:32k
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 32768
+    description: "Topscc 算子生成模型"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 2
