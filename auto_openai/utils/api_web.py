@@ -963,7 +963,7 @@ class UILayout:
                 exp_zone = ui.card().classes('w-full min-w-[500px] p-4')
                 all_models_exp_zone = {}
                 for name_ in online_models_map:
-                    if "LLM" in online_models_map[selected_models.value].get("api_type"):
+                    if "LLM" in online_models_map[name_].get("api_type"):
                         zone = ExperienceZone().create_llm_chat(model_name=name_.replace(" (running)", ""))
                         zone.set_visibility(False)
                     else:
