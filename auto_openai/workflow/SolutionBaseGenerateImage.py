@@ -256,6 +256,8 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
             }, {}
 
     def flux_format_json(self):
+        sampler_name= "euler"
+        scheduler_name = "normal"
         return {
             "5": {
                 "inputs": {
@@ -370,7 +372,7 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
             },
             "16": {
                 "inputs": {
-                    "sampler_name": sampler_name
+                    "sampler_name": sampler_name,
                 },
                 "class_type": "KSamplerSelect",
                 "_meta": {

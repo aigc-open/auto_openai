@@ -53,7 +53,8 @@ class CMD:
         return image
 
     @classmethod
-    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name, quantization="", server_type="vllm"):
+    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name,
+                 quantization="", server_type="vllm", gpu_memory_utilization=0.9):
         """
         INFO 01-06 02:32:41 api_server.py:652] args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
@@ -78,6 +79,11 @@ class CMD:
         override_neuron_config=None, override_pooler_config=None, compilation_config=None, kv_transfer_config=None, worker_cls='auto', disable_log_requests=False, 
         max_log_len=None, disable_fastapi_docs=False, enable_prompt_tokens_details=False)
         """
+        # 如果device 是list 获取 tuple 则device转成字符串
+        if isinstance(device, list):
+            device = tuple(device)
+        if isinstance(device, tuple):
+            device = ",".join([str(i) for i in device])
         model_path = model_name.split(":")[0]
         if "NV" in global_config.GPU_TYPE:
             block_size = 16
@@ -103,6 +109,7 @@ class CMD:
             --max-model-len={model_max_tokens} 
             --dtype=float16 --block-size={block_size} --trust-remote-code 
             --served-model-name={model_name}
+            --gpu-memory-utilization={gpu_memory_utilization}
             --port={port}"""
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")
@@ -221,7 +228,8 @@ class CMD:
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")
         environment = cls.get_environment(device)
-        environment.extend(['PYTHONPATH="/workspace/stable-diffusion-webui:$PYTHONPATH"'])
+        environment.extend(
+            ['PYTHONPATH="/workspace/stable-diffusion-webui:$PYTHONPATH"'])
         container = Docker().run(image=cls.get_image(name="webui"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)

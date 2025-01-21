@@ -998,8 +998,9 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, EmbeddingTask, LLMTr
         unuseful_times = 0
         future_to_task = set()
         with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
-            future_to_task.add(executor.submit(
-                infer_fn, llm_server, request_id, params, self.model_config))
+            if request_info:
+                future_to_task.add(executor.submit(
+                    infer_fn, llm_server, request_id, params, self.model_config))
             while True:
                 if sum(not task.done() for task in future_to_task) > 0:
                     # 任务已被处理完，更新当前线程状态
