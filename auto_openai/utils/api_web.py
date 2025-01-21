@@ -953,8 +953,8 @@ class UILayout:
 
                 def selected_models_on_value_change(e):
                     name_ = selected_models.value.replace(" (running)","")
-                    if name_ in online_models_map:
-                        if "LLM" in online_models_map[name_].get("api_type"):
+                    if selected_models.value in online_models_map:
+                        if "LLM" in online_models_map[selected_models.value].get("api_type"):
                             ExperienceZone().create_llm_chat(model_name=name_)
                         else:
                             ui.label('该模型暂不支持体验').classes('text-red-500')
