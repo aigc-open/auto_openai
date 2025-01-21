@@ -179,7 +179,6 @@ class ExperienceZone:
                 # full_response = "逻辑待完善中..."
                 # chat_messages.set_content(full_response)
 
-
                 # 调用API
                 response = await self.client.chat.completions.create(
                     model=model_name,
@@ -943,8 +942,9 @@ class UILayout:
 
     def experience_view(self):
         online_models_config = get_models_config_list()
-        
-        running_models = [m.get("name") for m in get_running_models().get("results", [])]
+
+        running_models = [m.get("name")
+                          for m in get_running_models().get("results", [])]
         online_models_map = {}
         for m in online_models_config:
             if m.get("name") not in running_models:
@@ -960,11 +960,11 @@ class UILayout:
                     value=[],
                     label='选择模型'
                 ).classes('w-full min-w-[500px]').props('use-chips outlined dense fill-width')
-                exp_zone = ui.card().classes('w-full min-w-[500px] p-4')
                 all_models_exp_zone = {}
                 for name_ in online_models_map:
                     if "LLM" in online_models_map[name_].get("api_type"):
-                        zone = ExperienceZone().create_llm_chat(model_name=name_.replace(" (running)", ""))
+                        zone = ExperienceZone().create_llm_chat(
+                            model_name=name_.replace(" (running)", ""))
                         zone.set_visibility(False)
                     else:
                         with ui.card().classes('w-full min-w-[500px] p-4') as zone:
@@ -974,12 +974,11 @@ class UILayout:
 
                 def selected_models_on_value_change(e):
                     name_ = selected_models.value
-                    for _name,zone_ in all_models_exp_zone.items():
+                    for _name, zone_ in all_models_exp_zone.items():
                         if _name == name_:
                             zone_.set_visibility(True)
                         else:
                             zone_.set_visibility(False)
-                    
 
                 selected_models.on_value_change(
                     selected_models_on_value_change)
