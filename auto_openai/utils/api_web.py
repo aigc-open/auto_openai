@@ -128,7 +128,7 @@ class ExperienceZone:
         import asyncio
 
         # 创建主容器
-        with ui.card().classes('w-full max-w-7xl mx-auto p-6 shadow-lg rounded-xl'):
+        with ui.card().classes('w-full max-w-7xl mx-auto p-6 shadow-lg rounded-xl') as card:
             # 顶部标题和输入区域
             with ui.column().classes('w-full gap-4 mb-6'):
                 # 标题区域
@@ -210,6 +210,7 @@ class ExperienceZone:
         send.on('click', on_click)
         # 添加回车发送功能
         prompt.on('keydown.enter', on_click)
+        return card
 
 
 class UILayout:
@@ -959,16 +960,19 @@ class UILayout:
                     value=[],
                     label='选择模型'
                 ).classes('w-full min-w-[500px]').props('use-chips outlined dense fill-width')
+                exp_zone = None
 
                 def selected_models_on_value_change(e):
                     name_ = selected_models.value.replace(" (running)","")
+                    if exp_zone is not None:
+                        exp_zone.delete()
                     if selected_models.value in online_models_map:
                         if "LLM" in online_models_map[selected_models.value].get("api_type"):
-                            ExperienceZone().create_llm_chat(model_name=name_)
+                            exp_zone = ExperienceZone().create_llm_chat(model_name=name_)
                         else:
-                            ui.label('该模型暂不支持体验').classes('text-red-500')
+                            exp_zone = ui.label('该模型暂不支持体验').classes('text-red-500')
                     else:
-                        ui.label('该模型暂不支持体验').classes('text-red-500')
+                        exp_zone = ui.label('该模型暂不支持体验').classes('text-red-500')
 
                 selected_models.on_value_change(
                     selected_models_on_value_change)
