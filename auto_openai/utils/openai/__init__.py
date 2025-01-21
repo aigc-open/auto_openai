@@ -227,6 +227,17 @@ class Scheduler:
         if data is not None:
             return RedisStreamInfer(**json.loads(data.decode()))
         return data
+    
+    # 添加一个任务处理完的计数 +1
+    def set_request_done(self):
+        self.redis_client.incr(f"lm-request-done")
+
+    def get_request_done(self):
+        data = self.redis_client.get(f"lm-request-done")
+        if data is None:
+            return int(0)
+        else:
+            return int(data.decode())
 
     def set_running_model(self, model_name, pexpire=10*1000):
         """设置正在运行的模型"""

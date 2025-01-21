@@ -158,6 +158,8 @@ class BaseTask:
         return duration_sec
 
     def profiler_collector(self, model_name, key, value, description=""):
+        if key not in "start_server_time":
+            scheduler.set_request_done()
         device_model_name = f"{global_config.GPU_TYPE}/{model_name}"
         # 统计服务加载时间
         profiler = scheduler.get_profiler()

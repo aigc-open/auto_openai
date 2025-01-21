@@ -21,6 +21,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 import plotly.graph_objects as go
 from PIL import Image
+import asyncio
 web_prefix = ""
 
 
@@ -109,6 +110,97 @@ def generate_api_documentation(schema: Dict[str, Any]):
         data.append(current_data)
     df = pd.DataFrame(data)
     return df
+
+
+class ExperienceZone:
+    base_url = os.environ.get(
+        "OPENAI_BASE_URL", "http://127.0.0.1:9000/openai/v1")
+    api_key = "xxxx"
+    client = OpenAI(base_url=base_url, api_key=api_key)
+
+    @classmethod
+    def create_llm_chat(self, model_name):
+        import asyncio
+
+        # 创建主容器
+        with ui.card().classes('w-full max-w-7xl mx-auto p-6 shadow-lg rounded-xl'):
+            # 顶部标题和输入区域
+            with ui.column().classes('w-full gap-4 mb-6'):
+                # 标题区域
+                with ui.row().classes('w-full items-center mb-2'):
+                    ui.icon('chat').classes('text-3xl text-blue-600 mr-2')
+                    ui.label('AI 助手').classes(
+                        'text-2xl font-bold text-gray-800')
+
+                # 输入区域
+                with ui.card().classes('w-full bg-white p-4 rounded-xl shadow-sm'):
+                    with ui.row().classes('w-full gap-4 items-end'):
+                        with ui.column().classes('flex-grow'):
+                            prompt = ui.input(
+                                value="请你使用python 写3种排序算法",
+                                label='提示词',
+                                placeholder='请输入您想问的问题...'
+                            ).props('filled outlined').classes('w-full')
+
+                        # 按钮区域
+                        with ui.row().classes('gap-2 shrink-0'):
+                            send = ui.button('发送', icon='send').classes(
+                                'bg-blue-600 text-white px-6 py-2 rounded-lg '
+                                'hover:bg-blue-700 transition-colors'
+                            ).props('flat')
+                            spinner = ui.spinner(
+                                size='sm').classes('text-blue-600')
+                            spinner.set_visibility(False)
+
+            # 对话内容区域
+            with ui.card().classes('w-full bg-gray-50 rounded-xl'):
+                ui.icon('textsms').classes('text-3xl text-gray-500 p-4')
+                ui.label('对话内容').classes('text-sm text-gray-500 p-4')
+                # 添加滚动容器
+                with ui.scroll_area().classes('h-[500px] px-4'):
+                    chat_messages = ui.markdown(
+                        "等待输入...").classes('prose max-w-full')
+
+        async def on_click():
+            if not prompt.value:
+                return
+
+            try:
+                # 禁用输入和按钮
+                spinner.set_visibility(True)
+                prompt.disabled = True
+                send.visible = False
+
+                # 调用API
+                response = self.client.chat.completions.create(
+                    model=model_name,
+                    messages=[{"role": "user", "content": prompt.value}],
+                    stream=True
+                )
+
+                # 流式处理响应
+                full_response = ""
+                for chunk in response:
+                    if chunk.choices[0].delta.content:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        chat_messages.set_content(full_response + "\n```")
+                        await asyncio.sleep(0.01)
+                chat_messages.set_content(full_response)
+
+            except Exception as e:
+                chat_messages.set_content(f"❌ 错误: {str(e)}")
+                ui.notify(f"发生错误: {str(e)}", type='negative')
+
+            finally:
+                # 清理并重置状态
+                spinner.set_visibility(False)
+                send.set_visibility(True)
+
+        # 绑定事件处理器
+        send.on('click', on_click)
+        # 添加回车发送功能
+        prompt.on('keydown.enter', on_click)
 
 
 class UILayout:
@@ -243,6 +335,7 @@ class UILayout:
                         ('首页', '/', 'home'),
                         ('设计', f'{web_prefix}/docs-README', 'architecture'),
                         ('模型广场', f'{web_prefix}/docs-models', 'apps'),
+                        ("体验区", f'{web_prefix}/experience', 'directions_run'),
                         ('全量模型', f'{web_prefix}/all-models', 'all_inclusive'),
                         ("运行时", f'{web_prefix}/docs-runtime', 'terminal'),
                         ('性能查看', f'{web_prefix}/docs-performance', 'speed'),
@@ -278,7 +371,7 @@ class UILayout:
         # hero section
         with ui.card().classes('w-full p-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white'):
             ui.label('下一代 AI 计算调度系统').classes('text-4xl font-bold mb-4')
-            ui.label('基于 vllm 和 ComfyUI 的高效 AI 计算调度解决方案').classes(
+            ui.label('基于 vllm 和 ComfyUI 等Backend的高效 AI 计算调度解决方案').classes(
                 'text-xl mb-4')
 
         # 特性展示
@@ -673,6 +766,15 @@ class UILayout:
                             ui.label(str(scheduler.get_request_queue_all_length())).classes(
                                 'text-3xl font-bold text-orange-600')
 
+                with ui.card().classes('flex-1 p-6 bg-green-50 rounded-xl hover:shadow-lg transition-shadow'):
+                    with ui.column().classes('space-y-2'):
+                        ui.label('已完成的任务').classes('text-lg text-gray-600')
+                        with ui.row().classes('items-center gap-2'):
+                            ui.icon('beenhere').classes(
+                                'text-2xl text-green-600')
+                            ui.label(str(scheduler.get_request_done())).classes(
+                                'text-3xl font-bold text-orange-600')
+
             # 运行中的模型列表
             with ui.card().classes('w-full p-6'):
                 with ui.row().classes('items-center gap-4 mb-6'):
@@ -829,6 +931,39 @@ class UILayout:
                                 'text-4xl text-gray-400')
                             ui.label('暂无离线模型').classes('text-xl text-gray-400')
 
+    def experience_view(self):
+        online_models_config = get_models_config_list()
+        
+        running_models = [m.get("name") for m in get_running_models().get("results", [])]
+        online_models_map = {}
+        for m in online_models_config:
+            if m.get("name") not in running_models:
+                online_models_map[m.get("name")] = m
+            else:
+                online_models_map[m.get("name")+" (running)"] = m
+        model_names = list(online_models_map.keys())
+        with ui.row().classes('items-end gap-4 w-full'):  # 添加 w-full 确保行占满宽度
+            with ui.column().classes('w-3/4 flex-grow'):  # 添加 flex-grow 让选择框占据所有可用空间
+                selected_models = ui.select(
+                    model_names,
+                    with_input=True,
+                    value=[],
+                    label='选择模型'
+                ).classes('w-full min-w-[500px]').props('use-chips outlined dense fill-width')
+
+                def selected_models_on_value_change(e):
+                    name_ = selected_models.value.replace(" (running)","")
+                    if name_ in online_models_map:
+                        if "LLM" in online_models_map[name_].get("api_type"):
+                            ExperienceZone().create_llm_chat(model_name=name_)
+                        else:
+                            ui.label('该模型暂不支持体验').classes('text-red-500')
+                    else:
+                        ui.label('该模型暂不支持体验').classes('text-red-500')
+
+                selected_models.on_value_change(
+                    selected_models_on_value_change)
+
 
 layout = UILayout()
 
@@ -855,6 +990,13 @@ class UIWeb:
         layout.header()
         with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
             layout.model_plaza()
+
+    @ui.page(f'{web_prefix}/experience')
+    @staticmethod
+    def experience():
+        layout.header()
+        with ui.column().classes('w-full max-w-7xl mx-auto p-4 gap-8'):
+            layout.experience_view()
 
     @ui.page(f'{web_prefix}/all-models')
     @staticmethod
