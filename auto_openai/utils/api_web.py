@@ -14,7 +14,7 @@ from auto_openai.utils.openai import Scheduler
 from auto_openai.utils.depends import get_running_models, get_models_config_list
 from auto_openai.utils.public import scheduler
 from auto_openai.utils.support_models.model_config import all_supported_device, system_models_config
-from openai import OpenAI
+from openai import AsyncOpenAI
 from fastapi import FastAPI, Request, Body, Header, Query
 from nicegui import ui
 from pathlib import Path
@@ -116,7 +116,12 @@ class ExperienceZone:
     base_url = os.environ.get(
         "OPENAI_BASE_URL", "http://127.0.0.1:9000/openai/v1")
     api_key = "xxxx"
-    client = OpenAI(base_url=base_url, api_key=api_key)
+    client = AsyncOpenAI(base_url=base_url, api_key=api_key)
+
+    # async with httpx.AsyncClient(base_url="http://127.0.0.1:8000/") as client:
+    #     response = await client.get("/")
+    #     response.raise_for_status()
+    #     return response.json()
 
     @classmethod
     def create_llm_chat(self, model_name):
@@ -171,26 +176,26 @@ class ExperienceZone:
                 prompt.disabled = True
                 send.visible = False
 
-                full_response = "逻辑待完善中..."
-                chat_messages.set_content(full_response)
+                # full_response = "逻辑待完善中..."
+                # chat_messages.set_content(full_response)
 
 
                 # 调用API
-                # response = self.client.chat.completions.create(
-                #     model=model_name,
-                #     messages=[{"role": "user", "content": prompt.value}],
-                #     stream=True
-                # )
+                response = await self.client.chat.completions.create(
+                    model=model_name,
+                    messages=[{"role": "user", "content": prompt.value}],
+                    stream=True
+                )
 
-                # # 流式处理响应
-                # full_response = ""
-                # for chunk in response:
-                #     if chunk.choices[0].delta.content:
-                #         content = chunk.choices[0].delta.content
-                #         full_response += content
-                #         chat_messages.set_content(full_response + "\n```")
-                #         await asyncio.sleep(0.01)
-                # chat_messages.set_content(full_response)
+                # 流式处理响应
+                full_response = ""
+                async for chunk in response:
+                    if chunk.choices[0].delta.content:
+                        content = chunk.choices[0].delta.content
+                        full_response += content
+                        chat_messages.set_content(full_response + "\n```")
+                        await asyncio.sleep(0.01)
+                chat_messages.set_content(full_response)
 
             except Exception as e:
                 chat_messages.set_content(f"❌ 错误: {str(e)}")
