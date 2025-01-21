@@ -171,22 +171,26 @@ class ExperienceZone:
                 prompt.disabled = True
                 send.visible = False
 
-                # 调用API
-                response = self.client.chat.completions.create(
-                    model=model_name,
-                    messages=[{"role": "user", "content": prompt.value}],
-                    stream=True
-                )
-
-                # 流式处理响应
-                full_response = ""
-                for chunk in response:
-                    if chunk.choices[0].delta.content:
-                        content = chunk.choices[0].delta.content
-                        full_response += content
-                        chat_messages.set_content(full_response + "\n```")
-                        await asyncio.sleep(0.01)
+                full_response = "逻辑待完善中..."
                 chat_messages.set_content(full_response)
+
+
+                # 调用API
+                # response = self.client.chat.completions.create(
+                #     model=model_name,
+                #     messages=[{"role": "user", "content": prompt.value}],
+                #     stream=True
+                # )
+
+                # # 流式处理响应
+                # full_response = ""
+                # for chunk in response:
+                #     if chunk.choices[0].delta.content:
+                #         content = chunk.choices[0].delta.content
+                #         full_response += content
+                #         chat_messages.set_content(full_response + "\n```")
+                #         await asyncio.sleep(0.01)
+                # chat_messages.set_content(full_response)
 
             except Exception as e:
                 chat_messages.set_content(f"❌ 错误: {str(e)}")
