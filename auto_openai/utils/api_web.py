@@ -960,19 +960,19 @@ class UILayout:
                     value=[],
                     label='选择模型'
                 ).classes('w-full min-w-[500px]').props('use-chips outlined dense fill-width')
-                exp_zone = None
+                exp_zone = ui.card().classes('w-full min-w-[500px] p-4')
 
                 def selected_models_on_value_change(e):
                     name_ = selected_models.value.replace(" (running)","")
-                    if exp_zone is not None:
-                        exp_zone.delete()
-                    if selected_models.value in online_models_map:
-                        if "LLM" in online_models_map[selected_models.value].get("api_type"):
-                            exp_zone = ExperienceZone().create_llm_chat(model_name=name_)
+                    with exp_zone:
+                        if selected_models.value in online_models_map:
+                            if "LLM" in online_models_map[selected_models.value].get("api_type"):
+                                
+                                ExperienceZone().create_llm_chat(model_name=name_)
+                            else:
+                                ui.label('该模型暂不支持体验').classes('text-red-500')
                         else:
                             exp_zone = ui.label('该模型暂不支持体验').classes('text-red-500')
-                    else:
-                        exp_zone = ui.label('该模型暂不支持体验').classes('text-red-500')
 
                 selected_models.on_value_change(
                     selected_models_on_value_change)
