@@ -961,18 +961,25 @@ class UILayout:
                     label='选择模型'
                 ).classes('w-full min-w-[500px]').props('use-chips outlined dense fill-width')
                 exp_zone = ui.card().classes('w-full min-w-[500px] p-4')
+                all_models_exp_zone = {}
+                for name_ in online_models_map:
+                    if "LLM" in online_models_map[selected_models.value].get("api_type"):
+                        zone = ExperienceZone().create_llm_chat(model_name=name_.replace(" (running)", ""))
+                        zone.set_visibility(False)
+                    else:
+                        with ui.card().classes('w-full min-w-[500px] p-4') as zone:
+                            ui.label('该模型暂不支持体验').classes('text-red-500')
+                        zone.set_visibility(False)
+                    all_models_exp_zone.update({name_: zone})
 
                 def selected_models_on_value_change(e):
-                    name_ = selected_models.value.replace(" (running)","")
-                    with exp_zone:
-                        if selected_models.value in online_models_map:
-                            if "LLM" in online_models_map[selected_models.value].get("api_type"):
-                                
-                                ExperienceZone().create_llm_chat(model_name=name_)
-                            else:
-                                ui.label('该模型暂不支持体验').classes('text-red-500')
+                    name_ = selected_models.value
+                    for _name,zone_ in all_models_exp_zone.items():
+                        if _name == name_:
+                            zone_.set_visibility(True)
                         else:
-                            exp_zone = ui.label('该模型暂不支持体验').classes('text-red-500')
+                            zone_.set_visibility(False)
+                    
 
                 selected_models.on_value_change(
                     selected_models_on_value_change)
