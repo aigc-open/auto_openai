@@ -20,7 +20,7 @@ from fastapi.responses import FileResponse
 from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest, Scheduler, gen_request_id, \
     ImageGenerateRequest, ImageGenerateResponse, AudioSpeechRequest, EmbeddingsRequest, RerankRequest, VideoGenerationsRequest
 
-from auto_openai.utils.api_web import UIWeb
+from auto_openai.web.pages.routers import UIWeb
 
 
 app = FastAPI(root_path="/openai", title="Auto Openai")

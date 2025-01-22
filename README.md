@@ -3,6 +3,8 @@
 ## 项目概述
 
 本项目是一个基于 vllm 和 ComfyUI 的高效 AI 计算调度系统。旨在优化大型语言模型的推理过程，提供灵活的资源分配和自动扩展能力。通过集成 OpenAI 兼容的 API 接口，用户可以轻松访问和使用系统资源。
+![](./auto_openai/statics/home.png)
+- [快速体验地址](https://auto-openai.cpolar.cn/)
 
 ## 主要功能
 
@@ -15,6 +17,8 @@
 - **OpenAI 兼容的 API**：提供与 OpenAI API 兼容的接口，便于现有应用的快速集成和迁移。
 - **多类型 api 支持**: 支持多种类型的 API，包括 LLM, VL, SD, Embedding, Audio, Image, TTS, rerank 等。
 - **分布式支持**: 支持分布式计算，提高计算效率。
+
+
 
 # 安装
 
@@ -38,9 +42,18 @@ pip install .
 | ASR        | funasr                                                                             | ✅   |
 | 视频生成   | CogVideo/CogVideoX-5b                                                              | ✅   |
 
+- 获取支持的模型列表
+```bash
+python3 -m auto_openai.utils.support_models.model_config
+```
+
+## [模型下载请参考](./auto_openai/utils/support_models/model_config.py)
+
+![](./auto_openai/statics/models.png)
+
+
 ## 本项目依赖的第三方组件
 
-- vllm/transformers/ComfyUI/embedding/funasr/maskgct/webui(按需安装)
 - redis
 
 ### 内置模型下载
@@ -53,12 +66,6 @@ python3 -m auto_openai.lm_server.install_models tiktoken
 
 - 这些配置可以通过环境变量进行修改
   [`conf/config.yaml`](conf/config.yaml)
-- 获取支持的模型列表
-```bash
-python3 -m auto_openai.utils.support_models.model_config
-```
-
-## [模型下载请参考](./model_download.sh)
 
 
 ## 启动服务
@@ -103,6 +110,7 @@ COMMANDS
 ```
 
 # 快速入门
+![](./auto_openai/statics/test.png)
 
 ## 示例 OpenAI API 参考
 
