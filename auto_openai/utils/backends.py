@@ -277,11 +277,12 @@ class VllmTask(BaseTask):
                 self.update_running_model()
                 client = VLLMOpenAI(api_key="xxx", base_url=llm_server)
                 params.update(self.stop_params)
+                start_time = time.time()
                 if params.get("messages"):
                     stream = client.chat.completions.create(**params)
                 else:
                     stream = client.completions.create(**params)
-                start_time = time.time()
+
                 # 基本参数
                 text = ""
                 finish_reason = None
@@ -293,6 +294,8 @@ class VllmTask(BaseTask):
                 send_text = ""
                 all_text = ""
                 pushed = False
+                tool_call_function_name = ""
+                tool_call_function_args = ""
                 for chunk in stream:
                     self.update_running_model()
                     if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
@@ -301,7 +304,14 @@ class VllmTask(BaseTask):
                         logger.info(
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
-                    if params.get("messages") and chunk.choices[0].delta.content is not None:
+
+                    if params.get("messages") and chunk.choices[0].delta.tool_calls:
+                        tool_call = chunk.choices[0].delta.tool_calls[0]
+                        if tool_call.function.name:
+                            tool_call_function_name = tool_call.function.name
+                        if tool_call.function.arguments:
+                            tool_call_function_args += tool_call.function.arguments
+                    elif params.get("messages") and chunk.choices[0].delta.content is not None:
                         text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:
                         text = chunk.choices[0].text
@@ -339,6 +349,17 @@ class VllmTask(BaseTask):
                                              value=RedisStreamInfer(text=send_text, finish=False, usage=dict(completion_tokens=completion_tokens,
                                                                                                              prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
                         if finish is True:
+                            scheduler.set_result(request_id=request_id+"_tool_name",
+                                                 value=RedisStreamInfer(
+                                                     text=tool_call_function_name, finish=False,
+                                                     usage=dict(completion_tokens=completion_tokens,
+                                                                prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
+                            scheduler.set_result(request_id=request_id+"_tool_args",
+                                                 value=RedisStreamInfer(
+                                                     text=tool_call_function_args, finish=False,
+                                                     usage=dict(completion_tokens=completion_tokens,
+                                                                prompt_tokens=prompt_tokens,
+                                                                total_tokens=total_tokens, tps=tps)))
                             scheduler.set_result(request_id=request_id,
                                                  value=RedisStreamInfer(text="", finish=True, usage=dict(completion_tokens=completion_tokens,
                                                                                                          prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))

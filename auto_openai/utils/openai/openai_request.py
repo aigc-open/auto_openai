@@ -2,7 +2,7 @@ import requests
 import json
 import uuid
 import time
-from typing import Dict, List, Literal, Optional, Union
+from typing import Any, ClassVar, Dict, List, Literal, Optional, Set, Union
 from pydantic import BaseModel, Field
 import redis
 import time
@@ -95,6 +95,44 @@ class UsageInfo(BaseModel):
     completion_tokens: int = 0
     tps: float = 0
 
+class FunctionDefinition(BaseModel):
+    name: str
+    description: Optional[str] = None
+    parameters: Optional[Dict[str, Any]] = None
+
+
+class ChatCompletionToolsParam(BaseModel):
+    type: Literal["function"] = "function"
+    function: FunctionDefinition
+
+class ChatCompletionNamedFunction(BaseModel):
+    name: str
+
+class ChatCompletionNamedToolChoiceParam(BaseModel):
+    function: ChatCompletionNamedFunction
+    type: Literal["function"] = "function"
+
+class FunctionCall(BaseModel):
+    name: str
+    arguments: str
+
+
+class ToolCall(BaseModel):
+    id: str = Field(default_factory=lambda: f"chatcmpl-tool-{random_uuid()}")
+    type: Literal["function"] = "function"
+    function: FunctionCall
+
+
+class DeltaFunctionCall(BaseModel):
+    name: Optional[str] = None
+    arguments: Optional[str] = None
+
+
+# a tool call delta where everything is optional
+class DeltaToolCall(BaseModel):
+    id: str = Field(default_factory=lambda: f"chatcmpl-tool-{random_uuid()}")
+    type: Literal["function"] = "function"
+    function: Optional[DeltaFunctionCall] = None
 
 class ChatCompletionRequest(BaseModel):
     model: str = Field(..., description="模型名称")
@@ -127,6 +165,12 @@ class ChatCompletionRequest(BaseModel):
     # echo: Optional[bool] = False
     # repetition_penalty: Optional[float] = 1.0
     # min_p: Optional[float] = 0.0
+    tools: Optional[List[ChatCompletionToolsParam]] = []
+    tool_choice: Optional[Union[Literal["auto"],
+                                ChatCompletionNamedToolChoiceParam]] = "auto"
+
+    # NOTE this will be ignored by VLLM -- the model determines the behavior
+    # parallel_tool_calls: Optional[bool] = False
 
 
 class CompletionRequest(BaseModel):
@@ -176,7 +220,7 @@ class CompletionResponseChoice(BaseModel):
     index: int
     text: str
     logprobs: Optional[LogProbs] = None
-    finish_reason: Optional[Literal["stop", "length"]] = None
+    finish_reason: Optional[Literal["stop", "length", "tool_calls"]] = None
 
 
 class CompletionResponse(BaseModel):
@@ -192,7 +236,7 @@ class CompletionResponseStreamChoice(BaseModel):
     index: int
     text: str
     logprobs: Optional[LogProbs] = None
-    finish_reason: Optional[Literal["stop", "length"]] = None
+    finish_reason: Optional[Literal["stop", "length", "tool_calls"]] = None
 
 
 class CompletionStreamResponse(BaseModel):
@@ -207,12 +251,13 @@ class CompletionStreamResponse(BaseModel):
 class ChatMessage(BaseModel):
     role: str
     content: str
+    tool_calls: List[DeltaToolCall] = Field(default_factory=list)
 
 
 class ChatCompletionResponseChoice(BaseModel):
     index: int
     message: ChatMessage
-    finish_reason: Optional[Literal["stop", "length"]] = None
+    finish_reason: Optional[Literal["stop", "length", "tool_calls"]] = None
 
 
 class ChatCompletionResponse(BaseModel):
@@ -227,12 +272,13 @@ class ChatCompletionResponse(BaseModel):
 class DeltaMessage(BaseModel):
     role: Optional[str] = None
     content: Optional[str] = None
+    tool_calls: List[DeltaToolCall] = Field(default_factory=list)
 
 
 class ChatCompletionResponseStreamChoice(BaseModel):
     index: int
     delta: DeltaMessage
-    finish_reason: Optional[Literal["stop", "length"]] = None
+    finish_reason: Optional[Literal["stop", "length", "tool_calls"]] = None
 
 
 class ChatCompletionStreamResponse(BaseModel):

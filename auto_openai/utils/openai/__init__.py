@@ -39,8 +39,24 @@ class CompletionClient:
         return {'Content-Type': 'application/json', "Authorization": f"Bearer {self.api_key}"}
 
     def create_stream(self, **kwargs):
+        if "tools" in kwargs:
+            if not kwargs["tools"]:
+                del kwargs["tools"]
+                if "tool_choice" in kwargs:
+                    del kwargs["tool_choice"]
+            else:
+                if kwargs.get("tool_choice") == "auto":
+                    kwargs["tool_choice"] = {
+                        "type": "function",
+                        "function": {"name": kwargs["tools"][0]["function"]["name"]}
+                    }
+
+        else:
+            if "tool_choice" in kwargs:
+                del kwargs["tool_choice"]
         response = requests.post(
-            self.url, headers=self.headers, data=json.dumps(kwargs), stream=True)
+            self.url, headers=self.headers,
+            data=json.dumps(kwargs), stream=True)
         if self.chat_flag is True:
             Response = ChatCompletionStreamResponse
         else:
@@ -83,6 +99,20 @@ class CompletionClient:
                     return
 
     def create_(self, **kwargs):
+        if "tools" in kwargs:
+            if not kwargs["tools"]:
+                del kwargs["tools"]
+                if "tool_choice" in kwargs:
+                    del kwargs["tool_choice"]
+            else:
+                if kwargs.get("tool_choice") == "auto":
+                    kwargs["tool_choice"] = {
+                        "type": "function",
+                        "function": {"name": kwargs["tools"][0]["function"]["name"]}
+                    }
+        else:
+            if "tool_choice" in kwargs:
+                del kwargs["tool_choice"]
         response = requests.post(
             self.url, headers=self.headers, data=json.dumps(kwargs))
         if self.chat_flag is True:
@@ -179,7 +209,6 @@ class Scheduler:
         for key in keys:
             length += self.redis_client.llen(name=key)
         return length
-        
 
     def get_request_queue_names(self):
         """大模型任务队列有请求的模型用于轮询遍历"""
@@ -227,7 +256,7 @@ class Scheduler:
         if data is not None:
             return RedisStreamInfer(**json.loads(data.decode()))
         return data
-    
+
     # 添加一个任务处理完的计数 +1
     def set_request_done(self):
         self.redis_client.incr(f"lm-request-done")
@@ -362,13 +391,25 @@ class Scheduler:
         async for data_ in self.stream(request=request, request_id=request_id):
             data: RedisStreamInfer = data_
             finish_reason = "stop" if data.finish else None
+            content = data.text
+            tool_calls = []
+            if data.finish:
+                data_tool_name = self.get_result(
+                    request_id=request_id+"_tool_name")
+                data_tool_args = self.get_result(
+                    request_id=request_id+"_tool_args")
+                data_tool_name = data_tool_name.text if data_tool_name else None
+                data_tool_args = data_tool_args.text if data_tool_args else None
+                tool_calls = [
+                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}]
             chunk = ChatCompletionStreamResponse(
                 model=request.model,
                 choices=[{
                     "index": 0,
                     "delta": {
                         "role": "assistant",
-                        "content": data.text
+                        "content": content,
+                        "tool_calls": tool_calls
                     },
                     "finish_reason": finish_reason
                 }],
@@ -381,11 +422,20 @@ class Scheduler:
 
     async def ChatCompletion(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         content = ""
+        tool_calls = []
         async for data_ in self.stream(request=request, request_id=request_id):
             data: RedisStreamInfer = data_
             content += data.text
             if data.finish:
                 usage = UsageInfo(**data.usage)
+                data_tool_name = self.get_result(
+                    request_id=request_id+"_tool_name")
+                data_tool_args = self.get_result(
+                    request_id=request_id+"_tool_args")
+                data_tool_name = data_tool_name.text if data_tool_name else None
+                data_tool_args = data_tool_args.text if data_tool_args else None
+                tool_calls = [
+                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}]
         finish_reason = "stop"
         response = ChatCompletionResponse(
             model=request.model,
@@ -393,7 +443,8 @@ class Scheduler:
                 "index": 0,
                 "message": {
                     "role": "assistant",
-                    "content": content
+                    "content": content,
+                    "tool_calls": tool_calls
                 },
                 "finish_reason": finish_reason
             }],

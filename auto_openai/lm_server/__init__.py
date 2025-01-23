@@ -56,7 +56,7 @@ class CMD:
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name,
                  quantization="", server_type="vllm", gpu_memory_utilization=0.9):
         """
-        INFO 01-06 02:32:41 api_server.py:652] args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
+        args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
         lora_modules=None, prompt_adapters=None, chat_template='/template/template_deepseek-coder.jinja', chat_template_content_format='auto', 
         response_role='assistant', ssl_keyfile=None, ssl_certfile=None, ssl_ca_certs=None, ssl_cert_reqs=0, root_path=None, middleware=[], return_tokens_as_token_ids=False, 
@@ -110,6 +110,7 @@ class CMD:
             --dtype=float16 --block-size={block_size} --trust-remote-code 
             --served-model-name={model_name}
             --gpu-memory-utilization={gpu_memory_utilization}
+            --tool-call-parser=hermes
             --port={port}"""
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")

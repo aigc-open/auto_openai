@@ -19,8 +19,7 @@ response = client.chat.completions.create(
 
 for chunk in response:
     print(chunk.choices[0].delta.content or "", end="", flush=True)
-
-
+print()
 ########################### 续写模型 ###########################
 response = client.completions.create(
     model="Qwen2.5-7B-Instruct",
@@ -33,4 +32,33 @@ response = client.completions.create(
 for chunk in response:
     print(chunk.choices[0].text or "", end="", flush=True)
 print()
-print(chunk)
+
+########################### tools 调用 ###########################
+
+response = client.chat.completions.create(
+    model="Qwen2.5-7B-Instruct",
+    messages=[{"role": "user", "content": "How's the weather in Hangzhou?"}],
+    max_tokens=204096,
+    temperature=0.0,
+    stream=False,
+    tools=[
+        {
+            "type": "function",
+            "function": {
+                "name": "get_weather",
+                "description": "Get weather of an location, the user shoud supply a location first",
+                "parameters": {
+                    "type": "object",
+                    "properties": {
+                        "location": {
+                            "type": "string",
+                            "description": "The city and state, e.g. San Francisco, CA",
+                        }
+                    },
+                    "required": ["location"]
+                },
+            }
+        },
+    ]
+)
+print(response)
