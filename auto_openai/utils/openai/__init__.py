@@ -343,8 +343,9 @@ class Scheduler:
         self.set_request_queue(model_name=request.model, request_id=request_id)
         # 排队
         start_time = time.time()
+        logger.info(f"排队中 {request_id}")
         while True:
-            if int(time.time()) % 3 == 0:
+            if int(time.time()) % 1000 == 0:
                 logger.info(f"排队中 {request_id}")
             request_data: dict = request.dict()
             # 判断是否存在suffix 这个key
@@ -352,7 +353,7 @@ class Scheduler:
                 del request_data["suffix"]
             self.set_request_params(
                 request_id=request_id, value=json.dumps(request_data))
-            await asyncio.sleep(0.1)
+            # await asyncio.sleep(0.1)
 
             if self.http_request is not None and await self.http_request.is_disconnected():
                 # 客户端主动断开连接
@@ -362,10 +363,11 @@ class Scheduler:
             if time.time() - start_time > self.queue_timeout:
                 raise HTTPException(status_code=500, detail="队列相当拥挤")
         # 开始推流给用户
-        logger.info(f"{request_id} 排队总耗时: {time.time() - start_time}")
+        logger.info(f"排队总耗时 {request_id} : {time.time() - start_time}")
         start_time = time.time()
+        logger.info(f"推流中 {request_id}")
         while True:
-            if int(time.time()) % 3 == 0:
+            if int(time.time()) % 1000 == 0:
                 logger.info(f"推流中 {request_id}")
             data_ = self.get_result(request_id=request_id)
             if self.http_request is not None and await self.http_request.is_disconnected():
@@ -384,10 +386,11 @@ class Scheduler:
                     yield data
                     break
                 else:
-                    await asyncio.sleep(0.5)
+                    pass
+                    # await asyncio.sleep(0.5)
         self.set_request_status_ing(
             request_id=request_id, pexpire=0.01*1000)  # 10ms
-        logger.info(f"{request_id} 推流总耗时: {time.time() - start_time}")
+        logger.info(f"推流总耗时 {request_id} : {time.time() - start_time}")
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         async for data_ in self.stream(request=request, request_id=request_id):
