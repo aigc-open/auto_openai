@@ -13,18 +13,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Login to DockerHub
-      uses: docker/login-action@v3
-      with:
-        username: ${{ vars.DOCKERHUB_USERNAME }}
-        password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-    - name: Build and push Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: |
-          ${{ vars.DOCKER_USERNAME }}/auto_openai:0.2
+    - name: Debug All
+      run: |
+        echo "检查 Secrets:"
+        echo "DOCKERHUB_USERNAME (secret) 是否设置: ${{ secrets.DOCKERHUB_USERNAME != '' }}"
+        echo "DOCKERHUB_TOKEN (secret) 是否设置: ${{ secrets.DOCKERHUB_TOKEN != '' }}"
+        
+        echo "检查 Variables:"
+        echo "DOCKERHUB_USERNAME (var): ${{ vars.DOCKERHUB_USERNAME }}"
+        echo "DOCKER_USERNAME (var): ${{ vars.DOCKER_USERNAME }}"
