@@ -48,3 +48,18 @@ curl -X POST "http://127.0.0.1:9000/openai/v1/completions" \
   "suffix": "return sorted_list",
   "stream": false
 }'
+
+# 代理模式(使用外网模型名称代理到本地模型)
+# Qwen2.5-Coder-14B-Instruct:20k 为代理模型(实际模型)
+# gpt-4o 为外网模型名称,被代理对象
+curl -X POST "http://127.0.0.1:9000/openai/Qwen2.5-Coder-14B-Instruct:20k/v1/completions" \
+  -H "Authorization: Bearer xxxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+  "model": "gpt-4o",
+  "prompt": "# 打印冒泡排序 \ndef",
+  "max_tokens": 128,
+  "temperature": 0.0,
+  "suffix": "return sorted_list",
+  "stream": false
+}'

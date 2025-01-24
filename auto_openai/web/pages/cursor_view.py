@@ -11,6 +11,8 @@ def index():
         project_path, "statics", 'cursor-code-generate.png'))
     cursor_code_chat = Image.open(os.path.join(
         project_path, "statics", 'cursor-code-chat.png'))
+    cursor_composer = Image.open(os.path.join(
+        project_path, "statics", 'cursor-composer.png'))
 
     with ui.column().classes('w-full max-w-7xl mx-auto p-8 space-y-12'):
         # 标题部分
@@ -52,4 +54,11 @@ def index():
             ui.markdown("### 💬 代码聊天").classes(
                 'text-xl font-semibold text-gray-800')
             ui.image(cursor_code_chat).classes(
+                'w-full rounded-lg shadow-md')
+            
+        # Composer
+        with ui.card().classes('w-full p-6 space-y-6'):
+            ui.markdown("### 🎨 Composer").classes(
+                'text-xl font-semibold text-gray-800')
+            ui.image(cursor_composer).classes(
                 'w-full rounded-lg shadow-md')
