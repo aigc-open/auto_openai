@@ -276,9 +276,9 @@ class VllmTask(BaseTask):
                 if self.status == False:
                     raise Exception("模型服务启动异常")
                 self.update_running_model()
+                start_time = time.time()
                 client = VLLMOpenAI(api_key="xxx", base_url=llm_server)
                 params.update(self.stop_params)
-                start_time = time.time()
                 if params.get("messages"):
                     stream = client.chat.completions.create(**params)
                 else:
@@ -334,9 +334,10 @@ class VllmTask(BaseTask):
                             completion_tokens = chunk.usage.completion_tokens
                             prompt_tokens = chunk.usage.prompt_tokens
                             total_tokens = chunk.usage.total_tokens
-
-                        tps = completion_tokens / (end_time-start_time)
-                        logger.info(f"本轮对话{request_id}-tps: {tps}")
+                        total_time = end_time-start_time
+                        tps = completion_tokens / total_time
+                        logger.info(
+                            f"本轮对话{request_id}: tps={tps} total_tokens={total_tokens} prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} total_time={total_time}")
                         if tps:
                             model_name = self.model_config["name"]
                             self.profiler_collector(
