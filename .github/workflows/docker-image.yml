@@ -19,6 +19,13 @@ jobs:
       with:
         username: ${{ vars.DOCKERHUB_USERNAME }} 
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/auto_openai:0.2 
+        
   build-lm:
     runs-on: ubuntu-latest
     steps:
@@ -29,6 +36,7 @@ jobs:
       with:
         username: ${{ vars.DOCKERHUB_USERNAME }} 
         password: ${{ secrets.DOCKERHUB_TOKEN }}
+
 
     - name: Build and push Docker images(LM)
       env:
