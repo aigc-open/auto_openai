@@ -23,14 +23,11 @@ def index():
                     ('性能查看', f'{web_prefix}/docs-performance', 'speed'),
                     ('系统分布式虚拟节点',
                         f'{web_prefix}/docs-distributed_nodes', 'hub'),
-                    ('Cursor接入', f'{web_prefix}/docs-cursor', 'mouse')
                 ]
 
+                # 添加其他导航项
                 for label, path, icon in nav_items:
-                    # 检查当前页面路径是否匹配
                     is_active = ui.page.path == path
-
-                    # 根据是否激活设置不同的样式
                     btn_classes = (
                         'px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ' +
                         (
@@ -43,3 +40,12 @@ def index():
                     with ui.button(on_click=lambda p=path: ui.navigate.to(p)).classes(btn_classes):
                         ui.icon(icon).classes('text-lg')
                         ui.label(label)
+
+                # 添加 Cursor 接入下拉菜单
+                with ui.button(text="解决方案",icon='menu').classes('px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 hover:bg-white/20 text-white'):
+                    with ui.menu().classes('bg-white'):
+                        with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cursor')):
+                            ui.label('Cursor 接入')
+                        with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cline')):
+                            ui.label('Cline 接入')
+

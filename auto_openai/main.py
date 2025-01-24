@@ -70,6 +70,40 @@ async def chat_completion(
     return await scheduler.ChatCompletion(request=data, request_id=request_id)
 
 
+@app.post("/{proxy_model}/v1/chat/completions")
+async def chat_completion(
+        request: Request,
+        proxy_model: str,
+        data: ChatCompletionRequest):
+    data.model = proxy_model
+    # 处理模型最终需要完成的token数量
+    model_config = get_model_config(name=data.model)
+    model_max_tokens = model_config.get("model_max_tokens", 2048)
+
+    data.messages = cut_messages(
+        messages=data.messages, token_limit=int(model_max_tokens*4/5))
+    current_token_count = messages_token_count(
+        messages=data.messages, token_limit=int(model_max_tokens*4/5)) + 100  # 上浮100token误差
+
+    max_tokens = min([data.max_tokens, model_max_tokens - current_token_count])
+    max_tokens = 1 if max_tokens < 0 else max_tokens
+    data.max_tokens = max_tokens
+    data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
+
+    scheduler = Scheduler(redis_client=redis_client, http_request=request,
+                          queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
+
+    scheduler.set_model_config(
+        model_name=data.model, value=json.dumps(model_config))
+    request_id = gen_request_id()
+    if data.stream:
+        return StreamingResponse(scheduler.ChatCompletionStream(
+            request=data,
+            request_id=request_id),
+            media_type="text/event-stream")
+    return await scheduler.ChatCompletion(request=data, request_id=request_id)
+
+
 @app.post("/v1/completions")
 async def completion(
         request: Request,
