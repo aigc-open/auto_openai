@@ -16,7 +16,7 @@ boto3==1.35.63
 wget
 psutil
 webuiapi
-gradio==5.10.0
+gradio==5.4.0
 together
 pandas
 docker
