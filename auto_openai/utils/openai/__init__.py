@@ -362,6 +362,7 @@ class Scheduler:
             if time.time() - start_time > self.queue_timeout:
                 raise HTTPException(status_code=500, detail="队列相当拥挤")
         # 开始推流给用户
+        logger.info(f"{request_id} 排队总耗时: {time.time() - start_time}")
         start_time = time.time()
         while True:
             if int(time.time()) % 3 == 0:
@@ -386,6 +387,7 @@ class Scheduler:
                     await asyncio.sleep(0.5)
         self.set_request_status_ing(
             request_id=request_id, pexpire=0.01*1000)  # 10ms
+        logger.info(f"{request_id} 推流总耗时: {time.time() - start_time}")
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         async for data_ in self.stream(request=request, request_id=request_id):
