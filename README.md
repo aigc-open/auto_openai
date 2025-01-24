@@ -68,7 +68,83 @@ python3 -m auto_openai.lm_server.install_models tiktoken
   [`conf/config.yaml`](conf/config.yaml)
 
 
-## 启动服务
+
+## 容器化部署
+
+### 部署网关API
+
+- [容器下载地址](https://hub.docker.com/u/aigc919)
+
+```yaml
+version: "3"
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "16379:6379"
+    restart: always
+    command:
+      - redis-server
+  openai-api:
+    image: aigc919/auto_openai:0.2
+    ports:
+      - "19000:9000"
+    command:
+      - /bin/sh
+      - -c
+      - |
+        python3 -m auto_openai.main --port=9000
+    restart: always
+    volumes:
+      - ./conf:/app/conf
+    depends_on:
+      - redis
+```
+
+### 调度器部署
+
+```yaml
+services:
+  scheduler-0-of-0:
+    command: &id001
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1736148045-908794112
+      LM_SERVER_BASE_PORT: 30184
+      NODE_GPU_TOTAL: '0'
+    image: aigc919/auto_openai:0.2
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: &id002
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+  scheduler-1-of-1:
+    command: *id001
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      LABEL: lm-server-1736148045-1366755522
+      LM_SERVER_BASE_PORT: 30192
+      NODE_GPU_TOTAL: '1'
+    image: aigc919/auto_openai:0.2
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id002
+version: '3'
+
+```
+
+## 本地启动服务
 
 ```bash
 AUTO_OPENAI_CONFIG_PATH=./conf/config.yaml python3 -m auto_openai.main --port=9000
