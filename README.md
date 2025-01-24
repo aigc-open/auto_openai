@@ -74,6 +74,7 @@ python3 -m auto_openai.lm_server.install_models tiktoken
 ### 部署网关API
 
 - [容器下载地址](https://hub.docker.com/u/aigc919)
+- 大模型镜像请参考: auto_openai_lm_images
 
 ```yaml
 version: "3"
