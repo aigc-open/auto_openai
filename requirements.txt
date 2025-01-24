@@ -16,9 +16,9 @@ boto3==1.35.63
 wget
 psutil
 webuiapi
-gradio==5.4.0
+gradio==5.10.0
 together
-pandas
-docker
+pandas==1.4.3
+docker==7.1.0
 nicegui==2.9.1
 plotly==5.24.1
