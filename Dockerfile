@@ -9,9 +9,7 @@ RUN apt-get update && \
     apt-get install -y gcc libc-dev default-mysql-client default-libmysqlclient-dev nginx libsasl2-dev libldap2-dev libssl-dev zip jq && \
     apt-get clean
 
-
-RUN pip config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip config set install.trusted-host artifact.enflame.cn
-# RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
 
 
 WORKDIR /workspace
