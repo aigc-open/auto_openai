@@ -42,7 +42,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
                 request_info = self.get_request(model_name=self.current_model)
                 if not request_info:
                     # 该模型没有推理任务，则跳过该模型
-                    time.sleep(1)
+                    # time.sleep(1)
                     unuseful_times += 1
                     free_status_list[idx] = True
                     continue
