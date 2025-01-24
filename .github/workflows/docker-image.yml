@@ -25,5 +25,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: |
-          ${{ vars.DOCKERHUB_USERNAME }}/auto_openai:0.2  # 使用相同的变量名
+        tags: ${{ vars.DOCKERHUB_USERNAME }}/auto_openai:0.2 
