@@ -26,6 +26,9 @@ def index(model_name):
 
             # 输入区域
             with ui.card().classes('w-full bg-white p-4 rounded-xl shadow-sm'):
+                with ui.row():
+                    temperature = ui.number(label="Temperature(代码生成建议使用0.0)", value=0.0, min=0.0, max=1.0).props('filled outlined').classes('w-[200px]')
+                    max_tokens = ui.number(label="Max Tokens", value=512, min=0, max=4096).props('filled outlined').classes('w-[200px]')
                 with ui.row().classes('w-full gap-4 items-end'):
                     with ui.column().classes('flex-grow'):
                         prompt = ui.input(
@@ -36,6 +39,7 @@ def index(model_name):
 
                     # 按钮区域
                     with ui.row().classes('gap-2 shrink-0'):
+
                         send = ui.button('发送', icon='send').classes(
                             'bg-blue-600 text-white px-6 py-2 rounded-lg '
                             'hover:bg-blue-700 transition-colors'
@@ -70,7 +74,9 @@ def index(model_name):
             response = await client.chat.completions.create(
                 model=model_name,
                 messages=[{"role": "user", "content": prompt.value}],
-                stream=True
+                stream=True,
+                temperature=temperature.value,
+                max_tokens=max_tokens.value
             )
 
             # 流式处理响应
