@@ -58,9 +58,9 @@ class BaseTask:
         if not request_id:
             # logger.warning(f"{model_name} 的未取到request_id")
             return None
-        for _ in range(10):
-            # 为了避免写入队列的时差问题，获取参数时，延时获取，并容错10次
-            time.sleep(0.3)
+        start_time = time.time()
+        while time.time() - start_time > 3:
+            # 3秒未获取到参数则视为被放弃的请求
             task_params = scheduler.get_request_params(request_id=request_id)
             if task_params:
                 break
