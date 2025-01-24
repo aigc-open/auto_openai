@@ -60,7 +60,7 @@ class BaseTask:
             return None
         start_time = time.time()
         task_params = None
-        while time.time() - start_time > 100:
+        while time.time() - start_time < 3:
             # 3秒未获取到参数则视为被放弃的请求
             task_params = scheduler.get_request_params(request_id=request_id)
             if task_params:
