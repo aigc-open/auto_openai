@@ -54,7 +54,8 @@ class CMD:
 
     @classmethod
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name,
-                 quantization="", server_type="vllm", gpu_memory_utilization=0.9):
+                 quantization="", server_type="vllm", gpu_memory_utilization=0.9,
+                 enforce_eager=True, num_scheduler_steps=1):
         """
         args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
@@ -85,24 +86,18 @@ class CMD:
         if isinstance(device, tuple):
             device = ",".join([str(i) for i in device])
         model_path = model_name.split(":")[0]
-        if "NV" in global_config.GPU_TYPE:
-            block_size = 16
-        else:
-            block_size = 64
-        if quantization:
-            quantization = f"--quantization {quantization}"
-        else:
-            quantization = ""
-        if ".jinja" in template:
-            template = f"--chat-template {template}"
-        else:
-            template = ""
+        # 参数特殊处理
+        block_size = 64 if "NV" in global_config.GPU_TYPE else 16
+        quantization = f"--quantization {quantization}" if quantization else ""
+        template = f"--chat-template {template}" if ".jinja" in template else ""
+        enforce_eager = "--enforce-eager" if enforce_eager else ""
         cmd = f"""
             python3 -m vllm.entrypoints.openai.api_server 
             --model {model_path} 
             --device={device_name} 
             {quantization}
-            --enforce-eager
+            {enforce_eager}
+            --num-scheduler-steps={num_scheduler_steps}
             --enable-prefix-caching
             {template}
             --tensor-parallel-size={need_gpu_count} 

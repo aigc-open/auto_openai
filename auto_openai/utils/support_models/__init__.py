@@ -42,6 +42,8 @@ class LLMConfig(LMConfig):
     stop: List[str]
     server_type: str = "vllm"
     api_type: str = "LLM"
+    enforce_eager: bool = True
+    num_scheduler_steps: int = 1
 
     def extend(self, gpus: List[MultiGPUS]):
         _model_configs_ = []
