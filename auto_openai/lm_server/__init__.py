@@ -87,7 +87,7 @@ class CMD:
             device = ",".join([str(i) for i in device])
         model_path = model_name.split(":")[0]
         # 参数特殊处理
-        block_size = 64 if "NV" in global_config.GPU_TYPE else 16
+        block_size = 16 if "NV" in global_config.GPU_TYPE else 64
         quantization = f"--quantization {quantization}" if quantization else ""
         template = f"--chat-template {template}" if ".jinja" in template else ""
         enforce_eager = "--enforce-eager" if enforce_eager else ""
