@@ -298,6 +298,7 @@ class VllmTask(BaseTask):
                 send_text = ""
                 all_text = ""
                 pushed = False
+                prefill_time = 0
                 tool_call_function_name = ""
                 tool_call_function_args = ""
                 for chunk in stream:
@@ -308,6 +309,7 @@ class VllmTask(BaseTask):
                         logger.info(
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
+                        prefill_time = time.time() - start_time
 
                     if params.get("messages") and chunk.choices[0].delta.tool_calls:
                         tool_call = chunk.choices[0].delta.tool_calls[0]
@@ -340,7 +342,7 @@ class VllmTask(BaseTask):
                         total_time = end_time-start_time
                         tps = completion_tokens / total_time
                         logger.info(
-                            f"本轮对话{request_id}: tps={tps} total_tokens={total_tokens} prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} total_time={total_time}")
+                            f"本轮对话{request_id}: tps={tps} total_tokens={total_tokens} prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} prefill_time={prefill_time} total_time={total_time}")
                         if tps:
                             model_name = self.model_config["name"]
                             self.profiler_collector(
