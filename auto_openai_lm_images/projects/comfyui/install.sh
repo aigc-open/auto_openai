@@ -65,3 +65,4 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui_segm
 cd $root_path/custom_nodes && git clone https://gitee.com/python279/ComfyUI-AdvancedLivePortrait.git && cd ComfyUI-AdvancedLivePortrait && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/yubiaohyb/ComfyUI-LivePortraitKJ.git && cd ComfyUI-LivePortraitKJ && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-CogVideoXWrapper.git && cd ComfyUI-CogVideoXWrapper && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-KwaiKolorsWrapper.git && cd ComfyUI-KwaiKolorsWrapper && pip install -r requirements.txt

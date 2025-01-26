@@ -21,6 +21,7 @@ class Docker:
             "privileged": True,
             "shm_size": "16gb",
             "volumes": ["/root/share_models/:/root/share_models/",
+                        "/root/share_models/webui-models/:/workspace/ComfyUI/models",
                         "/root/share_models/webui-models/comfyui_controlnet_aux_ckpts:/workspace/ComfyUI/custom_nodes/comfyui_controlnet_aux/ckpts",
                         "/root/share_models/webui-models/controlnet_v1.1_annotator/:/workspace/stable-diffusion-webui/extensions/sd-webui-controlnet/annotator/downloads"
                         ],

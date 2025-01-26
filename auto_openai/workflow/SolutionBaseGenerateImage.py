@@ -15,10 +15,14 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
     def format_json(self):
         if "flux" in self.model:
             return self.flux_format_json()
-        return self.normal_format_json()
+        elif "majicmixRealistic_v7" in self.model:
+            return self.majicmix_format_json()
+        elif "Kolors" in self.model:
+            return self.kolors_format_json()
+        raise NotImplementedError("Not support model")
 
-    def normal_format_json(self):
-        sampler_name= "euler"
+    def normal_format_json(self, ckpt_name: str):
+        sampler_name = "euler"
         scheduler_name = "normal"
         if self.image_url:
             filename = UrlParser(
@@ -27,7 +31,7 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
             return {
                 "177": {
                     "inputs": {
-                        "ckpt_name": self.model
+                        "ckpt_name": ckpt_name
                     },
                     "class_type": "CheckpointLoaderSimple",
                     "_meta": {
@@ -255,8 +259,11 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
                 }
             }, {}
 
+    def majicmixRealistic_v7_format_json(self):
+        return self.normal_format_json(ckpt_name="majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors")
+
     def flux_format_json(self):
-        sampler_name= "euler"
+        sampler_name = "euler"
         scheduler_name = "normal"
         return {
             "5": {
@@ -417,6 +424,104 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
                 "class_type": "RandomNoise",
                 "_meta": {
                     "title": "RandomNoise"
+                }
+            }
+        }, {}
+
+    def kolors_format_json(self):
+        return {
+            "3": {
+                "inputs": {
+                    "images": [
+                        "10",
+                        0
+                    ]
+                },
+                "class_type": "PreviewImage",
+                "_meta": {
+                    "title": "Preview Image"
+                }
+            },
+            "10": {
+                "inputs": {
+                    "samples": [
+                        "14",
+                        0
+                    ],
+                    "vae": [
+                        "11",
+                        0
+                    ]
+                },
+                "class_type": "VAEDecode",
+                "_meta": {
+                    "title": "VAE Decode"
+                }
+            },
+            "11": {
+                "inputs": {
+                    "vae_name": "sdxl.vae.safetensors"
+                },
+                "class_type": "VAELoader",
+                "_meta": {
+                    "title": "Load VAE"
+                }
+            },
+            "12": {
+                "inputs": {
+                    "prompt": self.prompt,
+                    "negative_prompt": self.negative_prompt,
+                    "num_images_per_prompt": self.batch_size,
+                    "chatglm3_model": [
+                        "45",
+                        0
+                    ]
+                },
+                "class_type": "KolorsTextEncode",
+                "_meta": {
+                    "title": "Kolors Text Encode"
+                }
+            },
+            "14": {
+                "inputs": {
+                    "width": self.width,
+                    "height": self.height,
+                    "seed": self.seed,
+                    "steps": self.steps,
+                    "cfg": self.cfg,
+                    "scheduler": "EulerDiscreteScheduler",
+                    "denoise_strength": 1.0,
+                    "kolors_model": [
+                        "16",
+                        0
+                    ],
+                    "kolors_embeds": [
+                        "12",
+                        0
+                    ]
+                },
+                "class_type": "KolorsSampler",
+                "_meta": {
+                    "title": "Kolors Sampler"
+                }
+            },
+            "16": {
+                "inputs": {
+                    "model": "Kwai-Kolors/Kolors",
+                    "precision": "fp16"
+                },
+                "class_type": "DownloadAndLoadKolorsModel",
+                "_meta": {
+                    "title": "(Down)load Kolors Model"
+                }
+            },
+            "45": {
+                "inputs": {
+                    "chatglm3_checkpoint": "chatglm3-fp16.safetensors"
+                },
+                "class_type": "LoadChatGLM3",
+                "_meta": {
+                    "title": "Load ChatGLM3 Model"
                 }
             }
         }, {}

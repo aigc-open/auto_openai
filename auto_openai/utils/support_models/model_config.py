@@ -450,13 +450,21 @@ system_models_config.add(VideoConfig(name="CogVideo/CogVideoX-5b",
                                      gpu_types=get_gpu_types_count(24)
                                      ))
 ########################################## SD ###########################################
-system_models_config.add(SDConfig(name="majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
+system_models_config.add(SDConfig(name="SolutionBaseGenerateImage/majicmixRealistic_v7",
                                   model_url="https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git",
                                   server_type="comfyui",
                                   api_type="SolutionBaseGenerateImage",
-                                  description="majicmixRealistic_betterV6",
+                                  description="majicmixRealistic_v7",
                                   need_gpu_count=1,
                                   gpu_types=get_gpu_types_count(16)
+                                  ))
+system_models_config.add(SDConfig(name="SolutionBaseGenerateImage/Kolors",
+                                  model_url="https://www.modelscope.cn/Kwai-Kolors/Kolors.git",
+                                  server_type="comfyui",
+                                  api_type="SolutionBaseGenerateImage",
+                                  description="Kolors 可图大模型",
+                                  need_gpu_count=1,
+                                  gpu_types=get_gpu_types_count(24)
                                   ))
 system_models_config.add(SDConfig(name="SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
                                   model_url="https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git",
@@ -466,6 +474,8 @@ system_models_config.add(SDConfig(name="SD15MultiControlnetGenerateImage/majicmi
                                   need_gpu_count=1,
                                   gpu_types=get_gpu_types_count(16)
                                   ))
+
+
 ########################################## ASR ###########################################
 system_models_config.add(ASRConfig(name="funasr",
                                    server_type="funasr",

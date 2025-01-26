@@ -97,11 +97,24 @@ class VisionConfig(LLMConfig):
 
 class SDConfig(LMConfig):
     def is_available(self) -> bool:
+        if self.name == "SolutionBaseGenerateImage/Kolors":
+            return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "diffusers", "Kolors")) and self.check_resource()
+        elif self.name == "SolutionBaseGenerateImage/majicmixRealistic_v7":
+            return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "Stable-diffusion", "majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors")) and self.check_resource()
         return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "Stable-diffusion", self.name.replace("SD15MultiControlnetGenerateImage/", ""))) and self.check_resource()
 
     def download_shell(self):
         if not self.model_url:
             return ""
+        if self.name == "SolutionBaseGenerateImage/Kolors":
+            return f"""
+mkdir -p $webui_path/diffusers/
+cd $webui_path/diffusers && git lfs install && git clone {self.model_url}
+mkdir -p $webui_path/LLM/
+cd $webui_path/LLM && wget -nc https://www.modelscope.cn/models/Kijai/ChatGLM3-safetensors/resolve/master/chatglm3-fp16.safetensors
+mkdir -p $webui_path/VAE/
+cd $webui_path/VAE && wget -nc https://www.modelscope.cn/models/AI-ModelScope/sdxl-vae-fp16-fix/resolve/master/sdxl.vae.safetensors
+"""
         return f"""
 mkdir -p $webui_path/Stable-diffusion
 cd $webui_path/Stable-diffusion && git lfs install && git clone {self.model_url}
@@ -246,7 +259,7 @@ mkdir -p $webui_path
         for model in self._models:
             if model.name in models:
                 shell_arr.add(model.download_shell().strip())
-                
+
         shell_arr = list(shell_arr)
         shell_arr.sort()
 
