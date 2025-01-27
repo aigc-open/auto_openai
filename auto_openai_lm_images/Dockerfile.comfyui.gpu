@@ -19,7 +19,9 @@ RUN bash /modify/modify.sh
 RUN pip3.10 install protobuf==3.20 fire diffusers==0.31.0
 RUN pip3.10 install transformers==4.44.2
 RUN pip3.10 install numpy==1.24.3
-RUN pip3.10 uninstall opencv -y
+RUN pip3.10 install opencv-python==3.4.18.65
+RUN pip3.10 uninstall -y flash_attn
+RUN mv /workspace/ComfyUI/custom_nodes/ComfyUI-Impact-Pack /workspace/custom_nodes
 
 ENTRYPOINT []
 
