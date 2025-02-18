@@ -14,6 +14,7 @@ services=(
     "vllm"
     "vllm-glm"
     "vllm-qwen2-vl"
+    "vllm-qwen25-vl"
     "webui"
 )
 
