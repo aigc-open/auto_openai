@@ -18,8 +18,6 @@ def get_gpu_types_count(mem: int):
 
 
 ########################################## LLM ###########################################
-
-
 system_models_config.extend(LLMConfig(name="Qwen2.5-72B-Instruct",
                                       model_url="https://www.modelscope.cn/Qwen/Qwen2.5-72B-Instruct.git",
                                       server_type="vllm",
@@ -81,11 +79,9 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-7B-Instruct-1M",
                                       gpu_types=get_gpu_types_count(24)
                                       ).extend([
                                           MultiGPUS(
-                                              model_max_tokens=980*1024, gpu_types=get_gpu_types_count(120)),
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
                                           MultiGPUS(
-                                              model_max_tokens=200*1024, gpu_types=get_gpu_types_count(40)),
-                                          MultiGPUS(
-                                              model_max_tokens=500*1024, gpu_types=get_gpu_types_count(80)),
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
                                       ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-7B-DeepSeek-R1-1M",
                                       model_url="https://www.modelscope.cn/prithivMLmods/Qwen2.5-7B-DeepSeek-R1-1M.git",
@@ -100,92 +96,86 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-7B-DeepSeek-R1-1M",
                                       gpu_types=get_gpu_types_count(24)
                                       ).extend([
                                           MultiGPUS(
-                                              model_max_tokens=980*1024, gpu_types=get_gpu_types_count(120)),
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
                                           MultiGPUS(
-                                              model_max_tokens=200*1024, gpu_types=get_gpu_types_count(40)),
-                                          MultiGPUS(
-                                              model_max_tokens=500*1024, gpu_types=get_gpu_types_count(80)),
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
                                       ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-14B-Instruct-1M",
-                                               model_url="https://www.modelscope.cn/Qwen/Qwen2.5-14B-Instruct-1M.git",
-                                               server_type="vllm",
-                                               api_type="LLM",
-                                               model_max_tokens=4*1024,
-                                               description="Qwen2.5-14B-Instruct-1M",
-                                               need_gpu_count=1,
-                                               template="template_qwen.jinja",
-                                               stop=["<|im_start", "<|",
-                                                     "<|im_end|>", "<|endoftext|>"],
-                                               gpu_types=get_gpu_types_count(
-                                                   40)
-                                               ).extend([
-                                                   MultiGPUS(model_max_tokens=32*1024,
-                                                             gpu_types=get_gpu_types_count(72)),
-                                                    MultiGPUS(model_max_tokens=980*1024,
-                                                             gpu_types=get_gpu_types_count(320)),
-                                                    MultiGPUS(model_max_tokens=200*1024,
-                                                             gpu_types=get_gpu_types_count(160)),
-                                               ]))
+                                      model_url="https://www.modelscope.cn/Qwen/Qwen2.5-14B-Instruct-1M.git",
+                                      server_type="vllm",
+                                      api_type="LLM",
+                                      model_max_tokens=4*1024,
+                                      description="Qwen2.5-14B-Instruct-1M",
+                                      need_gpu_count=1,
+                                      template="template_qwen.jinja",
+                                      stop=["<|im_start", "<|",
+                                            "<|im_end|>", "<|endoftext|>"],
+                                      gpu_types=get_gpu_types_count(
+                                          40)
+                                      ).extend([
+                                          MultiGPUS(
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
+                                          MultiGPUS(
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
+                                      ]))
 system_models_config.extend(LLMConfig(name="qwen2.5-14b-instruct-1m-gptq-int4",
-                                               model_url="https://www.modelscope.cn/tclf90/qwen2.5-14b-instruct-1m-gptq-int4.git",
-                                               server_type="vllm",
-                                               api_type="LLM",
-                                               model_max_tokens=4*1024,
-                                               description="qwen2.5-14b-instruct-1m-gptq-int4",
-                                               need_gpu_count=1,
-                                               template="template_qwen.jinja",
-                                               stop=["<|im_start", "<|",
-                                                     "<|im_end|>", "<|endoftext|>"],
-                                               gpu_types=get_gpu_types_count(
-                                                   12)
-                                               ).extend([
-                                                   MultiGPUS(model_max_tokens=32*1024,
-                                                             gpu_types=get_gpu_types_count(24)),
-                                                    MultiGPUS(model_max_tokens=980*1024,
-                                                             gpu_types=get_gpu_types_count(80)),
-                                                    MultiGPUS(model_max_tokens=200*1024,
-                                                             gpu_types=get_gpu_types_count(40)),
-                                               ]))
+                                      model_url="https://www.modelscope.cn/tclf90/qwen2.5-14b-instruct-1m-gptq-int4.git",
+                                      server_type="vllm",
+                                      api_type="LLM",
+                                      model_max_tokens=4*1024,
+                                      description="qwen2.5-14b-instruct-1m-gptq-int4",
+                                      need_gpu_count=1,
+                                      template="template_qwen.jinja",
+                                      stop=["<|im_start", "<|",
+                                            "<|im_end|>", "<|endoftext|>"],
+                                      gpu_types=get_gpu_types_count(
+                                          12)
+                                      ).extend([
+                                          MultiGPUS(
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
+                                          MultiGPUS(
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
+                                      ]))
 system_models_config.extend(LLMConfig(name="qwen2.5-7b-instruct-1m-gptq-int4",
-                                               model_url="https://www.modelscope.cn/tclf90/qwen2.5-7b-instruct-1m-gptq-int4.git",
-                                               server_type="vllm",
-                                               api_type="LLM",
-                                               model_max_tokens=4*1024,
-                                               description="qwen2.5-7b-instruct-1m-gptq-int4",
-                                               need_gpu_count=1,
-                                               template="template_qwen.jinja",
-                                               stop=["<|im_start", "<|",
-                                                     "<|im_end|>", "<|endoftext|>"],
-                                               gpu_types=get_gpu_types_count(
-                                                   12)
-                                               ).extend([
-                                                   MultiGPUS(model_max_tokens=32*1024,
-                                                             gpu_types=get_gpu_types_count(12)),
-                                                    MultiGPUS(model_max_tokens=980*1024,
-                                                             gpu_types=get_gpu_types_count(40)),
-                                                    MultiGPUS(model_max_tokens=200*1024,
-                                                             gpu_types=get_gpu_types_count(40)),
-                                               ]))
+                                      model_url="https://www.modelscope.cn/tclf90/qwen2.5-7b-instruct-1m-gptq-int4.git",
+                                      server_type="vllm",
+                                      api_type="LLM",
+                                      model_max_tokens=4*1024,
+                                      description="qwen2.5-7b-instruct-1m-gptq-int4",
+                                      need_gpu_count=1,
+                                      template="template_qwen.jinja",
+                                      stop=["<|im_start", "<|",
+                                            "<|im_end|>", "<|endoftext|>"],
+                                      gpu_types=get_gpu_types_count(
+                                          12)
+                                      ).extend([
+                                          MultiGPUS(model_max_tokens=32*1024,
+                                                    gpu_types=get_gpu_types_count(12)),
+                                          MultiGPUS(
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
+                                          MultiGPUS(
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
+                                      ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-14B-DeepSeek-R1-1M",
-                                               model_url="https://www.modelscope.cn/AI-ModelScope/Qwen2.5-14B-DeepSeek-R1-1M.git",
-                                               server_type="vllm",
-                                               api_type="LLM",
-                                               model_max_tokens=4*1024,
-                                               description="Qwen2.5-14B-DeepSeek-R1-1M",
-                                               need_gpu_count=1,
-                                               template="template_qwen.jinja",
-                                               stop=["<|im_start", "<|",
-                                                     "<|im_end|>", "<|endoftext|>"],
-                                               gpu_types=get_gpu_types_count(
-                                                   40)
-                                               ).extend([
-                                                   MultiGPUS(model_max_tokens=32*1024,
-                                                             gpu_types=get_gpu_types_count(72)),
-                                                    MultiGPUS(model_max_tokens=980*1024,
-                                                             gpu_types=get_gpu_types_count(320)),
-                                                    MultiGPUS(model_max_tokens=200*1024,
-                                                             gpu_types=get_gpu_types_count(160)),
-                                               ]))
+                                      model_url="https://www.modelscope.cn/AI-ModelScope/Qwen2.5-14B-DeepSeek-R1-1M.git",
+                                      server_type="vllm",
+                                      api_type="LLM",
+                                      model_max_tokens=4*1024,
+                                      description="Qwen2.5-14B-DeepSeek-R1-1M",
+                                      need_gpu_count=1,
+                                      template="template_qwen.jinja",
+                                      stop=["<|im_start", "<|",
+                                            "<|im_end|>", "<|endoftext|>"],
+                                      gpu_types=get_gpu_types_count(
+                                          40)
+                                      ).extend([
+                                          MultiGPUS(model_max_tokens=32*1024,
+                                                    gpu_types=get_gpu_types_count(72)),
+                                          MultiGPUS(
+                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
+                                          MultiGPUS(
+                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
+                                      ]))
 system_models_config.extend(LLMConfig(name="glm-4-9b-chat",
                                       model_url="https://www.modelscope.cn/ZhipuAI/glm-4-9b-chat.git",
                                       server_type="vllm-glm",
