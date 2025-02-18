@@ -13,6 +13,7 @@ RUN pip install vllm==0.7.2
 RUN pip3.10 install protobuf==3.20 fire
 RUN pip3.10 uninstall pynvml -y
 RUN pip3.10 install opencv-python==4.10.0.84
+RUN pip3.10 install opencv-fixer==0.2.5 && python -c "from opencv_fixer import AutoFix; AutoFix()"
 COPY ./template /template
 
 ENTRYPOINT []
