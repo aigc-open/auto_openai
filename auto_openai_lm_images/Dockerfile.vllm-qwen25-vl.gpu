@@ -15,7 +15,7 @@ RUN pip3.10 uninstall pynvml -y
 RUN pip3.10 install git+https://github.com/huggingface/transformers accelerate
 RUN pip3.10 install opencv-python==4.10.0.84
 RUN pip3.10 install opencv-fixer==0.2.5 && python -c "from opencv_fixer import AutoFix; AutoFix()"
-RUN pip3.10 install transformers==4.49.0
+RUN pip3.10 install git+https://github.com/huggingface/transformers.git@336dc69d63d56f232a183a3e7f52790429b871ef
 COPY ./template /template
 
 ENTRYPOINT []
