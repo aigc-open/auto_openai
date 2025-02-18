@@ -114,9 +114,9 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-14B-Instruct-1M",
                                           40)
                                       ).extend([
                                           MultiGPUS(
-                                              model_max_tokens=280*1024, gpu_types=get_gpu_types_count(160)),
+                                              model_max_tokens=200*1024, gpu_types=get_gpu_types_count(160)),
                                           MultiGPUS(
-                                              model_max_tokens=150*1024, gpu_types=get_gpu_types_count(80)),
+                                              model_max_tokens=100*1024, gpu_types=get_gpu_types_count(80)),
                                       ]))
 system_models_config.extend(LLMConfig(name="qwen2.5-14b-instruct-1m-gptq-int4",
                                       model_url="https://www.modelscope.cn/tclf90/qwen2.5-14b-instruct-1m-gptq-int4.git",
