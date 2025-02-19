@@ -355,17 +355,18 @@ class VllmTask(BaseTask):
                                              value=RedisStreamInfer(text=send_text, finish=False, usage=dict(completion_tokens=completion_tokens,
                                                                                                              prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
                         if finish is True:
-                            scheduler.set_result(request_id=request_id+"_tool_name",
-                                                 value=RedisStreamInfer(
-                                                     text=tool_call_function_name, finish=False,
-                                                     usage=dict(completion_tokens=completion_tokens,
-                                                                prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
-                            scheduler.set_result(request_id=request_id+"_tool_args",
-                                                 value=RedisStreamInfer(
-                                                     text=tool_call_function_args, finish=False,
-                                                     usage=dict(completion_tokens=completion_tokens,
-                                                                prompt_tokens=prompt_tokens,
-                                                                total_tokens=total_tokens, tps=tps)))
+                            if tool_call_function_name:
+                                scheduler.set_result(request_id=request_id+"_tool_name",
+                                                    value=RedisStreamInfer(
+                                                        text=tool_call_function_name, finish=False,
+                                                        usage=dict(completion_tokens=completion_tokens,
+                                                                    prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
+                                scheduler.set_result(request_id=request_id+"_tool_args",
+                                                    value=RedisStreamInfer(
+                                                        text=tool_call_function_args, finish=False,
+                                                        usage=dict(completion_tokens=completion_tokens,
+                                                                    prompt_tokens=prompt_tokens,
+                                                                    total_tokens=total_tokens, tps=tps)))
                             scheduler.set_result(request_id=request_id,
                                                  value=RedisStreamInfer(text="", finish=True, usage=dict(completion_tokens=completion_tokens,
                                                                                                          prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))

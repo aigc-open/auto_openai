@@ -409,7 +409,7 @@ class Scheduler:
                 data_tool_name = data_tool_name.text if data_tool_name else None
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
-                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}]
+                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
             chunk = ChatCompletionStreamResponse(
                 model=request.model,
                 choices=[{
@@ -443,7 +443,7 @@ class Scheduler:
                 data_tool_name = data_tool_name.text if data_tool_name else None
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
-                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}]
+                    {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
         finish_reason = "stop"
         response = ChatCompletionResponse(
             model=request.model,
