@@ -79,7 +79,9 @@ class HTTPConfig(LMConfig):
     model_name: str = ""
 
     def is_available(self) -> bool:
-        return True
+        if self.gpu_types.get(global_config.GPU_TYPE):
+            return True
+        return False
 
     def download_shell(self):
         if not self.model_url:
