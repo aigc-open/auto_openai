@@ -13,5 +13,16 @@ for file in $scheduler_file
 do
     echo "# docker-compose -f $file up -d" >> start.sh
 done
-echo "python3 stop.py" >> stop.sh
+cat << 'EOF' >> stop.sh
+for container in $(docker ps -a -q -f "label=auto_openai_all"); do    
+    # 停止容器（如果正在运行）
+    echo "正在停止容器... "
+    docker stop $container
+    
+    # 删除容器
+    echo "正在删除容器... "
+    docker rm $container
+    echo "===== 容器处理完成 ====="
+done
+EOF
 echo "Done"
