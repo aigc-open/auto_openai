@@ -9,8 +9,8 @@ BASE_PORT = 30000
 
 image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
 generate_dir = "auto_openai_gcu"
-# image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
-# generate_dir = "auto_openai_deployment"
+image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
+generate_dir = "auto_openai_deployment"
 
 
 class Gen:
@@ -44,7 +44,7 @@ class Gen:
     yaml_filename = "{generate_dir}/scheduler-{gpu}-of-{split_size}-docker-compose.yml"
 
     @classmethod
-    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL"):
+    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL", GPU_TYPE=""):
         global BASE_PORT
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
@@ -59,6 +59,8 @@ class Gen:
                  "AVAILABLE_SERVER_TYPES": AVAILABLE_SERVER_TYPES,
                  "AVAILABLE_MODELS": AVAILABLE_MODELS
                  })
+            if GPU_TYPE:
+                environment.update({"GPU_TYPE": GPU_TYPE})
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
             containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}-of-{idx}"] = container
@@ -86,4 +88,4 @@ Gen.run(gpu=[4, 4, 4, 4], split_size=1,
 Gen.run(gpu=[3, 3, 3, 3], split_size=1,
         AVAILABLE_SERVER_TYPES="embedding,rerank")
 Gen.run(gpu=[100, 100], split_size=1,
-        AVAILABLE_SERVER_TYPES="http-llm")
+        AVAILABLE_SERVER_TYPES="http-llm", GPU_TYPE="CPU")

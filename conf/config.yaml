@@ -19,7 +19,7 @@ UNUSERFULL_TIMES_PER_MODEL: 10
 DEFAULT_MODEL_CONFIG_max_tokens: 4096
 NODE_GPU_TOTAL: "7"
 MOCK: false
-GPU_TYPE: EF-S60
+GPU_TYPE: CPU
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 AVAILABLE_MODELS: DeepSeek-Coder-V2-Lite-Base:10k,ALL
 #######################################################
@@ -39,12 +39,14 @@ CUSTOM_MODLES:
   - name: DeepSeek-R1
     model_name: ep-20250219101116-8mrh2
     server_type: http-llm
-    api_key: xxxxx
-    base_url: https://xxxx/api/v3
+    api_key: ddc48c07-623b-4898-8210-bf52fbf1ea78
+    base_url: https://ark.cn-beijing.volces.com/api/v3
     api_type: LLM
     model_max_tokens: 10240
-    description: "接口转发模型"
+    description: "DeepSeek-R1满血版"
     need_gpu_count: 1
     template: template_qwen.jinja
     stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types: {}
+    gpu_types: 
+      CPU:
+        need_gpu_count: 1

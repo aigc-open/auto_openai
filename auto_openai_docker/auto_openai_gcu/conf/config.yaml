@@ -116,4 +116,6 @@ CUSTOM_MODLES:
     need_gpu_count: 1
     template: template_qwen.jinja
     stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types: {}
+    gpu_types: 
+      CPU:
+        need_gpu_count: 1

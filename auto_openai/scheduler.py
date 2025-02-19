@@ -7,7 +7,7 @@ from loguru import logger
 from auto_openai.utils.init_env import global_config
 from auto_openai.utils.support_models.model_config import system_models_config
 from auto_openai.utils.backends import ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, \
-    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask,HttpLLMTask
+    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask, HttpLLMTask
 
 
 class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
@@ -69,9 +69,12 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
                 # 如果没有该模型配置，则跳过该模型
                 continue
             # 检测模型文件是否存在,如果不存在就直接跳过该模型
-            if not system_models_config.get(model_name).is_available():
-                # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
-                # 服务类型不在范围内得也要跳过
+            try:
+                if not system_models_config.get(model_name).is_available():
+                    # 如果没有该模型配置，则跳过该模型, 说明该模型不在该调度器中运行
+                    # 服务类型不在范围内得也要跳过
+                    continue
+            except:
                 continue
             self.set_infer_fn()
             # 更新当前设备的gpu count
