@@ -7,11 +7,11 @@ from loguru import logger
 from auto_openai.utils.init_env import global_config
 from auto_openai.utils.support_models.model_config import system_models_config
 from auto_openai.utils.backends import ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, \
-    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask
+    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask,HttpLLMTask
 
 
 class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
-           EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask):
+           EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask, HttpLLMTask):
 
     def loop_infer(self, llm_server, request_info, free_status_list, idx, max_workers=8, infer_fn=None):
         logger.info(f"进程服务信息: {llm_server}")
@@ -175,6 +175,10 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
             # 启动embedding 大模型服务
             self.start_diffusers_video_server(
                 model_name=self.model_config["name"])
+        elif self.model_config.get("server_type") == "http-llm":
+            # 启动embedding 大模型服务
+            self.start_http_llm_server(
+                model_name=self.model_config["name"])
         else:
             raise Exception(
                 f"未知的模型服务类型: {self.model_config.get('server_type')}")
@@ -237,6 +241,11 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
             self.infer_fn = self.diffusers_video_infer
             self.service_list = self.__service_list__(
                 url_format="http://localhost:{port}")
+        elif self.model_config.get("server_type") == "http-llm":
+            # 启动embedding 大模型服务
+            self.max_workers = 10
+            self.infer_fn = self.http_llm_infer
+            self.service_list = [self.model_config["base_url"]]
         else:
             raise Exception(
                 f"未知的模型服务类型: {self.model_config.get('server_type')}")

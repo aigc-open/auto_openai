@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-938911359
+      LABEL: lm-server-1739940385-1393629206
       LM_SERVER_BASE_PORT: 30104
       NODE_GPU_TOTAL: 0,1,2,3
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
@@ -25,7 +25,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-321208725
+      LABEL: lm-server-1739940385-166390726
       LM_SERVER_BASE_PORT: 30112
       NODE_GPU_TOTAL: 4,5,6,7
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2

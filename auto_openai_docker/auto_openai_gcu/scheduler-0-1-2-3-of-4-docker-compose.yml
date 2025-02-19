@@ -7,8 +7,8 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1734922220-1474248951
-      LM_SERVER_BASE_PORT: 30200
+      LABEL: lm-server-1739940385-542949289
+      LM_SERVER_BASE_PORT: 30216
       NODE_GPU_TOTAL: 0,1,2,3
     image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host

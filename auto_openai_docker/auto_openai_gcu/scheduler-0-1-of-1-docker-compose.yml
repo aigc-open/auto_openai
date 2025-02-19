@@ -7,10 +7,10 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1739940351-925854064
+      LABEL: lm-server-1739940385-45596746
       LM_SERVER_BASE_PORT: 30184
       NODE_GPU_TOTAL: '0'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -25,10 +25,10 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1739940351-925445600
+      LABEL: lm-server-1739940385-744470546
       LM_SERVER_BASE_PORT: 30192
       NODE_GPU_TOTAL: '1'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always

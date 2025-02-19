@@ -61,17 +61,20 @@ class CompletionClient:
             Response = ChatCompletionStreamResponse
         else:
             Response = CompletionStreamResponse
-        for chunk in response.iter_content(chunk_size=1024):
+        for chunk in response.iter_content(chunk_size=100*1024):
             if chunk:
                 try:
-                    chunk = chunk.decode("utf8").strip().replace("data: ", "")
-                    if chunk.strip() == "[DONE]":
-                        return
-                    chunk = json.loads(chunk)
-                    # chunk["object"] = "text_completion"
-                    yield Response(**chunk)
+                    chunk = chunk.decode("utf8").strip()
+                    for data_ in chunk.split("data: "):
+                        if not data_.strip():
+                            continue
+                        if data_.strip() == "[DONE]":
+                            return
+                        data_json = json.loads(data_.strip())
+                        # chunk["object"] = "text_completion"
+                        yield Response(**data_json)
                 except Exception as e:
-                    logger.warning(str(e))
+                    logger.exception(str(e))
                     logger.warning(f"流式任务解析失败: {chunk}")
                     error = {
                         "object": "chat.completion.chunk" if self.chat_flag else "text_completion",

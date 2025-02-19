@@ -252,6 +252,7 @@ class ChatMessage(BaseModel):
     role: str
     content: str
     tool_calls: List[DeltaToolCall] = Field(default_factory=list)
+    reasoning_content: Optional[str] = ""
 
 
 class ChatCompletionResponseChoice(BaseModel):
@@ -273,6 +274,8 @@ class DeltaMessage(BaseModel):
     role: Optional[str] = None
     content: Optional[str] = None
     tool_calls: List[DeltaToolCall] = Field(default_factory=list)
+    reasoning_content: Optional[str] = ""
+
 
 
 class ChatCompletionResponseStreamChoice(BaseModel):

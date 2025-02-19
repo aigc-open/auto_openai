@@ -723,7 +723,10 @@ system_models_config.add(TTSConfig(name="maskgct-tts-clone",
 
 ########################################## 定制化模型 ###########################################
 for m in global_config.CUSTOM_MODLES:
-    system_models_config.add(LLMConfig(**m))
+    if m.get("server_type") == "vllm":
+        system_models_config.add(LLMConfig(**m))
+    elif "http" in m.get("server_type"):
+        system_models_config.add(HTTPConfig(**m))
 # usage
 # python3 -m auto_openai.utils.support_models.model_config
 

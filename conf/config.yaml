@@ -36,3 +36,15 @@ CUSTOM_MODLES:
       EF-S60:
         need_gpu_count: 1
 
+  - name: DeepSeek-R1
+    model_name: ep-20250219101116-8mrh2
+    server_type: http-llm
+    api_key: xxxxx
+    base_url: https://xxxx/api/v3
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "接口转发模型"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types: {}

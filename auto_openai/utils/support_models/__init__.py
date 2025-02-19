@@ -67,6 +67,26 @@ class LLMConfig(LMConfig):
         return f"""
 cd $LLM_path && git lfs install && git clone {self.model_url}
 """
+    
+class HTTPConfig(LMConfig):
+    model_max_tokens: int
+    template: str = ""
+    stop: List[str]
+    server_type: str = "http"
+    api_type: str = "LLM"
+    api_key: str = ""
+    base_url: str = ""
+    model_name: str = ""
+
+    def is_available(self) -> bool:
+        return True
+
+    def download_shell(self):
+        if not self.model_url:
+            return ""
+        return f"""
+cd $LLM_path && git lfs install && git clone {self.model_url}
+"""
 
 
 class CoderLLMConfig(LLMConfig):

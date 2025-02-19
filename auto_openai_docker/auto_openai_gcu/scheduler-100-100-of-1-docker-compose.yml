@@ -1,16 +1,16 @@
 services:
-  scheduler-0-of-0:
+  scheduler-100-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1739940351-925854064
-      LM_SERVER_BASE_PORT: 30184
-      NODE_GPU_TOTAL: '0'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
+      AVAILABLE_SERVER_TYPES: http-llm
+      LABEL: lm-server-1739940385-396618260
+      LM_SERVER_BASE_PORT: 30288
+      NODE_GPU_TOTAL: '100'
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
@@ -20,15 +20,15 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-100-of-1:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1739940351-925445600
-      LM_SERVER_BASE_PORT: 30192
-      NODE_GPU_TOTAL: '1'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
+      AVAILABLE_SERVER_TYPES: http-llm
+      LABEL: lm-server-1739940385-1615489343
+      LM_SERVER_BASE_PORT: 30296
+      NODE_GPU_TOTAL: '100'
+    image: harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
