@@ -110,6 +110,7 @@ class CMD:
         cmd = cmd.replace("\n", " ").strip()
         logger.info(f"本次启动模型: \n{cmd}")
         environment = cls.get_environment(device)
+        environment.extend(['VLLM_WORKER_MULTIPROC_METHOD=spawn'])
         container = Docker().run(image=cls.get_image(name=server_type), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
