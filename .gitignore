@@ -166,3 +166,4 @@ flagged
 bak.sh
 # scheduler*.yml
 tmp
+conf/config.yaml

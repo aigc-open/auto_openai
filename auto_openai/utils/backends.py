@@ -1109,7 +1109,7 @@ class HttpLLMTask(BaseTask):
                             tool_call_function_name = tool_call.function.name
                         if tool_call.function.arguments:
                             tool_call_function_args += tool_call.function.arguments
-                    elif params.get("messages") and chunk.choices[0].delta.reasoning_content is not None:
+                    elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
                         text = chunk.choices[0].delta.reasoning_content
                         reasoning_content = True
                     elif params.get("messages") and chunk.choices[0].delta.content is not None:
