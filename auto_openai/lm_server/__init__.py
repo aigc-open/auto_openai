@@ -85,6 +85,10 @@ class CMD:
             device = tuple(device)
         if isinstance(device, tuple):
             device = ",".join([str(i) for i in device])
+        if "deepseek-vl2" in model_name.lower():
+            hf_overrides = """--hf-overrides '{"architectures": ["DeepseekVLV2ForCausalLM"]}'"""
+        else:
+            hf_overrides = ""
         model_path = model_name.split(":")[0]
         # 参数特殊处理
         block_size = 16 if "NV" in global_config.GPU_TYPE else 64
@@ -97,6 +101,7 @@ class CMD:
             --device={device_name} 
             {quantization}
             {enforce_eager}
+            {hf_overrides}
             --num-scheduler-steps={num_scheduler_steps}
             --enable-prefix-caching
             {template}
