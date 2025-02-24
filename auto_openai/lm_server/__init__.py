@@ -55,7 +55,7 @@ class CMD:
     @classmethod
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name,
                  quantization="", server_type="vllm", gpu_memory_utilization=0.9,
-                 enforce_eager=True, num_scheduler_steps=1):
+                 enforce_eager=True, num_scheduler_steps=1, reasoning_parser=""):
         """
         args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
@@ -89,6 +89,10 @@ class CMD:
             hf_overrides = """--hf-overrides '{"architectures": ["DeepseekVLV2ForCausalLM"]}'"""
         else:
             hf_overrides = ""
+        if reasoning_parser:
+            reasoning_parser = f"--enable-reasoning --reasoning-parser {reasoning_parser}"
+        else:
+            reasoning_parser = ""
         model_path = model_name.split(":")[0]
         # 参数特殊处理
         block_size = 16 if "NV" in global_config.GPU_TYPE else 64
@@ -102,6 +106,7 @@ class CMD:
             {quantization}
             {enforce_eager}
             {hf_overrides}
+            {reasoning_parser}
             --num-scheduler-steps={num_scheduler_steps}
             --enable-prefix-caching
             {template}

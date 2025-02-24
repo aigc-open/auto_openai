@@ -1,6 +1,7 @@
 import os
 from yaml import load
 from loguru import logger
+import json
 try:
     from yaml import CLoader as Loader
 except ImportError:
@@ -98,6 +99,98 @@ class GlobalConfig(BaseModel):
         node_gpu_total: list = list([int(x.strip())
                                      for x in self.NODE_GPU_TOTAL.split(',')])
         return node_gpu_total
+
+    def get_continue_config(self, path="./conf/continueconfig.json"):
+        continue_config = {
+            "models": [
+                {
+                    "title": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+                    "provider": "openrouter",
+                    "model": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+                    "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
+                    "apiKey": "..."
+                }
+            ],
+            "tabAutocompleteModel": {
+                "title": "Qwen2.5-Coder-7B-Instruct",
+                "provider": "openrouter",
+                "model": "Qwen2.5-Coder-7B-Instruct",
+                "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
+                "apiKey": "..."
+            },
+            "embeddingsProvider": {
+                "provider": "lmstudio",
+                "model": "bge-base-zh-v1.5",
+                "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
+                "maxBatchSize": 20
+            },
+            "contextProviders": [
+                {
+                    "name": "code",
+                    "params": {}
+                },
+                {
+                    "name": "docs",
+                    "params": {}
+                },
+                {
+                    "name": "diff",
+                    "params": {}
+                },
+                {
+                    "name": "terminal",
+                    "params": {}
+                },
+                {
+                    "name": "problems",
+                    "params": {}
+                },
+                {
+                    "name": "folder",
+                    "params": {}
+                },
+                {
+                    "name": "codebase",
+                    "params": {}
+                },
+                {
+                    "name": "commit",
+                    "params": {
+                        "Depth": 50,
+                        "LastXCommitsDepth": 10
+                    }
+                },
+                {
+                    "name": "url",
+                    "params": {}
+                }
+            ],
+            "slashCommands": [
+                {
+                    "name": "share",
+                    "description": "Export the current chat session to markdown"
+                },
+                {
+                    "name": "cmd",
+                    "description": "Generate a shell command"
+                },
+                {
+                    "name": "commit",
+                    "description": "Generate a git commit message"
+                }
+            ],
+            "completionOptions": {
+                "maxTokens": 20480,
+                "temperature": 0.7
+            }
+        }
+        if not os.path.exists(path):
+            return continue_config
+        with open(path, "r") as f:
+            try:
+                return json.load(f)
+            except Exception as e:
+                return continue_config
 
 
 global_config = GlobalConfig()

@@ -311,6 +311,12 @@ async def get_nodes(request: Request):
 async def get_available_model(request: Request):
     return global_config.get_MODELS_MAPS()
 
+
+@app.get("/v1/get_continue_config")
+async def get_continue_config(request: Request, config_name="continueconfig.json"):
+    continue_config = global_config.get_continue_config(
+        path=f"./conf/{config_name}")
+    return continue_config
 ########################### web html ############################
 UIWeb.register_ui(app, mount_path="/")
 

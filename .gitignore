@@ -167,3 +167,4 @@ bak.sh
 # scheduler*.yml
 tmp
 conf/config.yaml
+nohup.out

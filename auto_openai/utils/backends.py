@@ -33,6 +33,7 @@ root_path = os.path.dirname(os.path.abspath(__file__))
 
 MODEL_PROF_KEY = "Profiler"
 
+
 class BaseTask:
     current_model = None
     worker_start_port = global_config.LM_SERVER_BASE_PORT
@@ -214,7 +215,9 @@ class VllmTask(BaseTask):
                     quantization=self.model_config.get("quantization", None),
                     server_type=server_type,
                     enforce_eager=self.model_config.get("enforce_eager", True),
-                    num_scheduler_steps=self.model_config.get("num_scheduler_steps", 1))
+                    num_scheduler_steps=self.model_config.get(
+                        "num_scheduler_steps", 1),
+                    reasoning_parser=self.model_config.get("reasoning_parser", ""))
             except Exception as e:
                 status = False
         # self.status = status
@@ -279,27 +282,30 @@ class VllmTask(BaseTask):
                     raise Exception("模型服务启动异常")
                 self.update_running_model()
                 start_time = time.time()
-                client = VLLMOpenAI(api_key="xxx", base_url=llm_server)
-                params.update(self.stop_params)
+                client = VLLMOpenAI(api_key=self.model_config.get(
+                    "api_key"), base_url=llm_server)
+                params.update({**self.stop_params})
                 if params.get("messages"):
                     stream = client.chat.completions.create(**params)
                 else:
                     stream = client.completions.create(**params)
 
                 # 基本参数
-                text = ""
+
                 finish_reason = None
                 finish = False
                 completion_tokens = 0
                 prompt_tokens = 0
                 total_tokens = 0
                 tps = 0
-                send_text = ""
-                all_text = ""
                 pushed = False
                 prefill_time = 0
                 tool_call_function_name = ""
                 tool_call_function_args = ""
+                text = ""
+                send_text = ""
+                all_text = ""
+                reasoning_content = True
                 for chunk in stream:
                     self.update_running_model()
                     if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
@@ -309,15 +315,21 @@ class VllmTask(BaseTask):
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
                         prefill_time = time.time() - start_time
-
                     if params.get("messages") and chunk.choices[0].delta.tool_calls:
                         tool_call = chunk.choices[0].delta.tool_calls[0]
                         if tool_call.function.name:
                             tool_call_function_name = tool_call.function.name
                         if tool_call.function.arguments:
                             tool_call_function_args += tool_call.function.arguments
-                    elif params.get("messages") and chunk.choices[0].delta.content is not None:
-                        text = chunk.choices[0].delta.content
+                    elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
+                        text = chunk.choices[0].delta.reasoning_content
+                    elif params.get("messages") and chunk.choices[0].delta.content:
+                        if reasoning_content is True:
+                            text = "@@@@@@AUTOOPENAI@@@@@@" + \
+                                chunk.choices[0].delta.content
+                            reasoning_content = False
+                        else:
+                            text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:
                         text = chunk.choices[0].text
                     else:
@@ -355,18 +367,17 @@ class VllmTask(BaseTask):
                                              value=RedisStreamInfer(text=send_text, finish=False, usage=dict(completion_tokens=completion_tokens,
                                                                                                              prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
                         if finish is True:
-                            if tool_call_function_name:
-                                scheduler.set_result(request_id=request_id+"_tool_name",
-                                                    value=RedisStreamInfer(
-                                                        text=tool_call_function_name, finish=False,
-                                                        usage=dict(completion_tokens=completion_tokens,
-                                                                    prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
-                                scheduler.set_result(request_id=request_id+"_tool_args",
-                                                    value=RedisStreamInfer(
-                                                        text=tool_call_function_args, finish=False,
-                                                        usage=dict(completion_tokens=completion_tokens,
-                                                                    prompt_tokens=prompt_tokens,
-                                                                    total_tokens=total_tokens, tps=tps)))
+                            scheduler.set_result(request_id=request_id+"_tool_name",
+                                                 value=RedisStreamInfer(
+                                                     text=tool_call_function_name, finish=False,
+                                                     usage=dict(completion_tokens=completion_tokens,
+                                                                prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
+                            scheduler.set_result(request_id=request_id+"_tool_args",
+                                                 value=RedisStreamInfer(
+                                                     text=tool_call_function_args, finish=False,
+                                                     usage=dict(completion_tokens=completion_tokens,
+                                                                prompt_tokens=prompt_tokens,
+                                                                total_tokens=total_tokens, tps=tps)))
                             scheduler.set_result(request_id=request_id,
                                                  value=RedisStreamInfer(text="", finish=True, usage=dict(completion_tokens=completion_tokens,
                                                                                                          prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
@@ -377,7 +388,6 @@ class VllmTask(BaseTask):
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
                 text="推理服务异常", finish=True))
-            # self.current_model = None
 
 
 class ComfyuiTask(BaseTask):
@@ -1017,7 +1027,6 @@ class RerankTask(BaseTask):
 
 class HttpLLMTask(BaseTask):
 
-
     def start_http_llm(self, idx: int, model_name):
         # 需要保证服务一定完全启动
         return True
@@ -1032,7 +1041,8 @@ class HttpLLMTask(BaseTask):
         logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def http_llm_infer(self, llm_server, request_id, params, model_config):
-        error = self.http_llm_pipeline(llm_server, request_id, params, model_config)
+        error = self.http_llm_pipeline(
+            llm_server, request_id, params, model_config)
         if error is not None and type(error) == ErrorResponse and error.diff_max_tokens > 0:
             new_max_tokens = params["max_tokens"] - error.diff_max_tokens
             if new_max_tokens > 0:
@@ -1072,7 +1082,8 @@ class HttpLLMTask(BaseTask):
                     raise Exception("模型服务启动异常")
                 self.update_running_model()
                 start_time = time.time()
-                client = VLLMOpenAI(api_key=self.model_config.get("api_key"), base_url=llm_server)
+                client = VLLMOpenAI(api_key=self.model_config.get(
+                    "api_key"), base_url=llm_server)
                 params.update({"model": self.model_config.get("model_name")})
                 if params.get("messages"):
                     stream = client.chat.completions.create(**params)
@@ -1080,20 +1091,21 @@ class HttpLLMTask(BaseTask):
                     stream = client.completions.create(**params)
 
                 # 基本参数
-                text = ""
+
                 finish_reason = None
                 finish = False
                 completion_tokens = 0
                 prompt_tokens = 0
                 total_tokens = 0
                 tps = 0
-                send_text = ""
-                all_text = ""
                 pushed = False
                 prefill_time = 0
                 tool_call_function_name = ""
                 tool_call_function_args = ""
-                reasoning_content=False
+                text = ""
+                send_text = ""
+                all_text = ""
+                reasoning_content = True
                 for chunk in stream:
                     self.update_running_model()
                     if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
@@ -1112,11 +1124,11 @@ class HttpLLMTask(BaseTask):
                             tool_call_function_args += tool_call.function.arguments
                     elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
                         text = chunk.choices[0].delta.reasoning_content
-                        reasoning_content = True
-                    elif params.get("messages") and chunk.choices[0].delta.content is not None:
+                    elif params.get("messages") and chunk.choices[0].delta.content:
                         if reasoning_content is True:
-                            text = "</think>\n" + chunk.choices[0].delta.content
-                            reasoning_content=False
+                            text = "@@@@@@AUTOOPENAI@@@@@@" + \
+                                chunk.choices[0].delta.content
+                            reasoning_content = False
                         else:
                             text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:

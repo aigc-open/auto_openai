@@ -1,0 +1,133 @@
+{
+    "models": [
+      {
+        "title": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+        "provider": "openrouter",
+        "model": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+        "apiBase": "http://10.12.110.149:9001/openai/v1",
+        "apiKey": "..."
+      },
+      {
+        "title": "Qwen2.5-Coder-14B-Instruct:32k",
+        "provider": "openrouter",
+        "model": "Qwen2.5-Coder-14B-Instruct:32k",
+        "apiBase": "http://10.12.110.149:9001/openai/v1",
+        "apiKey": "..."
+      },
+      {
+        "title": "Qwen2.5-14B-Instruct-1M:100k",
+        "provider": "openrouter",
+        "model": "Qwen2.5-14B-Instruct-1M:100k",
+        "apiBase": "http://10.12.110.149:9001/openai/v1",
+        "apiKey": "..."
+      },
+      {
+        "title": "Qwen2.5-14B-DeepSeek-R1-1M:150k",
+        "provider": "openrouter",
+        "model": "Qwen2.5-14B-DeepSeek-R1-1M:150k",
+        "apiBase": "http://10.12.110.149:9001/openai/v1",
+        "apiKey": "..."
+      },
+      {
+        "model": "DeepSeek-R1-Distill-Qwen-32B:32k",
+        "provider": "openrouter",
+        "apiKey": "...",
+        "apiBase": "http://10.12.110.149:9001/openai/v1",
+        "title": "DeepSeek-R1-Distill-Qwen-32B:32k"
+      }
+    ],
+    "tabAutocompleteModel": {
+      "title": "Qwen2.5-Coder-7B-Instruct",
+      "provider": "openrouter",
+      "model": "Qwen2.5-Coder-7B-Instruct",
+      "apiBase": "http://10.12.110.149:9001/openai/v1",
+      "apiKey": "..."
+    },
+    "embeddingsProvider": {
+      "provider": "lmstudio",
+      "model": "bge-base-zh-v1.5",
+      "apiBase": "http://10.12.110.149:9001/openai/v1",
+      "maxBatchSize": 20
+    },
+    "contextProviders": [
+      {
+        "name": "httpdocs",
+        "params": {
+          "displayTitle": "Enflame",
+          "description": "获取燧原专属文档",
+          "endpoints": {
+            "Wiki": {
+              "url": "http://10.9.115.77:45678/api/v1/get_wiki/",
+              "description": "燧原 Wiki 文档"
+            },
+            "Docs": {
+              "url": "http://10.9.115.77:45678/api/v1/get_topsplatform/",
+              "description": "燧原技术栈官方文档"
+            },
+            "TopsCC": {
+              "url": "http://10.9.115.77:45678/api/v1/get_topscc/",
+              "description": "燧原 TopsCC 算子模板"
+            }
+          },
+          "options": {}
+        }
+      },
+      {
+        "name": "code",
+        "params": {}
+      },
+      {
+        "name": "docs",
+        "params": {}
+      },
+      {
+        "name": "diff",
+        "params": {}
+      },
+      {
+        "name": "terminal",
+        "params": {}
+      },
+      {
+        "name": "problems",
+        "params": {}
+      },
+      {
+        "name": "folder",
+        "params": {}
+      },
+      {
+        "name": "codebase",
+        "params": {}
+      },
+      {
+        "name": "commit",
+        "params": {
+          "Depth": 50,
+          "LastXCommitsDepth": 10
+        }
+      },
+      {
+        "name": "url",
+        "params": {}
+      }
+    ],
+    "slashCommands": [
+      {
+        "name": "share",
+        "description": "Export the current chat session to markdown"
+      },
+      {
+        "name": "cmd",
+        "description": "Generate a shell command"
+      },
+      {
+        "name": "commit",
+        "description": "Generate a git commit message"
+      }
+    ],
+    "completionOptions": {
+      "maxTokens": 20480,
+      "temperature": 0.7
+    }
+  }

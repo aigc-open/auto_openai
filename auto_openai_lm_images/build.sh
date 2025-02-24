@@ -5,18 +5,18 @@ device=gcu
 
 # List of services to build
 services=(
-    "comfyui"
-    "diffusers-server"
-    "embedding-server"
-    "funasr-server"
-    "llm-transformer-server"
-    "maskgct"
-    "rerank-server"
+    # "comfyui"
+    # "diffusers-server"
+    # "embedding-server"
+    # "funasr-server"
+    # "llm-transformer-server"
+    # "maskgct"
+    # "rerank-server"
+    # "vllm-glm"
+    # "vllm-qwen2-vl"
+    # "vllm-qwen25-vl"
+    # "webui"
     "vllm"
-    "vllm-glm"
-    "vllm-qwen2-vl"
-    "vllm-qwen25-vl"
-    "webui"
 )
 
 # Loop through each service and build the Docker image

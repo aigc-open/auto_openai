@@ -396,6 +396,8 @@ class Scheduler:
         logger.info(f"推流总耗时 {request_id} : {time.time() - start_time}")
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
+        reasoning = True
+        reasoning_content = ""
         async for data_ in self.stream(request=request, request_id=request_id):
             data: RedisStreamInfer = data_
             finish_reason = "stop" if data.finish else None
@@ -410,6 +412,17 @@ class Scheduler:
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
                     {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
+            if reasoning:
+                if "@@@@@@AUTOOPENAI@@@@@@" in content:
+                    reasoning = False
+                    reasoning_content = ""
+                    content = content.replace("@@@@@@AUTOOPENAI@@@@@@", "")
+                else:
+                    reasoning_content = content
+                    content = ""
+            else:
+                reasoning_content = ""
+                content = content
             chunk = ChatCompletionStreamResponse(
                 model=request.model,
                 choices=[{
@@ -417,7 +430,8 @@ class Scheduler:
                     "delta": {
                         "role": "assistant",
                         "content": content,
-                        "tool_calls": tool_calls
+                        "tool_calls": tool_calls,
+                        "reasoning_content": reasoning_content
                     },
                     "finish_reason": finish_reason
                 }],
@@ -444,6 +458,12 @@ class Scheduler:
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
                     {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
+        content_and_reasoning = content.split("@@@@@@AUTOOPENAI@@@@@@")
+        if len(content_and_reasoning) >=2:
+            reasoning_content = content_and_reasoning[0]
+            content = content_and_reasoning[1]
+        else:
+            content = content_and_reasoning[0]
         finish_reason = "stop"
         response = ChatCompletionResponse(
             model=request.model,
@@ -452,7 +472,8 @@ class Scheduler:
                 "message": {
                     "role": "assistant",
                     "content": content,
-                    "tool_calls": tool_calls
+                    "tool_calls": tool_calls,
+                    "reasoning_content": reasoning_content
                 },
                 "finish_reason": finish_reason
             }],

@@ -44,6 +44,7 @@ class LLMConfig(LMConfig):
     api_type: str = "LLM"
     enforce_eager: bool = True
     num_scheduler_steps: int = 1
+    reasoning_parser: str = ""
 
     def extend(self, gpus: List[MultiGPUS]):
         _model_configs_ = []
@@ -67,7 +68,8 @@ class LLMConfig(LMConfig):
         return f"""
 cd $LLM_path && git lfs install && git clone {self.model_url}
 """
-    
+
+
 class HTTPConfig(LMConfig):
     model_max_tokens: int
     template: str = ""
