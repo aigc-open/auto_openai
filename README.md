@@ -17,6 +17,7 @@
 - **OpenAI 兼容的 API**：提供与 OpenAI API 兼容的接口，便于现有应用的快速集成和迁移。
 - **多类型 api 支持**: 支持多种类型的 API，包括 LLM, VL, SD, Embedding, Audio, Image, TTS, rerank 等。
 - **分布式支持**: 支持分布式计算，提高计算效率。
+- **支持深度思考**: API支持深度思考内容，提供更智能的回答。
 
 
 
@@ -31,16 +32,16 @@ pip install .
 | 模型类别   | 模型名称                                                                           | 状态 |
 | ---------- | ---------------------------------------------------------------------------------- | ---- |
 | 大语言模型 | [vllm 支持的所有模型](https://docs.vllm.ai/en/latest/models/supported_models.html) | ✅   |
-| 多模态     | glm-4v-9b                                                                          | ✅   |
+| 多模态     | glm-4v-9b, Qwen2.5-VL系列, Qwen2-VL系列                                           | ✅   |
 | 图像生成   | SD1.5 系列所有模型以及 Controlnet                                                  | ✅   |
 |            | ComfyUI 基础文生图工作流的所有模型                                                 | ✅   |
-| Embedding  | bge-base-zh-v1.5                                                                   | ✅   |
-|            | bge-m3                                                                             | ✅   |
-| Rerank     | bge-reranker-base                                                                  | ✅   |
-|            | bge-reranker-v2-m3                                                                 | ✅   |
-| TTS        | maskgct-tts-clone                                                                  | ✅   |
-| ASR        | funasr                                                                             | ✅   |
-| 视频生成   | CogVideo/CogVideoX-5b                                                              | ✅   |
+| Embedding  | bge-base-zh-v1.5                                                                 | ✅   |
+|            | bge-m3                                                                           | ✅   |
+| Rerank     | bge-reranker-base                                                                | ✅   |
+|            | bge-reranker-v2-m3                                                               | ✅   |
+| TTS        | maskgct-tts-clone                                                                | ✅   |
+| ASR        | funasr                                                                           | ✅   |
+| 视频生成   | CogVideo/CogVideoX-5b                                                             | ✅   |
 
 - 获取支持的模型列表
 ```bash
