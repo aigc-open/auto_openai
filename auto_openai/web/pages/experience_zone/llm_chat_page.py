@@ -82,6 +82,11 @@ def index(model_name):
             # 流式处理响应
             full_response = ""
             async for chunk in response:
+                if chunk.choices[0].delta.reasoning_content:
+                    content = chunk.choices[0].delta.reasoning_content
+                    full_response += content
+                    chat_messages.set_content(full_response + "\n```")
+                    await asyncio.sleep(0.01)
                 if chunk.choices[0].delta.content:
                     content = chunk.choices[0].delta.content
                     full_response += content
