@@ -13,7 +13,6 @@ model = "Qwen2.5-Coder-7B-Instruct"
 response = client.chat.completions.create(
     model=model,
     messages=[
-        # {"role": "system", "content": "请你以第一人称角度给出详细的思考过程，并给出最终结果，思考的过程使用<think></think>"},
         {"role": "user", "content": "请你介绍一下人工智能"}],
     max_tokens=1024,
     temperature=0.0,

@@ -1106,7 +1106,7 @@ class HttpLLMTask(BaseTask):
                 text = ""
                 send_text = ""
                 all_text = ""
-                reasoning_content = True
+                think_tag = False
                 for chunk in stream:
                     self.update_running_model()
                     if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
@@ -1116,7 +1116,6 @@ class HttpLLMTask(BaseTask):
                             f"模型{params['model']}数据生成中...: {request_id}")
                         pushed = True
                         prefill_time = time.time() - start_time
-
                     if params.get("messages") and chunk.choices[0].delta.tool_calls:
                         tool_call = chunk.choices[0].delta.tool_calls[0]
                         if tool_call.function.name:
@@ -1124,12 +1123,13 @@ class HttpLLMTask(BaseTask):
                         if tool_call.function.arguments:
                             tool_call_function_args += tool_call.function.arguments
                     elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
+                        think_tag = True
                         text = chunk.choices[0].delta.reasoning_content
                     elif params.get("messages") and chunk.choices[0].delta.content:
-                        if reasoning_content is True:
-                            text = "@@@@@@AUTOOPENAI@@@@@@" + \
-                                chunk.choices[0].delta.content
-                            reasoning_content = False
+                        if not think_tag:
+                            text += "</think>"
+                            text += chunk.choices[0].delta.content
+                            think_tag = True
                         else:
                             text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:
