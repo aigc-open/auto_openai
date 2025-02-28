@@ -258,6 +258,11 @@ class VllmTask(BaseTask):
                                      usage=dict(prompt_tokens=0, total_tokens=0,
                                                 completion_tokens=0, tps=0)))
 
+
+    def update_params(self, params):
+        params.update({**self.stop_params})
+        return params
+
     def llm_pipeline(self, llm_server, request_id, params, model_config):
         try:
             logger.info(f"处理大模型推理任务中: {llm_server} {request_id} {params}")
@@ -284,7 +289,7 @@ class VllmTask(BaseTask):
                 start_time = time.time()
                 client = VLLMOpenAI(api_key=self.model_config.get(
                     "api_key"), base_url=llm_server)
-                params.update({**self.stop_params})
+                params = self.update_params(params=params)
                 if params.get("messages"):
                     stream = client.chat.completions.create(**params)
                 else:
@@ -325,7 +330,11 @@ class VllmTask(BaseTask):
                         think_tag = True
                         text = chunk.choices[0].delta.reasoning_content
                     elif params.get("messages") and chunk.choices[0].delta.content:
-                        if not think_tag:
+                        if "</think>" not in all_text and think_tag:
+                            text += "</think>"
+                            text += chunk.choices[0].delta.content
+                            think_tag = True
+                        elif not think_tag:
                             text += "</think>"
                             text += chunk.choices[0].delta.content
                             think_tag = True
@@ -1026,7 +1035,7 @@ class RerankTask(BaseTask):
             # self.current_model = None
 
 
-class HttpLLMTask(BaseTask):
+class HttpLLMTask(VllmTask):
 
     def start_http_llm(self, idx: int, model_name):
         # 需要保证服务一定完全启动
@@ -1042,7 +1051,7 @@ class HttpLLMTask(BaseTask):
         logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
 
     def http_llm_infer(self, llm_server, request_id, params, model_config):
-        error = self.http_llm_pipeline(
+        error = self.llm_pipeline(
             llm_server, request_id, params, model_config)
         if error is not None and type(error) == ErrorResponse and error.diff_max_tokens > 0:
             new_max_tokens = params["max_tokens"] - error.diff_max_tokens
@@ -1059,135 +1068,7 @@ class HttpLLMTask(BaseTask):
                                      usage=dict(prompt_tokens=0, total_tokens=0,
                                                 completion_tokens=0, tps=0)))
 
-    def http_llm_pipeline(self, llm_server, request_id, params, model_config):
-        try:
-            logger.info(f"处理大模型推理任务中: {llm_server} {request_id} {params}")
-            if global_config.MOCK:
-                send_text = ""
-                for text in LLM_MOCK_DATA:
-                    send_text += text
-                    self.update_running_model()
-                    if len(send_text) > 5:
-                        scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                            text=f"{send_text}", finish=False))
-                        send_text = ""
-                scheduler.set_result(request_id=request_id,
-                                     value=RedisStreamInfer(
-                                         text=f"{request_id} {params['model']} 推理完成",
-                                         finish=True,
-                                         usage=dict(prompt_tokens=10, total_tokens=10,
-                                                    completion_tokens=10, tps=22)))
-                time.sleep(1)
-            else:
-                if self.status == False:
-                    raise Exception("模型服务启动异常")
-                self.update_running_model()
-                start_time = time.time()
-                client = VLLMOpenAI(api_key=self.model_config.get(
-                    "api_key"), base_url=llm_server)
-                params.update({"model": self.model_config.get("model_name")})
-                if params.get("messages"):
-                    stream = client.chat.completions.create(**params)
-                else:
-                    stream = client.completions.create(**params)
+    def update_params(self, params):
+        params.update({"model": self.model_config.get("model_name")})
+        return params
 
-                # 基本参数
-
-                finish_reason = None
-                finish = False
-                completion_tokens = 0
-                prompt_tokens = 0
-                total_tokens = 0
-                tps = 0
-                pushed = False
-                prefill_time = 0
-                tool_call_function_name = ""
-                tool_call_function_args = ""
-                text = ""
-                send_text = ""
-                all_text = ""
-                think_tag = False
-                for chunk in stream:
-                    self.update_running_model()
-                    if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
-                        return chunk
-                    if not pushed:
-                        logger.info(
-                            f"模型{params['model']}数据生成中...: {request_id}")
-                        pushed = True
-                        prefill_time = time.time() - start_time
-                    if params.get("messages") and chunk.choices[0].delta.tool_calls:
-                        tool_call = chunk.choices[0].delta.tool_calls[0]
-                        if tool_call.function.name:
-                            tool_call_function_name = tool_call.function.name
-                        if tool_call.function.arguments:
-                            tool_call_function_args += tool_call.function.arguments
-                    elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
-                        think_tag = True
-                        text = chunk.choices[0].delta.reasoning_content
-                    elif params.get("messages") and chunk.choices[0].delta.content:
-                        if not think_tag:
-                            text += "</think>"
-                            text += chunk.choices[0].delta.content
-                            think_tag = True
-                        else:
-                            text = chunk.choices[0].delta.content
-                    elif params.get("prompt") and chunk.choices[0].text is not None:
-                        text = chunk.choices[0].text
-                    else:
-                        text = ""
-
-                    if chunk.choices[0].finish_reason:
-                        finish = True
-                        finish_reason = chunk.choices[0].finish_reason
-                        logger.info(
-                            f"本轮对话{request_id}-finish_reason: {finish_reason}")
-                        end_time = time.time()
-                        if chunk.usage is None:
-                            completion_tokens = string_token_count(all_text)
-                            prompt_tokens = string_token_count(
-                                str=json.dumps(params))
-                            total_tokens = prompt_tokens + completion_tokens
-                        else:
-                            completion_tokens = chunk.usage.completion_tokens
-                            prompt_tokens = chunk.usage.prompt_tokens
-                            total_tokens = chunk.usage.total_tokens
-                        total_time = end_time-start_time
-                        tps = completion_tokens / total_time
-                        logger.info(
-                            f"本轮对话{request_id}: tps={tps} total_tokens={total_tokens} prompt_tokens={prompt_tokens} completion_tokens={completion_tokens} prefill_time={prefill_time} total_time={total_time}")
-                        if tps:
-                            model_name = self.model_config["name"]
-                            self.profiler_collector(
-                                model_name=model_name, key=MODEL_PROF_KEY, value=tps, description="每秒生成token的数量")
-                    send_text += text
-                    all_text += text
-                    if len(send_text) > 2 or finish is True:
-                        if finish is True:
-                            send_text = send_text.replace("<|", "\n")
-                        scheduler.set_result(request_id=request_id,
-                                             value=RedisStreamInfer(text=send_text, finish=False, usage=dict(completion_tokens=completion_tokens,
-                                                                                                             prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
-                        if finish is True:
-                            scheduler.set_result(request_id=request_id+"_tool_name",
-                                                 value=RedisStreamInfer(
-                                                     text=tool_call_function_name, finish=False,
-                                                     usage=dict(completion_tokens=completion_tokens,
-                                                                prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
-                            scheduler.set_result(request_id=request_id+"_tool_args",
-                                                 value=RedisStreamInfer(
-                                                     text=tool_call_function_args, finish=False,
-                                                     usage=dict(completion_tokens=completion_tokens,
-                                                                prompt_tokens=prompt_tokens,
-                                                                total_tokens=total_tokens, tps=tps)))
-                            scheduler.set_result(request_id=request_id,
-                                                 value=RedisStreamInfer(text="", finish=True, usage=dict(completion_tokens=completion_tokens,
-                                                                                                         prompt_tokens=prompt_tokens, total_tokens=total_tokens, tps=tps)))
-
-                        send_text = ""
-
-        except Exception as e:
-            logger.exception(f"推理异常: {e}")
-            scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
-                text="推理服务异常", finish=True))
-            # self.current_model = None
