@@ -50,13 +50,21 @@ class LLMConfig(LMConfig):
         _model_configs_ = []
         if self.gpu_types:
             _model_configs_.append(self)
+            # if not self.reasoning_parser:
+            #     tmp_config_ = self.copy()
+            #     tmp_config_.name = f"{self.name}:SR"
+            #     _model_configs_.append(tmp_config_)
         for gpu in gpus:
             tmp_config = self.copy()
             tmp_config.model_max_tokens = gpu.model_max_tokens
             tmp_config.gpu_types = gpu.gpu_types
-
             tmp_config.name = f"{tmp_config.name}:{int(gpu.model_max_tokens/1024)}k"
             _model_configs_.append(tmp_config)
+            # if not self.reasoning_parser:
+            #     tmp_config_ = tmp_config.copy()
+            #     tmp_config_.name = f"{tmp_config_.name}:SR"
+            #     _model_configs_.append(tmp_config_)
+
         return _model_configs_
 
     def is_available(self) -> bool:

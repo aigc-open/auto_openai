@@ -305,7 +305,7 @@ class VllmTask(BaseTask):
                 text = ""
                 send_text = ""
                 all_text = ""
-                reasoning_content = True
+                think_tag = False
                 for chunk in stream:
                     self.update_running_model()
                     if hasattr(chunk, "code") and type(chunk) == ErrorResponse and chunk.code >= 300:
@@ -322,12 +322,13 @@ class VllmTask(BaseTask):
                         if tool_call.function.arguments:
                             tool_call_function_args += tool_call.function.arguments
                     elif params.get("messages") and chunk.choices[0].delta.reasoning_content:
+                        think_tag = True
                         text = chunk.choices[0].delta.reasoning_content
                     elif params.get("messages") and chunk.choices[0].delta.content:
-                        if reasoning_content is True:
-                            text = "@@@@@@AUTOOPENAI@@@@@@" + \
-                                chunk.choices[0].delta.content
-                            reasoning_content = False
+                        if not think_tag:
+                            text += "</think>"
+                            text += chunk.choices[0].delta.content
+                            think_tag = True
                         else:
                             text = chunk.choices[0].delta.content
                     elif params.get("prompt") and chunk.choices[0].text is not None:
@@ -360,7 +361,7 @@ class VllmTask(BaseTask):
                                 model_name=model_name, key=MODEL_PROF_KEY, value=tps, description="每秒生成token的数量")
                     send_text += text
                     all_text += text
-                    if len(send_text) > 2 or finish is True:
+                    if len(send_text) >= 1 or finish is True:
                         if finish is True:
                             send_text = send_text.replace("<|", "\n")
                         scheduler.set_result(request_id=request_id,

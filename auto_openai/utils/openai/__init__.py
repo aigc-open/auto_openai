@@ -396,13 +396,15 @@ class Scheduler:
         logger.info(f"推流总耗时 {request_id} : {time.time() - start_time}")
 
     async def ChatCompletionStream(self, request: ChatCompletionRequest, request_id=gen_request_id()):
+        buffer = ""
         reasoning = True
-        reasoning_content = ""
+
         async for data_ in self.stream(request=request, request_id=request_id):
             data: RedisStreamInfer = data_
             finish_reason = "stop" if data.finish else None
-            content = data.text
+            current_text = data.text
             tool_calls = []
+
             if data.finish:
                 data_tool_name = self.get_result(
                     request_id=request_id+"_tool_name")
@@ -412,35 +414,72 @@ class Scheduler:
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
                     {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
+
+            buffer += current_text
+            content = ""
+            reasoning_content = ""
+
             if reasoning:
-                if "@@@@@@AUTOOPENAI@@@@@@" in content:
+                if "</think>" in buffer:
+                    thinks = buffer.split("</think>")
+                    reasoning_content = thinks[0] + "</think>"
+                    content = "".join(thinks[1:])
                     reasoning = False
-                    reasoning_content = ""
-                    content = content.replace("@@@@@@AUTOOPENAI@@@@@@", "")
+                    buffer = ""
                 else:
-                    reasoning_content = content
-                    content = ""
+                    reasoning_content = current_text
             else:
-                reasoning_content = ""
-                content = content
-            chunk = ChatCompletionStreamResponse(
-                model=request.model,
-                choices=[{
-                    "index": 0,
-                    "delta": {
-                        "role": "assistant",
-                        "content": content,
-                        "tool_calls": tool_calls,
-                        "reasoning_content": reasoning_content
-                    },
-                    "finish_reason": finish_reason
-                }],
-                usage=UsageInfo(
-                    **data.usage)
-            )
-            # data = chunk.json(exclude_unset=True, ensure_ascii=False) # pydantic 版本不兼容
-            data = json.dumps(chunk.dict(), ensure_ascii=False)
-            yield f"data: {data}\n\n"
+                content = current_text
+            if content and reasoning_content:
+                out_reasoning_content = json.dumps(
+                    ChatCompletionStreamResponse(
+                        model=request.model,
+                        choices=[{
+                            "index": 0,
+                            "delta": {
+                                "role": "assistant",
+                                "content": "",
+                                "tool_calls": tool_calls,
+                                "reasoning_content": reasoning_content
+                            },
+                            "finish_reason": finish_reason
+                        }],
+                        usage=UsageInfo(**data.usage)
+                    ).dict(), ensure_ascii=False)
+                out_content = json.dumps(
+                    ChatCompletionStreamResponse(
+                        model=request.model,
+                        choices=[{
+                            "index": 0,
+                            "delta": {
+                                "role": "assistant",
+                                "content": content,
+                                "tool_calls": tool_calls,
+                                "reasoning_content": ""
+                            },
+                            "finish_reason": finish_reason
+                        }],
+                        usage=UsageInfo(**data.usage)
+                    ).dict(), ensure_ascii=False)
+                yield f"data: {out_reasoning_content}\n\n"
+                yield f"data: {out_content}\n\n"
+            else:
+                chunk = ChatCompletionStreamResponse(
+                    model=request.model,
+                    choices=[{
+                        "index": 0,
+                        "delta": {
+                            "role": "assistant",
+                            "content": content,
+                            "tool_calls": tool_calls,
+                            "reasoning_content": reasoning_content
+                        },
+                        "finish_reason": finish_reason
+                    }],
+                    usage=UsageInfo(**data.usage)
+                )
+                out = json.dumps(chunk.dict(), ensure_ascii=False)
+                yield f"data: {out}\n\n"
 
     async def ChatCompletion(self, request: ChatCompletionRequest, request_id=gen_request_id()):
         content = ""
@@ -458,11 +497,12 @@ class Scheduler:
                 data_tool_args = data_tool_args.text if data_tool_args else None
                 tool_calls = [
                     {"function": {"name": data_tool_name, "arguments": data_tool_args}}] if data_tool_name else []
-        content_and_reasoning = content.split("@@@@@@AUTOOPENAI@@@@@@")
-        if len(content_and_reasoning) >=2:
+        content_and_reasoning = content.split("</think>")
+        if len(content_and_reasoning) >= 2:
             reasoning_content = content_and_reasoning[0]
-            content = content_and_reasoning[1]
+            content = "".join(content_and_reasoning[1:])
         else:
+            reasoning_content = ""
             content = content_and_reasoning[0]
         finish_reason = "stop"
         response = ChatCompletionResponse(
