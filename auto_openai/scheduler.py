@@ -248,7 +248,7 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
             # 启动embedding 大模型服务
             self.max_workers = 10
             self.infer_fn = self.http_llm_infer
-            self.service_list = [self.model_config["base_url"]]
+            self.service_list = [self.model_config["base_url"] for i in range(self.workers_num)]
         else:
             raise Exception(
                 f"未知的模型服务类型: {self.model_config.get('server_type')}")

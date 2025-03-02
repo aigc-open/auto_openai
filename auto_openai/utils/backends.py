@@ -260,8 +260,14 @@ class VllmTask(BaseTask):
 
 
     def update_params(self, params):
-        params.update({**self.stop_params})
-        return params
+        if self.model_config.get('model_name') and self.model_config.get('server_type') == "http-llm":
+            logger.info(f"转发代理模型模型: {self.model_config.get('model_name')}")
+            params.update({"model": self.model_config.get("model_name")})
+            return params
+        else:
+            logger.info(f"更新本地模型参数: {self.stop_params}")
+            params.update({**self.stop_params})
+            return params
 
     def llm_pipeline(self, llm_server, request_id, params, model_config):
         try:
@@ -330,7 +336,7 @@ class VllmTask(BaseTask):
                         think_tag = True
                         text = chunk.choices[0].delta.reasoning_content
                     elif params.get("messages") and chunk.choices[0].delta.content:
-                        if "</think>" not in all_text and think_tag:
+                        if "<think>" not in all_text and "</think>" not in all_text and think_tag:
                             text += "</think>"
                             text += chunk.choices[0].delta.content
                             think_tag = True
@@ -1067,8 +1073,4 @@ class HttpLLMTask(VllmTask):
                                      finish=True,
                                      usage=dict(prompt_tokens=0, total_tokens=0,
                                                 completion_tokens=0, tps=0)))
-
-    def update_params(self, params):
-        params.update({"model": self.model_config.get("model_name")})
-        return params
 

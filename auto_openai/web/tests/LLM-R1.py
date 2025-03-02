@@ -8,7 +8,7 @@ client = OpenAI(base_url=base_url, api_key=api_key)
 
 ########################### 深度思考模式 ###########################
 model = "DeepSeek-R1-Distill-Qwen-32B:10k"
-model = "Qwen2.5-Coder-7B-Instruct"
+# model = "Qwen2.5-Coder-7B-Instruct"
 # model = "Qwen2.5-Coder-7B-Instruct:SR"
 response = client.chat.completions.create(
     model=model,
