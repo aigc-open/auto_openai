@@ -85,10 +85,11 @@ CUSTOM_MODLES:
   - name: EnflameCoder-32B-Instruct-R1:32k
     server_type: vllm
     api_type: LLM
+    reasoning_parser: deepseek_r1
     model_max_tokens: 32768
     description: "Topscc 算子生成模型"
     need_gpu_count: 1
-    template: template_qwen.jinja
+    template: ""
     stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
     gpu_types:
       EF-S60:
@@ -97,10 +98,37 @@ CUSTOM_MODLES:
   - name: EnflameCoder-32B-Instruct-R1:10k
     server_type: vllm
     api_type: LLM
+    reasoning_parser: deepseek_r1
     model_max_tokens: 10240
     description: "Topscc 算子生成模型"
     need_gpu_count: 1
-    template: template_qwen.jinja
+    template: ""
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 2
+
+  - name: EnflameCoder-QwQ-32B:32k
+    server_type: vllm
+    api_type: LLM
+    reasoning_parser: deepseek_r1
+    model_max_tokens: 32768
+    description: "Topscc 算子生成模型"
+    need_gpu_count: 1
+    template: ""
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 4
+        
+  - name: EnflameCoder-QwQ-32B:10k
+    server_type: vllm
+    api_type: LLM
+    reasoning_parser: deepseek_r1
+    model_max_tokens: 10240
+    description: "Topscc 算子生成模型"
+    need_gpu_count: 1
+    template: ""
     stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
     gpu_types:
       EF-S60:
