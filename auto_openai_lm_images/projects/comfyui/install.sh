@@ -20,10 +20,9 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Anim
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/OneButtonPrompt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/was-node-suite-comfyui && cd was-node-suite-comfyui && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_essentials
-# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_UltimateSDUpscale --recursive
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_UltimateSDUpscale --recursive
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui_controlnet_aux && cd comfyui_controlnet_aux && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/stability-ComfyUI-nodes && cd stability-ComfyUI-nodes && pip install -r requirements.txt 
-cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/efficiency-nodes-comfyui && cd efficiency-nodes-comfyui && pip install -r requirements.txt 
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-VideoHelperSuite && cd ComfyUI-VideoHelperSuite && pip install -r requirements.txt 
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Custom-Scripts
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/FreeU_Advanced
@@ -52,17 +51,39 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-WD14
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_FizzNodes.git && cd ComfyUI_FizzNodes && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Allor.git && cd ComfyUI-Allor && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_InstantID.git && cd ComfyUI_InstantID && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/PuLID_ComfyUI.git && cd PuLID_ComfyUI && pip install -r requirements.txt
-# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/StableZero123-comfyui.git && cd StableZero123-comfyui && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/PuLID_ComfyUI.git && cd PuLID_ComfyUI && pip install -r requirements.txt && pip install facexlib
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/AIGODLIKE-ComfyUI-Translation.git
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_ADV_CLIP_emb.git
-# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Easy-Use.git && cd ComfyUI-Easy-Use && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/cg-use-everywhere.git
+# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/cg-use-everywhere.git # 在0.3.0以后不能使用
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Kolors-MZ.git
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui_segment_anything.git && cd comfyui_segment_anything && pip install -r requirements.txt
-# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-ollama.git && cd comfyui-ollama && pip install -r requirements.txt
-# cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-OOTDiffusion.git && cd ComfyUI-OOTDiffusion && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/python279/ComfyUI-AdvancedLivePortrait.git && cd ComfyUI-AdvancedLivePortrait && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/yubiaohyb/ComfyUI-LivePortraitKJ.git && cd ComfyUI-LivePortraitKJ && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-CogVideoXWrapper.git && cd ComfyUI-CogVideoXWrapper && pip install -r requirements.txt
-cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-KwaiKolorsWrapper.git && cd ComfyUI-KwaiKolorsWrapper && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-AdvancedLivePortrait.git && cd ComfyUI-AdvancedLivePortrait && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-LivePortraitKJ.git && cd ComfyUI-LivePortraitKJ && pip install -r requirements.txt && pip install pykalman
+# 客户
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Florence2.git && cd ComfyUI-Florence2 && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_MiniCPM-V-2_6-int4.git && cd ComfyUI_MiniCPM-V-2_6-int4 && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Advanced-ControlNet.git && cd ComfyUI-Advanced-ControlNet && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-BiRefNet-Hugo.git && cd ComfyUI-BiRefNet-Hugo && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/Comfyui_mobilesam.git && cd Comfyui_mobilesam && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/was-node-suite-comfyui.git && cd was-node-suite-comfyui && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/efficiency-nodes-comfyui.git && cd efficiency-nodes-comfyui && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-tooling-nodes.git && cd comfyui-tooling-nodes && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_HFDownLoad.git && cd ComfyUI_HFDownLoad && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/masquerade-nodes-comfyui.git 
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-mixlab-nodes.git && cd comfyui-mixlab-nodes && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Openpose-Editor-Plus.git && cd ComfyUI-Openpose-Editor-Plus && pip install pyOpenSSL watchdog
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/Comfyui_cgem156.git && cd Comfyui_cgem156 && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-YOLO.git && cd ComfyUI-YOLO && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Custom-Scripts.git && cd ComfyUI-Custom-Scripts && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Universal-Styler.git && cd ComfyUI-Universal-Styler && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Easy-Use.git && cd ComfyUI-Easy-Use && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-lama-remover.git && cd comfyui-lama-remover && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-gpt-agent.git && cd comfyui-gpt-agent && pip install -r requirements.txt
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-mediapipe.git && cd comfyui-mediapipe && pip install -r requirements.txt
+
+
+pip3.10 install protobuf==3.20 fire diffusers==0.31.0
+pip3.10 install transformers==4.44.2
+pip3.10 install torchvision==0.18.0 --force-reinstall
+pip3.10 install numpy==1.24.3
+pip3.10 install opencv-python==3.4.18.65
