@@ -133,33 +133,3 @@ CUSTOM_MODLES:
     gpu_types:
       EF-S60:
         need_gpu_count: 2
-  
-  - name: DeepSeek-R1满血版
-    model_name: ep-20250219145028-w67f6
-    server_type: http-llm
-    api_key: 8071659a-e617-4622-b671-f4933d194304
-    base_url: https://ark.cn-beijing.volces.com/api/v3
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "DeepSeek-R1满血版"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      CPU:
-        need_gpu_count: 1
-
-  - name: DeepSeek-V3满血版
-    model_name: ep-20250219150704-gmnw4
-    server_type: http-llm
-    api_key: 8071659a-e617-4622-b671-f4933d194304
-    base_url: https://ark.cn-beijing.volces.com/api/v3
-    api_type: LLM
-    model_max_tokens: 10240
-    description: "DeepSeek-V3满血版"
-    need_gpu_count: 1
-    template: template_qwen.jinja
-    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
-    gpu_types:
-      CPU:
-        need_gpu_count: 1  
