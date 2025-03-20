@@ -11,7 +11,7 @@ WORKDIR /workspace
 COPY ./projects/comfyui/install.sh /tmp/install.sh
 RUN bash /tmp/install.sh
 # 强制覆盖torch
-RUN pip3.10 install torch==2.3.0 torchvision==0.18.0 torchaudio==2.3.0 --force-reinstall
+pip3.10 install torchvision==0.18.0 torch==2.3.0 torchaudio==2.3.0 --force-reinstall 
 # 修改适配
 COPY ./projects/comfyui/ /modify/
 RUN bash /modify/modify.sh

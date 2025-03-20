@@ -1,8 +1,8 @@
 cd /workspace/ && git clone https://gitee.com/ComfyUI_1/ComfyUI.git && pip3.10 install -r /workspace/ComfyUI/requirements.txt
 git config --global --add safe.directory /workspace/ComfyUI
+
 root_path=/workspace/ComfyUI
 mkdir -p /workspace/ComfyUI/custom_nodes
-# 插件
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_FaceAnalysis.git && cd ComfyUI_FaceAnalysis && pip install -r requirements.txt
 # cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Manager.git
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Impact-Pack && cd ComfyUI-Impact-Pack # && python install.py
@@ -22,6 +22,8 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/was-node-sui
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_essentials
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_UltimateSDUpscale --recursive
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui_controlnet_aux && cd comfyui_controlnet_aux && pip install -r requirements.txt
+# https://www.modelscope.cn/models/depth-anything/Depth-Anything-V2-Large/files
+# https://www.modelscope.cn/models/jackle/comfyui_controlnet_aux_ckpts/files
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/stability-ComfyUI-nodes && cd stability-ComfyUI-nodes && pip install -r requirements.txt 
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-VideoHelperSuite && cd ComfyUI-VideoHelperSuite && pip install -r requirements.txt 
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Custom-Scripts
@@ -48,6 +50,7 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-BiRe
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Texture-Simple
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-APISR && cd ComfyUI-APISR && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-WD14-Tagger.git && cd ComfyUI-WD14-Tagger && pip install -r requirements.txt
+# https://www.modelscope.cn/models/fireicewolf/wd-v1-4-moat-tagger-v2/files
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_FizzNodes.git && cd ComfyUI_FizzNodes && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Allor.git && cd ComfyUI-Allor && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI_InstantID.git && cd ComfyUI_InstantID && pip install -r requirements.txt
@@ -80,10 +83,4 @@ cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-Easy
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-lama-remover.git && cd comfyui-lama-remover && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-gpt-agent.git && cd comfyui-gpt-agent && pip install -r requirements.txt
 cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/comfyui-mediapipe.git && cd comfyui-mediapipe && pip install -r requirements.txt
-
-
-pip3.10 install protobuf==3.20 fire diffusers==0.31.0
-pip3.10 install transformers==4.44.2
-pip3.10 install torchvision==0.18.0 --force-reinstall
-pip3.10 install numpy==1.24.3
-pip3.10 install opencv-python==3.4.18.65
+cd $root_path/custom_nodes && git clone https://gitee.com/ComfyUI_1/ComfyUI-EmptyHunyuanLatent.git

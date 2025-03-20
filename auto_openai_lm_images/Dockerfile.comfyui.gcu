@@ -25,14 +25,13 @@ WORKDIR /workspace
 COPY ./projects/comfyui/install.sh /tmp/install.sh
 RUN bash /tmp/install.sh
 # 强制覆盖torch
-RUN pip3.10 install torch==2.3.0 --force-reinstall
+RUN pip3.10 install torchvision==0.18.0 torch==2.3.0 torchaudio==2.3.0 --force-reinstall 
 # 修改适配
 COPY ./projects/comfyui/ /modify/
 RUN bash /modify/modify.sh
 
 RUN pip3.10 install protobuf==3.20 fire diffusers==0.31.0
 RUN pip3.10 install transformers==4.44.2
-RUN pip3.10 install torchvision==0.18.0 --force-reinstall
 RUN pip3.10 install numpy==1.24.3
 RUN pip3.10 install opencv-python==3.4.18.65
 RUN pip3.10 uninstall -y flash_attn
