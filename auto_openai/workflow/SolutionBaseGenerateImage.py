@@ -16,7 +16,7 @@ class SolutionBaseGenerateImage(SolutionBaseGenerateImageRequest, WorkflowFormat
         if "flux" in self.model:
             return self.flux_format_json()
         elif "majicmixRealistic_v7" in self.model:
-            return self.majicmix_format_json()
+            return self.majicmixRealistic_v7_format_json()
         elif "Kolors" in self.model:
             return self.kolors_format_json()
         raise NotImplementedError("Not support model")

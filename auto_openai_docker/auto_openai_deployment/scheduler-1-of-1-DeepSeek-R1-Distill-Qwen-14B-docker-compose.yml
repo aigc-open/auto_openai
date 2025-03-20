@@ -1,15 +1,15 @@
 services:
-  scheduler-0_1_2_3-of-0:
+  scheduler-1-of-0:
     command:
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: DeepSeek-R1-Distill-Qwen-14B:20k
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-1197668055
-      LM_SERVER_BASE_PORT: 30216
-      NODE_GPU_TOTAL: 0,1,2,3
+      LABEL: lm-server-1742479104-41401533
+      LM_SERVER_BASE_PORT: 30312
+      NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true

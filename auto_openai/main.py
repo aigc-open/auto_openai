@@ -312,7 +312,7 @@ async def get_available_model(request: Request):
     return global_config.get_MODELS_MAPS()
 
 
-@app.get("/v1/get_continue_config")
+@app.get("/v1/CodeConfig")
 async def get_continue_config(request: Request, config_name="continueconfig.json"):
     continue_config = global_config.get_continue_config(
         path=f"./conf/{config_name}")

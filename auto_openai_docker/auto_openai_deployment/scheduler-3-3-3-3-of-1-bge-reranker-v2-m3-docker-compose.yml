@@ -1,15 +1,15 @@
 services:
-  scheduler-0_1-of-0:
+  scheduler-3-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-357708459
-      LM_SERVER_BASE_PORT: 30072
-      NODE_GPU_TOTAL: 0,1
+      LABEL: lm-server-1742479104-834921349
+      LM_SERVER_BASE_PORT: 30400
+      NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
@@ -20,42 +20,42 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-2_3-of-1:
+  scheduler-3-of-1:
     command: *id001
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-670370360
-      LM_SERVER_BASE_PORT: 30080
-      NODE_GPU_TOTAL: 2,3
+      LABEL: lm-server-1742479104-435699718
+      LM_SERVER_BASE_PORT: 30408
+      NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-4_5-of-2:
+  scheduler-3-of-2:
     command: *id001
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-499484132
-      LM_SERVER_BASE_PORT: 30088
-      NODE_GPU_TOTAL: 4,5
+      LABEL: lm-server-1742479104-752119357
+      LM_SERVER_BASE_PORT: 30416
+      NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-6_7-of-3:
+  scheduler-3-of-3:
     command: *id001
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-633922260
-      LM_SERVER_BASE_PORT: 30096
-      NODE_GPU_TOTAL: 6,7
+      LABEL: lm-server-1742479104-780532653
+      LM_SERVER_BASE_PORT: 30424
+      NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true

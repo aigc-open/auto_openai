@@ -41,10 +41,10 @@ class Gen:
         "network_mode": "host"
     }
 
-    yaml_filename = "{generate_dir}/scheduler-{gpu}-of-{split_size}-docker-compose.yml"
+    yaml_filename = "{generate_dir}/scheduler-{gpu}-of-{split_size}{other_name}-docker-compose.yml"
 
     @classmethod
-    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL", GPU_TYPE=""):
+    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL", GPU_TYPE="", other_name=""):
         global BASE_PORT
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
@@ -68,7 +68,7 @@ class Gen:
         service.update({"services": containers})
         yaml_data = yaml.dump(service)
         os.makedirs(generate_dir, exist_ok=True)
-        with open(cls.yaml_filename.format(generate_dir=generate_dir, gpu="-".join(map(str, gpu)), split_size=split_size), 'w') as file:
+        with open(cls.yaml_filename.format(generate_dir=generate_dir, gpu="-".join(map(str, gpu)), split_size=split_size, other_name=other_name), 'w') as file:
             file.write(yaml_data)
         return service
 
@@ -89,3 +89,25 @@ Gen.run(gpu=[3, 3, 3, 3], split_size=1,
         AVAILABLE_SERVER_TYPES="embedding,rerank")
 Gen.run(gpu=[100, 100], split_size=1,
         AVAILABLE_SERVER_TYPES="http-llm", GPU_TYPE="CPU")
+# 固定的
+# node-01
+Gen.run(gpu=[0], split_size=1,
+        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k", other_name="-Qwen2.5-Coder-32B-Instruct-GPTQ-Int4")
+Gen.run(gpu=[1], split_size=1,
+        AVAILABLE_MODELS="DeepSeek-R1-Distill-Qwen-14B:20k", other_name="-DeepSeek-R1-Distill-Qwen-14B")
+Gen.run(gpu=[2], split_size=1,
+        AVAILABLE_MODELS="Qwen2-VL-7B-Instruct:32k", other_name="-Qwen2-VL-7B-Instruct")
+Gen.run(gpu=[3, 3], split_size=1,
+        AVAILABLE_MODELS="SolutionBaseGenerateImage/Kolors", other_name="-Kolors")
+# node-02
+# 万相视频生成
+Gen.run(gpu=[0], split_size=1,
+        AVAILABLE_MODELS="Wan2.1-TextToVideo", other_name="-Wan2.1-TextToVideo")
+# 这两张卡任意分配
+Gen.run(gpu=[1, 2], split_size=1,
+        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors", other_name="-anyone")
+# 这张卡被拆分8份，给embeding,rerank使用，小模型
+Gen.run(gpu=[3, 3, 3, 3], split_size=1,
+        AVAILABLE_MODELS="bge-base-zh-v1.5", other_name="-bge-base-zh-v1.5")
+Gen.run(gpu=[3, 3, 3, 3], split_size=1,
+        AVAILABLE_MODELS="bge-reranker-v2-m3", other_name="-bge-reranker-v2-m3")

@@ -1,15 +1,15 @@
 services:
-  scheduler-0_1_2_3-of-0:
+  scheduler-0-of-0:
     command:
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-1197668055
-      LM_SERVER_BASE_PORT: 30216
-      NODE_GPU_TOTAL: 0,1,2,3
+      LABEL: lm-server-1742479104-273844079
+      LM_SERVER_BASE_PORT: 30304
+      NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
