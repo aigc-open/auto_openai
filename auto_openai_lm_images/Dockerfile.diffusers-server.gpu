@@ -12,10 +12,9 @@ WORKDIR /workspace
 COPY ./projects/diffusers-server/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 # 强制覆盖torch
-RUN pip3.10 install torch==2.3.0 --force-reinstall
+RUN pip3.10 install torchvision==0.18.0 torch==2.3.0 torchaudio==2.3.0 --force-reinstall 
 
 RUN pip3.10 install protobuf==3.20 fire opencv-python
-RUN pip3.10 install torchvision==0.18.0
 RUN pip3.10 install SentencePiece imageio imageio-ffmpeg==0.5.1 opencv-python==4.6.0.66
 RUN pip3.10 uninstall apex -y
 RUN pip3.10 install transformers==4.44.2

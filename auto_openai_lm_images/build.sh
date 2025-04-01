@@ -7,7 +7,7 @@ device=gpu
 services=(
     # "comfyui"
     # "diffusers-server"
-    # "embedding-server"
+    "embedding-server"
     # "funasr-server"
     # "llm-transformer-server"
     # "maskgct"
