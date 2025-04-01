@@ -440,7 +440,7 @@ class Scheduler:
                                 "role": "assistant",
                                 "content": "",
                                 "tool_calls": tool_calls,
-                                "reasoning_content": reasoning_content
+                                "reasoning_content": reasoning_content.replace("</think>", "").replace("<think>", "")
                             },
                             "finish_reason": finish_reason
                         }],
@@ -472,7 +472,7 @@ class Scheduler:
                             "role": "assistant",
                             "content": content,
                             "tool_calls": tool_calls,
-                            "reasoning_content": reasoning_content
+                            "reasoning_content": reasoning_content.replace("</think>", "").replace("<think>", "")
                         },
                         "finish_reason": finish_reason
                     }],
@@ -513,7 +513,7 @@ class Scheduler:
                     "role": "assistant",
                     "content": content,
                     "tool_calls": tool_calls,
-                    "reasoning_content": reasoning_content
+                    "reasoning_content": reasoning_content.replace("</think>", "").replace("<think>", "")
                 },
                 "finish_reason": finish_reason
             }],
