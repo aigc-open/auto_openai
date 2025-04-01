@@ -1,5 +1,5 @@
 services:
-  scheduler-3-of-0:
+  scheduler-3-of-0-Kolors:
     command: &id001
     - /bin/sh
     - -c
@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-1679892041
+      LABEL: lm-server-1743478622-1468391912
       LM_SERVER_BASE_PORT: 30328
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -20,12 +20,12 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-3-of-1:
+  scheduler-3-of-1-Kolors:
     command: *id001
     environment:
       AVAILABLE_MODELS: SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-1720208396
+      LABEL: lm-server-1743478622-595172141
       LM_SERVER_BASE_PORT: 30336
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

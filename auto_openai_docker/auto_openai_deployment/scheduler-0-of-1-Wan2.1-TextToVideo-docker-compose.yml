@@ -1,5 +1,5 @@
 services:
-  scheduler-0-of-0:
+  scheduler-0-of-0-Wan2.1-TextToVideo:
     command:
     - /bin/sh
     - -c
@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: Wan2.1-TextToVideo
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-880779464
+      LABEL: lm-server-1743478622-1026254277
       LM_SERVER_BASE_PORT: 30344
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

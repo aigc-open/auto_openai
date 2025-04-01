@@ -63,7 +63,7 @@ class Gen:
                 environment.update({"GPU_TYPE": GPU_TYPE})
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
-            containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}-of-{idx}"] = container
+            containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}-of-{idx}{other_name}"] = container
         service = dict(cls.default)
         service.update({"services": containers})
         yaml_data = yaml.dump(service)

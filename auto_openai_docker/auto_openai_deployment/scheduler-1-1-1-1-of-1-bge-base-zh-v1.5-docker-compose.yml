@@ -1,5 +1,5 @@
 services:
-  scheduler-1-of-0:
+  scheduler-1-of-0-bge-base-zh-v1.5:
     command: &id001
     - /bin/sh
     - -c
@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: bge-base-zh-v1.5
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-1632226561
+      LABEL: lm-server-1743478622-1712617387
       LM_SERVER_BASE_PORT: 30352
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -20,12 +20,12 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-1-of-1-bge-base-zh-v1.5:
     command: *id001
     environment:
       AVAILABLE_MODELS: bge-base-zh-v1.5
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-962593083
+      LABEL: lm-server-1743478622-1407916966
       LM_SERVER_BASE_PORT: 30360
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -34,12 +34,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-1-of-2:
+  scheduler-1-of-2-bge-base-zh-v1.5:
     command: *id001
     environment:
       AVAILABLE_MODELS: bge-base-zh-v1.5
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-1233716441
+      LABEL: lm-server-1743478622-743638886
       LM_SERVER_BASE_PORT: 30368
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -48,12 +48,12 @@ services:
     restart: always
     shm_size: 8gb
     volumes: *id002
-  scheduler-1-of-3:
+  scheduler-1-of-3-bge-base-zh-v1.5:
     command: *id001
     environment:
       AVAILABLE_MODELS: bge-base-zh-v1.5
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743478188-502126259
+      LABEL: lm-server-1743478622-763057019
       LM_SERVER_BASE_PORT: 30376
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
