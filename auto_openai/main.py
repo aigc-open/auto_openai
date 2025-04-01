@@ -1,4 +1,3 @@
-
 import time
 import asyncio
 import os
@@ -144,7 +143,13 @@ async def completion(
 async def get_model(request: Request):
     # model_list = global_config.get_MODELS_MAPS().get(
     #     "LLM", []) + global_config.get_MODELS_MAPS().get("VLLM", [])
-    model_list = global_config.get_MODELS_MAPS().values()
+    models_map = global_config.get_MODELS_MAPS()
+    model_list = []
+    for k, models in models_map.items():
+        if isinstance(models, list):
+            model_list.extend(models)
+        else:
+            model_list.append(models)
     out = []
     for model in model_list:
         out.append({
