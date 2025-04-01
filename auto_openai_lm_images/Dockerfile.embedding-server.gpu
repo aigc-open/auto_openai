@@ -12,7 +12,7 @@ WORKDIR /workspace
 COPY ./projects/embedding-server/requirements.txt /tmp/requirements.txt
 RUN pip install -r /tmp/requirements.txt
 # 强制覆盖torch
-RUN pip3.10 install torch==2.3.0 --force-reinstall
+RUN pip3.10 install torchvision==0.18.0 torch==2.3.0 torchaudio==2.3.0 --force-reinstall 
 RUN pip3.10 install protobuf==3.20 fire
 # 修改适配
 COPY ./projects/embedding-server/ /workspace/embedding-server/

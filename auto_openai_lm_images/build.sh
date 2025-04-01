@@ -5,9 +5,9 @@ device=gpu
 
 # List of services to build
 services=(
-    "comfyui"
+    # "comfyui"
     # "diffusers-server"
-    # "embedding-server"
+    "embedding-server"
     # "funasr-server"
     # "llm-transformer-server"
     # "maskgct"
