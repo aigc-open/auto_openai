@@ -14,6 +14,8 @@ RUN pip install -r /tmp/requirements.txt
 # 强制覆盖torch
 RUN pip3.10 install torch==2.3.0 --force-reinstall
 RUN pip3.10 install protobuf==3.20 fire opencv-python
+RUN pip3.10 install transformers==4.44.2
+RUN pip3.10 install numpy==1.24.3
 # 修改适配
 COPY ./projects/llm-transformer-server/ /workspace/llm-transformer-server/
 

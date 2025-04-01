@@ -17,6 +17,7 @@ class Docker:
             "network_mode": network_mode,
             "detach": True,
             "labels": self.labels,
+            "restart_policy": {"Name": "on-failure", "MaximumRetryCount": 5},
             # "auto_remove": True,
             "privileged": True,
             "shm_size": "16gb",

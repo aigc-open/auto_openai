@@ -18,6 +18,8 @@ RUN pip3.10 install protobuf==3.20 fire opencv-python
 RUN pip3.10 install torchvision==0.18.0
 RUN pip3.10 install SentencePiece imageio imageio-ffmpeg==0.5.1 opencv-python==4.6.0.66
 RUN pip3.10 uninstall apex -y
+RUN pip3.10 install transformers==4.44.2
+RUN pip3.10 install numpy==1.24.3
 # 修改适配
 COPY ./projects/diffusers-server/ /workspace/diffusers-server/
 
