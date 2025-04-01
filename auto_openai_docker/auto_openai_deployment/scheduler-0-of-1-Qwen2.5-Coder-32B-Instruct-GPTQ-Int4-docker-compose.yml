@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-273844079
+      LABEL: lm-server-1743473817-1026948602
       LM_SERVER_BASE_PORT: 30304
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

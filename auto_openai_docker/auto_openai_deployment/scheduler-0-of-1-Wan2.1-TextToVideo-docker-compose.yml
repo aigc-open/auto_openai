@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: Wan2.1-TextToVideo
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1742479104-1345867561
+      LABEL: lm-server-1743473817-1541052164
       LM_SERVER_BASE_PORT: 30344
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

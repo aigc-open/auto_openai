@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: embedding,rerank
-      LABEL: lm-server-1742479104-390192202
+      LABEL: lm-server-1743473817-785699869
       LM_SERVER_BASE_PORT: 30224
       NODE_GPU_TOTAL: '4'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -25,7 +25,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: embedding,rerank
-      LABEL: lm-server-1742479104-1510817798
+      LABEL: lm-server-1743473817-654738414
       LM_SERVER_BASE_PORT: 30232
       NODE_GPU_TOTAL: '4'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -39,7 +39,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: embedding,rerank
-      LABEL: lm-server-1742479104-750811909
+      LABEL: lm-server-1743473817-1470171313
       LM_SERVER_BASE_PORT: 30240
       NODE_GPU_TOTAL: '4'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -53,7 +53,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: embedding,rerank
-      LABEL: lm-server-1742479104-446064515
+      LABEL: lm-server-1743473817-1316085458
       LM_SERVER_BASE_PORT: 30248
       NODE_GPU_TOTAL: '4'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

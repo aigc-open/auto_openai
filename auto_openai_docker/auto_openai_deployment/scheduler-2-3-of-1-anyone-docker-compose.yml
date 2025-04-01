@@ -1,15 +1,15 @@
 services:
-  scheduler-0-of-0:
+  scheduler-2-of-0:
     command: &id001
     - /bin/sh
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2.5-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-1080177177
-      LM_SERVER_BASE_PORT: 30160
-      NODE_GPU_TOTAL: '0'
+      LABEL: lm-server-1743473817-1583891201
+      LM_SERVER_BASE_PORT: 30416
+      NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true
@@ -20,28 +20,14 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-  scheduler-1-of-1:
+  scheduler-3-of-1:
     command: *id001
     environment:
-      AVAILABLE_MODELS: ALL
+      AVAILABLE_MODELS: Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2.5-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-805665458
-      LM_SERVER_BASE_PORT: 30168
-      NODE_GPU_TOTAL: '1'
-    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
-    network_mode: host
-    privileged: true
-    restart: always
-    shm_size: 8gb
-    volumes: *id002
-  scheduler-2-of-2:
-    command: *id001
-    environment:
-      AVAILABLE_MODELS: ALL
-      AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-1286714520
-      LM_SERVER_BASE_PORT: 30176
-      NODE_GPU_TOTAL: '2'
+      LABEL: lm-server-1743473817-595779331
+      LM_SERVER_BASE_PORT: 30424
+      NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
     network_mode: host
     privileged: true

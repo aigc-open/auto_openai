@@ -96,18 +96,19 @@ Gen.run(gpu=[0], split_size=1,
 Gen.run(gpu=[1], split_size=1,
         AVAILABLE_MODELS="DeepSeek-R1-Distill-Qwen-14B:20k", other_name="-DeepSeek-R1-Distill-Qwen-14B")
 Gen.run(gpu=[2], split_size=1,
-        AVAILABLE_MODELS="Qwen2-VL-7B-Instruct:32k", other_name="-Qwen2-VL-7B-Instruct")
+        AVAILABLE_MODELS="Qwen2.5-VL-7B-Instruct:32k", other_name="-Qwen2-VL-7B-Instruct")
 Gen.run(gpu=[3, 3], split_size=1,
         AVAILABLE_MODELS="SolutionBaseGenerateImage/Kolors", other_name="-Kolors")
 # node-02
 # 万相视频生成
 Gen.run(gpu=[0], split_size=1,
         AVAILABLE_MODELS="Wan2.1-TextToVideo", other_name="-Wan2.1-TextToVideo")
-# 这两张卡任意分配
-Gen.run(gpu=[1, 2], split_size=1,
-        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors", other_name="-anyone")
 # 这张卡被拆分8份，给embeding,rerank使用，小模型
-Gen.run(gpu=[3, 3, 3, 3], split_size=1,
+Gen.run(gpu=[1, 1, 1, 1], split_size=1,
         AVAILABLE_MODELS="bge-base-zh-v1.5", other_name="-bge-base-zh-v1.5")
-Gen.run(gpu=[3, 3, 3, 3], split_size=1,
+Gen.run(gpu=[1, 1, 1, 1], split_size=1,
         AVAILABLE_MODELS="bge-reranker-v2-m3", other_name="-bge-reranker-v2-m3")
+# 这两张卡任意分配
+Gen.run(gpu=[2, 3], split_size=1,
+        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2.5-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors", other_name="-anyone")
+
