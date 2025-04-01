@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-1011729524
+      LABEL: lm-server-1743478188-1037836574
       LM_SERVER_BASE_PORT: 30384
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -25,7 +25,7 @@ services:
     environment:
       AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-1287347181
+      LABEL: lm-server-1743478188-1066113336
       LM_SERVER_BASE_PORT: 30392
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -39,7 +39,7 @@ services:
     environment:
       AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-310558280
+      LABEL: lm-server-1743478188-39820196
       LM_SERVER_BASE_PORT: 30400
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -53,7 +53,7 @@ services:
     environment:
       AVAILABLE_MODELS: bge-reranker-v2-m3
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-277188467
+      LABEL: lm-server-1743478188-644439746
       LM_SERVER_BASE_PORT: 30408
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

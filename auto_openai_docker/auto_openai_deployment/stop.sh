@@ -16,7 +16,7 @@ docker-compose -f scheduler-1-1-1-1-of-1-bge-reranker-v2-m3-docker-compose.yml d
 docker-compose -f scheduler-1-2-of-1-anyone-docker-compose.yml down
 docker-compose -f scheduler-1-of-1-DeepSeek-R1-Distill-Qwen-14B-docker-compose.yml down
 docker-compose -f scheduler-2-3-of-1-anyone-docker-compose.yml down
-docker-compose -f scheduler-2-of-1-Qwen2-VL-7B-Instruct-docker-compose.yml down
+docker-compose -f scheduler-2-of-1-Qwen2.5-VL-7B-Instruct-docker-compose.yml down
 docker-compose -f scheduler-3-3-3-3-of-1-docker-compose.yml down
 docker-compose -f scheduler-3-3-of-1-Kolors-docker-compose.yml down
 docker-compose -f scheduler-4-4-4-4-of-1-docker-compose.yml down

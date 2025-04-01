@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: DeepSeek-R1-Distill-Qwen-14B:20k
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1743473817-1146734824
+      LABEL: lm-server-1743478188-630553951
       LM_SERVER_BASE_PORT: 30312
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
