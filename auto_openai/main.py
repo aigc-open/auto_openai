@@ -142,8 +142,9 @@ async def completion(
 
 @app.get("/v1/models")
 async def get_model(request: Request):
-    model_list = global_config.get_MODELS_MAPS().get(
-        "LLM", []) + global_config.get_MODELS_MAPS().get("VLLM", [])
+    # model_list = global_config.get_MODELS_MAPS().get(
+    #     "LLM", []) + global_config.get_MODELS_MAPS().get("VLLM", [])
+    model_list = global_config.get_MODELS_MAPS().values()
     out = []
     for model in model_list:
         out.append({

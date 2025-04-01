@@ -104,25 +104,22 @@ class GlobalConfig(BaseModel):
         continue_config = {
             "models": [
                 {
-                    "title": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+                    "title": "Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k",
                     "provider": "openrouter",
-                    "model": "Qwen2.5-32B-Instruct-GPTQ-Int4:32k",
+                    "model": "Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k",
                     "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
                     "apiKey": "..."
                 }
             ],
             "tabAutocompleteModel": {
-                "title": "Qwen2.5-Coder-7B-Instruct",
+                "title": "Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k",
                 "provider": "openrouter",
-                "model": "Qwen2.5-Coder-7B-Instruct",
+                "model": "Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k",
                 "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
                 "apiKey": "..."
             },
             "embeddingsProvider": {
-                "provider": "lmstudio",
-                "model": "bge-base-zh-v1.5",
-                "apiBase": "https://auto-openai.cpolar.cn/openai/v1",
-                "maxBatchSize": 20
+                "provider": "transformers.js"
             },
             "contextProviders": [
                 {
