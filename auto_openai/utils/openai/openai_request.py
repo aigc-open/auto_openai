@@ -308,7 +308,7 @@ class AudioTranscriptionsRequest(BaseModel):
 
 class EmbeddingsRequest(BaseModel):
     model: str = Field(..., description="模型名称")
-    input: Optional[List[str]] = Field(..., description="输入文本")
+    input: Union[str, List[str]] = Field(..., description="输入文本")
 
 
 class RerankRequest(BaseModel):
