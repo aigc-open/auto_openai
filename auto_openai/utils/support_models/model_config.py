@@ -227,7 +227,7 @@ system_models_config.extend(QwenCoderLLMConfig(name="Qwen2.5-Coder-32B-Instruct-
                                                    24)
                                                ).extend([
                                                    MultiGPUS(model_max_tokens=32*1024,
-                                                             gpu_types=get_gpu_types_count(48)),
+                                                             gpu_types=get_gpu_types_count(40)),
                                                    MultiGPUS(model_max_tokens=10*1024,
                                                              gpu_types=get_gpu_types_count(24)),
                                                ]))
