@@ -319,9 +319,8 @@ async def get_available_model(request: Request):
 
 
 @app.get("/v1/CodeConfig")
-async def get_continue_config(request: Request, config_name="continueconfig.json"):
-    continue_config = global_config.get_continue_config(
-        path=f"./conf/{config_name}")
+async def get_continue_config(request: Request):
+    continue_config = global_config.get_continue_config()
     return continue_config
 ########################### web html ############################
 UIWeb.register_ui(app, mount_path="/")
