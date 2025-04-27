@@ -23,6 +23,10 @@ class CMD:
                     logger.warning(container.logs(tail=10))
                     status = False
                     break
+                elif container.status == "restarting":
+                    logger.warning(container.logs(tail=10))
+                    status = False
+                    break
                 url = f"http://localhost:{port}/"
                 if requests.get(url, timeout=3).status_code < 500:
                     status = True
@@ -207,6 +211,21 @@ class CMD:
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
         return cls.check_status(container=container, port=port)
+
+    
+    @classmethod
+    def get_wan21(cls, model_name, device, port):
+        cmd = f"""
+            python3 main.py --port={port}
+            --model_path={os.path.join(global_config.DIFFUSERS_MODEL_ROOT_PATH, model_name)}"""
+        cmd = cmd.replace("\n", " ").strip().strip()
+        logger.info(f"本次启动模型: \n{cmd}")
+        environment = cls.get_environment(device)
+        container = Docker().run(image=cls.get_image(name="wan21"), command=cmd,
+                                 device_ids=device,
+                                 GPU_TYPE=global_config.GPU_TYPE, environment=environment)
+        return cls.check_status(container=container, port=port)
+
 
     @classmethod
     def get_rerank(cls, device, port):

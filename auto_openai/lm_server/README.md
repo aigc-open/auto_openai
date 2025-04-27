@@ -1,8 +1,12 @@
+# 运行
+
+## 下载 tiktoken 模型
+
 ```bash
 python3 -m auto_openai.lm_server.install_models tiktoken
 ```
 
-# 启动
+## 启动
 
 ```bash
 python3 -m auto_openai.lm_server.start --help
@@ -16,4 +20,5 @@ python3 -m auto_openai.lm_server.start get_embedding 6 7861
 python3 -m auto_openai.lm_server.start get_rerank 6 7861
 python3 -m auto_openai.lm_server.start get_llm_transformer glm-4v-9b 6 7861
 python3 -m auto_openai.lm_server.start get_diffusers_video CogVideo/CogVideoX-5b 6 7861
+python3 -m auto_openai.lm_server.start get_wan21 wan/Wan2.1-T2V-1.3B-Diffusers 6 7861
 ```

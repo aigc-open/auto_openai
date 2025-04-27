@@ -223,6 +223,10 @@ class VideoConfig(LMConfig):
             return f"""
 mkdir -p $webui_path/CogVideo 
 cd $webui_path/CogVideo && git lfs install && git clone {self.model_url}"""
+        elif "wan" in self.name:
+            return f"""
+mkdir -p $webui_path/wan 
+cd $webui_path/wan && git lfs install && git clone {self.model_url}"""
         else:
             return ""
 

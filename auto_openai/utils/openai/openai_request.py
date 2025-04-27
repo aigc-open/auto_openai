@@ -326,6 +326,7 @@ class VideoGenerationsRequest(BaseModel):
     width: int = Field(720, ge=64, le=1024, description="视频宽度")
     height: int = Field(480, ge=64, le=1024, description="视频高度")
     num_frames: int = Field(8, ge=1, le=48, description="视频帧数")
+    num_inference_steps: int = Field(30, ge=10, le=50, description="步数")
 
 
 class SamplerName(str, Enum):

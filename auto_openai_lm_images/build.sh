@@ -1,22 +1,23 @@
 image_name=harbor.uat.enflame.cc/library/enflame.cn
 device=gcu
-image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
-device=gpu
+# image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
+# device=gpu
 
 # List of services to build
 services=(
     # "comfyui"
     # "diffusers-server"
-    "embedding-server"
+    # "embedding-server"
     # "funasr-server"
     # "llm-transformer-server"
     # "maskgct"
-    "rerank-server"
+    # "rerank-server"
     # "vllm-glm"
     # "vllm-qwen2-vl"
     # "vllm-qwen25-vl"
     # "webui"
     # "vllm"
+    "wan21"
 )
 
 # Loop through each service and build the Docker image
