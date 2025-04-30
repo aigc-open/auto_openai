@@ -684,7 +684,7 @@ system_models_config.add(VideoConfig(name="CogVideo/CogVideoX-5b",
                                      gpu_types=get_gpu_types_count(24)
                                      ))
 system_models_config.add(VideoConfig(name="wan/Wan2.1-T2V-1.3B-Diffusers",
-                                     model_url="https://www.modelscope.cn/models/Wan-AI/Wan2.1-T2V-14B-Diffusers.git",
+                                     model_url="https://www.modelscope.cn/models/Wan-AI/Wan2.1-T2V-1.3B-Diffusers.git",
                                      server_type="wan21",
                                      api_type="Video",
                                      description="万相2.1 视频生成",

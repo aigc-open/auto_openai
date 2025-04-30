@@ -5,7 +5,7 @@ services:
     - -c
     - python3 -m auto_openai.scheduler
     environment:
-      AVAILABLE_MODELS: DeepSeek-R1-Distill-Qwen-14B:20k
+      AVAILABLE_MODELS: DeepSeek-R1-Distill-Qwen-14B:10k
       AVAILABLE_SERVER_TYPES: ALL
       LABEL: lm-server-1743478622-166003203
       LM_SERVER_BASE_PORT: 30312
