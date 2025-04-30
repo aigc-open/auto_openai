@@ -102,7 +102,7 @@ Gen.run(gpu=[3, 3], split_size=1,
 # node-02
 # 万相视频生成
 Gen.run(gpu=[0], split_size=1,
-        AVAILABLE_MODELS="Wan2.1-TextToVideo", other_name="-Wan2.1-TextToVideo")
+        AVAILABLE_MODELS="wan/Wan2.1-T2V-1.3B-Diffusers", other_name="-Wan2.1-TextToVideo")
 # 这张卡被拆分8份，给embeding,rerank使用，小模型
 Gen.run(gpu=[1, 1, 1, 1], split_size=1,
         AVAILABLE_MODELS="bge-base-zh-v1.5", other_name="-bge-base-zh-v1.5")
