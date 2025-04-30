@@ -94,7 +94,7 @@ Gen.run(gpu=[100, 100], split_size=1,
 Gen.run(gpu=[0], split_size=1,
         AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k", other_name="-Qwen2.5-Coder-32B-Instruct-GPTQ-Int4")
 Gen.run(gpu=[1], split_size=1,
-        AVAILABLE_MODELS="DeepSeek-R1-Distill-Qwen-14B:20k", other_name="-DeepSeek-R1-Distill-Qwen-14B")
+        AVAILABLE_MODELS="DeepSeek-R1-Distill-Qwen-14B:10k", other_name="-DeepSeek-R1-Distill-Qwen-14B")
 Gen.run(gpu=[2], split_size=1,
         AVAILABLE_MODELS="Qwen2.5-VL-7B-Instruct:32k", other_name="-Qwen2.5-VL-7B-Instruct")
 Gen.run(gpu=[3, 3], split_size=1,
