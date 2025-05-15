@@ -54,6 +54,7 @@ async def chat_completion(
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
     data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
+    data.top_p = 0.001 if data.top_p <= 0.0 else data.top_p
 
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
@@ -88,7 +89,7 @@ async def chat_completion(
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
     data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
-
+    data.top_p = 0.001 if data.top_p <= 0.0 else data.top_p
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
 
@@ -124,7 +125,7 @@ async def completion(
     max_tokens = 1 if max_tokens < 0 else max_tokens
     data.max_tokens = max_tokens
     data.temperature = 0.01 if data.temperature <= 0.01 else data.temperature
-
+    data.top_p = 0.001 if data.top_p <= 0.0 else data.top_p
     scheduler = Scheduler(redis_client=redis_client, http_request=request,
                           queue_timeout=global_config.QUEUE_TIMEOUT, infer_timeout=global_config.INFER_TIMEOUT)
     scheduler.set_model_config(
