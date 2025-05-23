@@ -16,5 +16,6 @@ all_supported_device = [
     SupportedDevice(name="NV-4060", mem=8, bandwidth="288GB/s"),
     SupportedDevice(name="NV-P40", mem=24, bandwidth="346GB/s"),
     SupportedDevice(name="NV-3060", mem=12, bandwidth="360GB/s"),
+    SupportedDevice(name="NV-T4-16G", mem=16, bandwidth="320GB/s"),
     SupportedDevice(name="CPU", mem=99999, bandwidth="0GB"),
 ]

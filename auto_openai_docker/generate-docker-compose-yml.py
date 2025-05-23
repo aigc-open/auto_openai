@@ -112,3 +112,7 @@ Gen.run(gpu=[1, 1, 1, 1], split_size=1,
 Gen.run(gpu=[2, 3], split_size=1,
         AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2.5-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors", other_name="-anyone")
 
+Gen.run(gpu=[0], split_size=1)
+Gen.run(gpu=[100, 100], split_size=1,
+        AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU",
+        other_name="-embedding-rerank-cpu")
