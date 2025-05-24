@@ -45,6 +45,8 @@ class CMD:
     def get_environment(cls, device):
         if "NV" in global_config.GPU_TYPE:
             return [f"CUDA_VISIBLE_DEVICES={device}", f"NVIDIA_VISIBLE_DEVICES={device}"]
+        elif "CPU" in global_config.GPU_TYPE and "NV" in global_config.CPU_IMAGE_TYPE:
+            return []
         else:
             return [f"TOPS_VISIBLE_DEVICES={device}"]
 
