@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1748004096-1724060214
+      LABEL: lm-server-1748094007-884568363
       LM_SERVER_BASE_PORT: 30328
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -25,7 +25,7 @@ services:
     environment:
       AVAILABLE_MODELS: SolutionBaseGenerateImage/Kolors
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1748004096-363411478
+      LABEL: lm-server-1748094007-1690196471
       LM_SERVER_BASE_PORT: 30336
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

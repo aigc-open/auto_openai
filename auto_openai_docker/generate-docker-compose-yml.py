@@ -44,7 +44,7 @@ class Gen:
     yaml_filename = "{generate_dir}/scheduler-{gpu}-of-{split_size}{other_name}-docker-compose.yml"
 
     @classmethod
-    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL", GPU_TYPE="", other_name=""):
+    def run(cls, gpu: list = [0], split_size=1, AVAILABLE_SERVER_TYPES="ALL", AVAILABLE_MODELS="ALL", GPU_TYPE="", other_name="", CPU_IMAGE_TYPE="NV"):
         global BASE_PORT
         containers = {}
         for idx, data in enumerate([gpu[i:i+split_size] for i in range(0, len(gpu), split_size)]):
@@ -61,6 +61,8 @@ class Gen:
                  })
             if GPU_TYPE:
                 environment.update({"GPU_TYPE": GPU_TYPE})
+                if GPU_TYPE == "CPU":
+                    environment.update({"CPU_IMAGE_TYPE": CPU_IMAGE_TYPE})
             container.update(
                 {"environment": environment, "shm_size": f"8gb"})
             containers[f"scheduler-{NODE_GPU_TOTAL.replace(',','_')}-of-{idx}{other_name}"] = container

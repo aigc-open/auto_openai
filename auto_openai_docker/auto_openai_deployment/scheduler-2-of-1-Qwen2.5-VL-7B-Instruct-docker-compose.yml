@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: Qwen2.5-VL-7B-Instruct:32k
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1748004096-1663058548
+      LABEL: lm-server-1748094007-1370743757
       LM_SERVER_BASE_PORT: 30320
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

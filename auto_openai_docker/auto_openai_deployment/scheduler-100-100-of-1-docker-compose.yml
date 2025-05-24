@@ -7,8 +7,9 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: http-llm
+      CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1748004096-147070337
+      LABEL: lm-server-1748094007-1016958274
       LM_SERVER_BASE_PORT: 30288
       NODE_GPU_TOTAL: '100'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2
@@ -26,8 +27,9 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: http-llm
+      CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1748004096-645612197
+      LABEL: lm-server-1748094007-1166888249
       LM_SERVER_BASE_PORT: 30296
       NODE_GPU_TOTAL: '100'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2

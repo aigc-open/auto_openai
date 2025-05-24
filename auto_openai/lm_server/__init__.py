@@ -52,6 +52,8 @@ class CMD:
     def get_image(cls, name):
         if "NV" in global_config.GPU_TYPE:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gpu"
+        elif "CPU" in global_config.GPU_TYPE and "NV" in global_config.CPU_IMAGE_TYPE:
+            image = global_config.IMAGE_BASE_PATH + f"/{name}:gpu"
         else:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gcu"
         return image

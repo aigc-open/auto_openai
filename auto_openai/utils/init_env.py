@@ -40,6 +40,7 @@ class GlobalConfig(BaseModel):
     #
     AVAILABLE_SERVER_TYPES: str = "ALL"
     GPU_TYPE: str = "EF-S60"
+    CPU_IMAGE_TYPE: str = "NV"
     MODELS: list = []
     AVAILABLE_MODELS: str = "ALL"
     LM_SERVER_BASE_PORT: int = 30000
