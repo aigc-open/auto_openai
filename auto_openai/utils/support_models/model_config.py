@@ -65,7 +65,7 @@ system_models_config.extend(LLMConfig(name="Qwen2.5-7B-Instruct-GPTQ-Int8",
                                       gpu_types=get_gpu_types_count(16)
                                       ).extend([
                                           MultiGPUS(
-                                              model_max_tokens=32*1024, gpu_types=get_gpu_types_count(16))
+                                              model_max_tokens=32*1024, gpu_types=get_gpu_types_count(24))
                                       ]))
 system_models_config.extend(LLMConfig(name="Qwen2.5-7B-Instruct-GPTQ-Int4",
                                       model_url="https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct-GPTQ-Int4.git",
