@@ -776,7 +776,7 @@ system_models_config.add(SDConfig(name="SolutionBaseGenerateImage/Kolors",
                                   api_type="SolutionBaseGenerateImage",
                                   description="Kolors 可图大模型",
                                   need_gpu_count=1,
-                                  gpu_types=get_gpu_types_count(24)
+                                  gpu_types=get_gpu_types_count(16)
                                   ))
 system_models_config.add(SDConfig(name="SD15MultiControlnetGenerateImage/majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors",
                                   model_url="https://www.modelscope.cn/GYMaster/majicmixRealistic_v7.safetensors.git",
