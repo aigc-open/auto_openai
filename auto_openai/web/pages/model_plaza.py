@@ -5,7 +5,7 @@ from auto_openai.utils.openai import ChatCompletionRequest, CompletionRequest,  
     AudioSpeechRequest, \
     EmbeddingsRequest, RerankRequest, AudioTranscriptionsRequest, \
     SolutionBaseGenerateImageRequest, VideoGenerationsRequest, \
-    SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit
+    SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit, BaseGenerateImageRequest
 from nicegui import ui
 from .components import DocContentZoneComponent
 
@@ -45,12 +45,17 @@ def index():
                     SD15MultiControlnetGenerateImageRequest, SD15ControlnetUnit]
             )
         with ui.tab_panel('SolutionBaseGenerateImage'):
-            with gr.Tab("SolutionBaseGenerateImage"):
-                DocContentZoneComponent.index(
-                    model_config=data.get("SolutionBaseGenerateImage"),
-                    model_type="SolutionBaseGenerateImage",
-                    RequestBaseModel=[SolutionBaseGenerateImageRequest]
-                )
+            DocContentZoneComponent.index(
+                model_config=data.get("SolutionBaseGenerateImage"),
+                model_type="SolutionBaseGenerateImage",
+                RequestBaseModel=[SolutionBaseGenerateImageRequest]
+            )
+        with ui.tab_panel('BaseGenerateImage'):
+            DocContentZoneComponent.index(
+                model_config=data.get("BaseGenerateImage"),
+                model_type="BaseGenerateImage",
+                RequestBaseModel=[BaseGenerateImageRequest]
+            )
         with ui.tab_panel('Embedding'):
             DocContentZoneComponent.index(
                 model_config=data.get("Embedding"),

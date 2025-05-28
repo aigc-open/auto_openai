@@ -1,0 +1,36 @@
+FROM nvcr.io/nvidia/pytorch:23.12-py3
+
+
+RUN apt update -y && apt install curl git ffmpeg -y && python3 -m pip install --upgrade pip==24.0
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+
+WORKDIR /workspace
+
+# 安装依赖
+COPY ./projects/diffusers-server/requirements.txt /tmp/requirements.txt
+RUN pip install -r /tmp/requirements.txt
+# 强制覆盖torch
+RUN pip3.10 install torchvision==0.20.0 torch==2.5.0 torchaudio==2.5.0 --force-reinstall 
+
+RUN pip3.10 install protobuf==3.20 fire opencv-python
+RUN pip3.10 install SentencePiece imageio imageio-ffmpeg==0.5.1 opencv-python==4.6.0.66
+RUN pip3.10 uninstall apex -y
+RUN pip3.10 install transformers==4.44.2
+RUN pip3.10 install numpy==1.24.3 diffusers==0.33.0
+RUN pip3.10 install gradio==5.10.0 gradio_client==1.5.3
+RUN pip3.10 install pydantic==2.10.6
+# 修改适配
+COPY ./projects/diffusers-server/ /workspace/diffusers-server/
+
+ENTRYPOINT []
+
+WORKDIR /workspace/diffusers-server/
+
+CMD "sleep infinity"
+
+
+
+
+

@@ -7,12 +7,13 @@ from loguru import logger
 from auto_openai.utils.init_env import global_config
 from auto_openai.utils.support_models.model_config import system_models_config
 from auto_openai.utils.backends import ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask, \
-    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask, HttpLLMTask, Wan21Task
+    EmbeddingTask, LLMTramsformerTask, RerankTask, DiffusersVideoTask, DiffusersImageTask, \
+    HttpLLMTask, Wan21Task
 
 
 class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
            EmbeddingTask, LLMTramsformerTask, RerankTask, 
-           DiffusersVideoTask, Wan21Task, HttpLLMTask):
+           DiffusersVideoTask, Wan21Task, HttpLLMTask, DiffusersImageTask):
 
     def loop_infer(self, llm_server, request_info, free_status_list, idx, max_workers=8, infer_fn=None):
         logger.info(f"进程服务信息: {llm_server}")
@@ -180,6 +181,11 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
             self.start_diffusers_video_server(
                 model_name=self.model_config["name"])
             
+        elif self.model_config.get("server_type") == "diffusers-image":
+            # 启动embedding 大模型服务
+            self.start_diffusers_image_server(
+                model_name=self.model_config["name"])
+            
         elif self.model_config.get("server_type") == "wan21":
             # 启动 embedding 大模型服务
             self.start_wan21_server(
@@ -248,6 +254,11 @@ class Task(ComfyuiTask, WebuiTask, MaskGCTTask, FunAsrTask,
         elif self.model_config.get("server_type") == "diffusers-video":
             self.max_workers = 1
             self.infer_fn = self.diffusers_video_infer
+            self.service_list = self.__service_list__(
+                url_format="http://localhost:{port}")
+        elif self.model_config.get("server_type") == "diffusers-image":
+            self.max_workers = 1
+            self.infer_fn = self.diffusers_image_infer
             self.service_list = self.__service_list__(
                 url_format="http://localhost:{port}")
         elif self.model_config.get("server_type") == "wan21":

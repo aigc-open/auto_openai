@@ -110,8 +110,10 @@ def ui():
                 run = gr.Button("Run")
             with gr.Column():
                 video = gr.Video(label="Video")
+                
+        predict = infer
 
-        run.click(fn=infer, inputs=[prompt, negative_prompt, height, width, num_inference_steps,
+        run.click(fn=predict, inputs=[prompt, negative_prompt, height, width, num_inference_steps,
                   num_frames, guidance_scale, seed, fps], outputs=[video])
     return demo
 # PATH:auto_openai/lm_server/install/install-diffusers-transformer-video-main.py

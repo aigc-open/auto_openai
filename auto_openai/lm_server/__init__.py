@@ -211,12 +211,24 @@ class CMD:
         cmd = cmd.replace("\n", " ").strip().strip()
         logger.info(f"本次启动模型: \n{cmd}")
         environment = cls.get_environment(device)
-        container = Docker().run(image=cls.get_image(name="diffusers-server"), command=cmd,
+        container = Docker().run(image=cls.get_image(name="diffusers-video-server"), command=cmd,
+                                 device_ids=device,
+                                 GPU_TYPE=global_config.GPU_TYPE, environment=environment)
+        return cls.check_status(container=container, port=port)
+    
+    @classmethod
+    def get_diffusers_image(cls, model_name, device, port):
+        cmd = f"""
+            python3 diffusers-image-main.py --port={port}
+            --model_path={os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "diffusers", model_name)}"""
+        cmd = cmd.replace("\n", " ").strip().strip()
+        logger.info(f"本次启动模型: \n{cmd}")
+        environment = cls.get_environment(device)
+        container = Docker().run(image=cls.get_image(name="diffusers-image-server"), command=cmd,
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
         return cls.check_status(container=container, port=port)
 
-    
     @classmethod
     def get_wan21(cls, model_name, device, port):
         cmd = f"""
@@ -229,7 +241,6 @@ class CMD:
                                  device_ids=device,
                                  GPU_TYPE=global_config.GPU_TYPE, environment=environment)
         return cls.check_status(container=container, port=port)
-
 
     @classmethod
     def get_rerank(cls, device, port):

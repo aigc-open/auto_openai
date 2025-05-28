@@ -17,11 +17,11 @@ INFER_TIMEOUT: 600
 USERFULL_TIMES_PER_MODEL: 20
 UNUSERFULL_TIMES_PER_MODEL: 10
 DEFAULT_MODEL_CONFIG_max_tokens: 4096
-NODE_GPU_TOTAL: "5,6"
+NODE_GPU_TOTAL: "6"
 MOCK: false
 GPU_TYPE: EF-S60
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
-AVAILABLE_MODELS: DeepSeek-Coder-V2-Lite-Base:10k,ALL
+AVAILABLE_MODELS: ALL
 #######################################################
 CUSTOM_MODLES:
   - name: EnflameCoder-14B-Instruct:10k

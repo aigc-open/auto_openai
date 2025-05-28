@@ -111,7 +111,7 @@ class BaseTask:
                             model_name=m.name, value=json.dumps(m.dict()))
                 time.sleep(2)
             except Exception as e:
-                pass
+                print(e)
 
     def loop(self):
         self.kill_model_server()
@@ -956,6 +956,112 @@ class DiffusersVideoTask(VllmTask):
             logger.exception(f"推理异常: {e}")
             scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
                 text="推理异常", finish=True))
+
+
+class DiffusersImageTask(VllmTask):
+
+    def start_diffusers_image(self, idx: int, model_name):
+        # 需要保证服务一定完全启动
+        status = True
+        if global_config.MOCK:
+            logger.info(f"本次模拟启动模型: \n{idx} {model_name}")
+            time.sleep(5)
+        else:
+            port = self.worker_start_port + idx
+            device = ",".join(map(str, self.split_gpu()[idx]))
+            try:
+                status = CMD.get_diffusers_image(
+                    model_name=model_name, device=device, port=port)
+            except Exception as e:
+                status = False
+        # self.status = status
+        return status
+
+    def start_diffusers_image_server(self, model_name):
+        # 启动大模型服务
+        self.kill_model_server()  # 要启动就一定要kil旧得进程
+        # 改多线程启动模型服务
+        with concurrent.futures.ThreadPoolExecutor(max_workers=self.workers_num) as executor:
+            # 提交任务给线程池,线程池大小由实际任务数量决定
+            future_to_task = {executor.submit(
+                self.start_diffusers_image, i, model_name): i for i in range(self.workers_num)}
+            results = [future.result()
+                       for future in concurrent.futures.as_completed(future_to_task)]
+            if not all(results):
+                self.status = False
+            else:
+                self.status = True
+        # for idx in range(self.workers_num):
+        #     self.start_cmd(idx=idx, model_name=model_name)
+        scheduler.set_running_model(model_name=model_name)
+        self.current_model = model_name
+        logger.info(f"当前运行模型: {self.current_model} 服务状态: {self.status}")
+
+    def diffusers_image_infer(self, llm_server, request_id, params, model_config):
+        self.update_running_model()
+        start_time = time.time()
+        try:
+            logger.info(
+                f"处理 diffusers_image 推理任务中: {llm_server} {request_id} {params}")
+            if global_config.MOCK:
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"https://github.com/gradio-app/gradio/raw/main/test/test_files/audio_sample.wav",
+                                         finish=True))
+                time.sleep(1)
+            else:
+                if self.status == False:
+                    raise Exception("模型服务启动异常")
+                self.update_running_model()
+                ######################################
+                model: str = params.get("model")
+                prompt: str = params.get("prompt")
+                negative_prompt: str = params.get("negative_prompt", "")
+                seed: int = params.get("seed")
+                width: int = params.get("width")
+                height: int = params.get("height")
+                guidance_scale: int = params.get("guidance_scale", 6)
+                num_inference_steps:int = params.get("num_inference_steps", 30)
+                num_images_per_prompt :int = params.get("batch_size", 1)
+                ######################################
+                client = Client(llm_server)
+                result = client.predict(
+                    prompt=prompt,
+                    negative_prompt=negative_prompt,
+                    height=height,
+                    width=width,
+                    num_inference_steps=num_inference_steps,
+                    guidance_scale=guidance_scale,
+                    seed=seed,
+                    num_images_per_prompt=num_images_per_prompt,
+                    api_name="/predict"
+                )
+                bucket_name = global_config.OSS_CLIENT_CONFIG.get(
+                    "bucket_name")
+                out = []
+                for img in result:
+                    local_path = img.get("image")
+                
+                    with open(local_path, "rb") as f:
+                        s3_client.upload_fileobj(f, bucket_name, local_path)
+                    url = s3_client.get_download_url(bucket_name, local_path)
+                    out.append({"url": url})
+                    
+                data = {"created": 0, "data": out}
+                scheduler.set_result(request_id=request_id,
+                                     value=RedisStreamInfer(
+                                         text=f"{json.dumps(data)}",
+                                         finish=True))
+                end_time = time.time()
+                if len(out):
+                    model_name = self.model_config["name"]
+                    self.profiler_collector(
+                        model_name=model_name, key=MODEL_PROF_KEY, value=(end_time-start_time)/len(out), description="每图推理耗时")
+        except Exception as e:
+            logger.exception(f"推理异常: {e}")
+            scheduler.set_result(request_id=request_id, value=RedisStreamInfer(
+                text="推理异常", finish=True))
+
 
 
 

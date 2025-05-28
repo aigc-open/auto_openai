@@ -539,7 +539,7 @@ class SD15MultiControlnetGenerateImage(SD15MultiControlnetGenerateImageRequest):
         return data
 
 
-class SolutionBaseGenerateImageRequest(BaseModel):
+class BaseGenerateImageRequest(BaseModel):
     model: str = Field(
         "sd1.5/majicmixRealistic_betterV6.safetensors", description="模型名称")
     seed: int = Field(1234, description="随机种子")
@@ -554,5 +554,5 @@ class SolutionBaseGenerateImageRequest(BaseModel):
     negative_prompt: str = Field("text, watermark", description="生成图片的负面描述")
     image_url: str = Field("", description="参考图像URL:图生图")
 
-
+SolutionBaseGenerateImageRequest = BaseGenerateImageRequest
 ##############################

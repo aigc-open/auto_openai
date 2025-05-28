@@ -786,6 +786,14 @@ system_models_config.add(SDConfig(name="SD15MultiControlnetGenerateImage/majicmi
                                   need_gpu_count=1,
                                   gpu_types=get_gpu_types_count(16)
                                   ))
+system_models_config.add(SDConfig(name="Kwai-Kolors/Kolors-diffusers",
+                                  model_url="https://www.modelscope.cn/JunHowie/Kolors-diffusers.git",
+                                  server_type="diffusers-image",
+                                  api_type="BaseGenerateImage",
+                                  description="Kolors 可图大模型",
+                                  need_gpu_count=1,
+                                  gpu_types=get_gpu_types_count(16)
+                                  ))
 
 
 ########################################## ASR ###########################################

@@ -284,7 +284,7 @@ class Scheduler:
             out.append(key.decode().replace("lm-running-", ""))
         return out
 
-    def set_available_model(self, model_name, value: str, pexpire=3*1000):
+    def set_available_model(self, model_name, value: str, pexpire=5*1000):
         """设置可得的模型"""
         self.redis_client.set(
             name=f"available-model-{model_name}", value=value, px=int(pexpire))

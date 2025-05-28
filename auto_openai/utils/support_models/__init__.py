@@ -133,11 +133,18 @@ class SDConfig(LMConfig):
             return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "diffusers", "Kolors")) and self.check_resource()
         elif self.name == "SolutionBaseGenerateImage/majicmixRealistic_v7":
             return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "Stable-diffusion", "majicmixRealistic_v7.safetensors/majicmixRealistic_v7.safetensors")) and self.check_resource()
+        elif self.name == "Kwai-Kolors/Kolors-diffusers":
+            return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "diffusers", self.name)) and self.check_resource()
         return os.path.exists(os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "Stable-diffusion", self.name.replace("SD15MultiControlnetGenerateImage/", ""))) and self.check_resource()
 
     def download_shell(self):
         if not self.model_url:
             return ""
+        if self.name == "Kwai-Kolors/Kolors-diffusers":
+            return f"""
+mkdir -p $webui_path/diffusers/Kwai-Kolors
+cd $webui_path/diffusers/Kwai-Kolors && git lfs install && git clone {self.model_url}
+"""
         if self.name == "SolutionBaseGenerateImage/Kolors":
             return f"""
 mkdir -p $webui_path/diffusers/
