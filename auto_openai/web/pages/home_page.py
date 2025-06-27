@@ -3,11 +3,15 @@ from nicegui import ui
 import plotly.graph_objects as go
 
 
+
+
+
 def index():
+    title = "上海交通大学 软件学院"
     # 主要内容区
     # hero section
-    with ui.card().classes('w-full p-8 bg-gradient-to-r from-blue-500 to-purple-600 text-white'):
-        ui.label('下一代 AI 计算调度系统').classes('text-4xl font-bold mb-4')
+    with ui.card().classes('w-full p-8 bg-white text-black'):
+        ui.label(title).classes('text-4xl font-bold mb-4')
         ui.label('基于 vllm 和 ComfyUI 等Backend的高效 AI 计算调度解决方案').classes(
             'text-xl mb-4')
 
@@ -50,29 +54,28 @@ def index():
                     bg_color = "from-blue-50 to-indigo-50 hover:from-blue-100 hover:to-indigo-100"
                     icon_color = "text-blue-600"
 
-                with ui.card().classes(f'p-6 bg-gradient-to-br {bg_color} rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl'):
+                with ui.card().classes(f'p-6 bg-gradient-to-br bg-white rounded-xl transition-all duration-300 transform hover:scale-105 hover:shadow-xl'):
                     with ui.column().classes('items-center text-center gap-3'):
                         # 设备图标
                         if "NVIDIA" in device_name:
-                            ui.icon('memory').classes(
-                                f'text-4xl {icon_color}')
+                            ui.image('auto_openai/statics/NVIDIA.png').classes('h-12 w-30 mx-auto object-contain')
                         elif "Enflame" in device_name:
-                            ui.icon('developer_board').classes(
-                                f'text-4xl {icon_color}')
+                            ui.image('auto_openai/statics/Enflame.png').classes('h-12 w-30 mx-auto object-contain')
                         else:
-                            ui.icon('computer').classes(
-                                f'text-4xl {icon_color}')
+                            ui.image('auto_openai/statics/CPU.png').classes('h-12 w-30 mx-auto object-contain')
 
                         # 设备名称
+                        if len(device_name) <= 6:
+                            device_name = f"通用计算 {device_name}"
                         ui.label(device_name).classes(
                             'text-lg font-bold text-gray-800')
 
-                        if device_name != "CPU":
-                            # 分隔线
-                            ui.element('div').classes(
-                                'w-16 h-0.5 bg-gray-200 my-2')
+                        # 分隔线（所有设备都显示）
+                        ui.element('div').classes(
+                            'w-16 h-0.5 bg-gray-200 my-2')
 
-                            # 设备规格
+                        # 设备规格
+                        if "CPU" not in device_name:
                             with ui.column().classes('gap-2 text-gray-600'):
                                 with ui.row().classes('items-center justify-center gap-2'):
                                     ui.icon('memory').classes('text-sm')
@@ -83,6 +86,13 @@ def index():
                                     ui.icon('speed').classes('text-sm')
                                     ui.label(f"{device_.bandwidth}").classes(
                                         'text-sm')
+                        else:
+                            pass
+                            # CPU 显示通用配置信息
+                            with ui.column().classes('gap-2 text-gray-600 items-center'):
+                                with ui.row().classes('items-center justify-center gap-2'):
+                                    ui.icon('computer').classes('text-sm')
+                                    ui.label("通用计算").classes('text-sm')
 
     # 支持的模型展示
     with ui.card().classes('w-full p-6'):
