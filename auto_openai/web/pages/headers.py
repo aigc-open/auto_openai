@@ -3,12 +3,15 @@ web_prefix = ""
 
 
 def index():
-    with ui.header().classes('bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg p-4'):
+    with ui.header().classes('bg-white text-black shadow-lg p-4'):
         with ui.row().classes('w-full max-w-7xl mx-auto flex justify-between items-center'):
             # Logo section
             with ui.row().classes('flex items-center gap-3'):
-                ui.icon('auto_awesome').classes('text-3xl text-yellow-300')
-                ui.label('AI 调度系统').classes(
+                try:
+                    ui.image('auto_openai/statics/logo.png').classes('h-8 w-8')
+                except:
+                    ui.icon('auto_awesome').classes('text-3xl text-yellow-500')
+                ui.label('AI 模型调度系统').classes(
                     'text-2xl font-bold tracking-wide')
 
             # Navigation section
@@ -31,9 +34,9 @@ def index():
                     btn_classes = (
                         'px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 ' +
                         (
-                            'bg-white text-purple-700 shadow-lg font-medium'
+                            'bg-gray-900 text-white shadow-lg font-medium'
                             if is_active else
-                            'hover:bg-white/20 text-white'
+                            'bg-black text-white hover:bg-gray-800'
                         )
                     )
 
@@ -42,10 +45,9 @@ def index():
                         ui.label(label)
 
                 # 添加 Cursor 接入下拉菜单
-                with ui.button(text="解决方案",icon='menu').classes('px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 hover:bg-white/20 text-white'):
-                    with ui.menu().classes('bg-white'):
-                        with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cursor')):
-                            ui.label('Cursor 接入')
-                        with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cline')):
-                            ui.label('Cline 接入')
-
+                # with ui.button(text="解决方案",icon='menu').classes('px-4 py-2 rounded-lg transition-all duration-300 flex items-center gap-2 hover:bg-gray-100 text-black'):
+                #     with ui.menu().classes('bg-white'):
+                #         with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cursor')):
+                #             ui.label('Cursor 接入')
+                #         with ui.menu_item(on_click=lambda: ui.navigate.to(f'{web_prefix}/solution-cline')):
+                #             ui.label('Cline 接入')

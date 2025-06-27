@@ -7,9 +7,7 @@ import os
 
 BASE_PORT = 30000
 
-image = "harbor.uat.enflame.cc/library/enflame.cn/auto_openai:0.2"
-generate_dir = "auto_openai_gcu"
-image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:0.2"
+image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx"
 generate_dir = "auto_openai_deployment"
 
 
@@ -85,36 +83,7 @@ Gen.run(gpu=[0, 1, 2], split_size=1)
 Gen.run(gpu=[0, 1], split_size=1)
 Gen.run(gpu=[0, 1, 2, 3], split_size=2)
 Gen.run(gpu=[0, 1, 2, 3], split_size=4)
-Gen.run(gpu=[4, 4, 4, 4], split_size=1,
-        AVAILABLE_SERVER_TYPES="embedding,rerank")
-Gen.run(gpu=[3, 3, 3, 3], split_size=1,
-        AVAILABLE_SERVER_TYPES="embedding,rerank")
-Gen.run(gpu=[100, 100], split_size=1,
-        AVAILABLE_SERVER_TYPES="http-llm", GPU_TYPE="CPU")
-# 固定的
-# node-01
-Gen.run(gpu=[0], split_size=1,
-        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k", other_name="-Qwen2.5-Coder-32B-Instruct-GPTQ-Int4")
-Gen.run(gpu=[1], split_size=1,
-        AVAILABLE_MODELS="DeepSeek-R1-Distill-Qwen-14B:10k", other_name="-DeepSeek-R1-Distill-Qwen-14B")
-Gen.run(gpu=[2], split_size=1,
-        AVAILABLE_MODELS="Qwen2.5-VL-7B-Instruct:32k", other_name="-Qwen2.5-VL-7B-Instruct")
-Gen.run(gpu=[3, 3], split_size=1,
-        AVAILABLE_MODELS="SolutionBaseGenerateImage/Kolors", other_name="-Kolors")
-# node-02
-# 万相视频生成
-Gen.run(gpu=[0], split_size=1,
-        AVAILABLE_MODELS="wan/Wan2.1-T2V-1.3B-Diffusers", other_name="-Wan2.1-TextToVideo")
-# 这张卡被拆分8份，给embeding,rerank使用，小模型
-Gen.run(gpu=[1, 1, 1, 1], split_size=1,
-        AVAILABLE_MODELS="bge-base-zh-v1.5", other_name="-bge-base-zh-v1.5")
-Gen.run(gpu=[1, 1, 1, 1], split_size=1,
-        AVAILABLE_MODELS="bge-reranker-v2-m3", other_name="-bge-reranker-v2-m3")
-# 这两张卡任意分配
-Gen.run(gpu=[2, 3], split_size=1,
-        AVAILABLE_MODELS="Qwen2.5-Coder-32B-Instruct-GPTQ-Int4:32k,DeepSeek-R1-Distill-Qwen-14B:20k,Qwen2.5-VL-7B-Instruct:32k,SolutionBaseGenerateImage/Kolors", other_name="-anyone")
-
-Gen.run(gpu=[0], split_size=1)
-Gen.run(gpu=[100, 100], split_size=1,
-        AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU",
-        other_name="-embedding-rerank-cpu")
+Gen.run(gpu=[100, 100, 100, 100], split_size=1,
+        AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU", other_name="-cpu")
+Gen.run(gpu=[101, 101, 101, 101], split_size=1,
+        AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU", other_name="-cpu")
