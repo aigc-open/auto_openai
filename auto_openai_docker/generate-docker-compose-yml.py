@@ -93,22 +93,11 @@ class Gen:
             yaml.dump(default, file)
 
     @classmethod
-    def sync_conf(cls):
-        import shutil
-        # Copy conf directory to gpu and cpu paths
-        for generate_dir in ["auto_openai_gpu_node", "auto_openai_master_node"]:
-            conf_dest = os.path.join(generate_dir, "conf")
-            if os.path.exists("conf"):
-                if os.path.exists(conf_dest):
-                    shutil.rmtree(conf_dest)
-                shutil.copytree("conf", conf_dest)
-
-    @classmethod
     def generate_node_pull_script(cls):
         with open("auto_openai_gpu_node/pull.sh", "w") as file:
-            file.write(f"docker pull {image}")
-        with open("auto_openai_master_node/pull.sh", "w") as file:
-            file.write(f"docker pull {image}")
+            file.write(f"docker pull {image}\nbash pull-gpu-image.sh")
+        with open("auto_openai_gcu_node/pull.sh", "w") as file:
+            file.write(f"docker pull {image}\nbash pull-gpu-image.sh")
 
 # size 是指一个实例挂载得卡数
 # Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=1)
@@ -125,6 +114,5 @@ Gen.run(gpu=[101, 101, 101, 101], split_size=1,
         AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU", other_name="-cpu")
 Gen.generate_master_node()
 Gen.generate_node_pull_script()
-Gen.sync_conf()
 os.system("cd auto_openai_gpu_node && bash echo.sh")
 os.system("cd auto_openai_gcu_node && bash echo.sh")

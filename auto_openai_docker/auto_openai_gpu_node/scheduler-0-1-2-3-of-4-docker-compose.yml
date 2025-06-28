@@ -7,7 +7,7 @@ services:
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
-      LABEL: lm-server-1751087410-576508782
+      LABEL: lm-server-1751107305-667510722
       LM_SERVER_BASE_PORT: 30072
       NODE_GPU_TOTAL: 0,1,2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
