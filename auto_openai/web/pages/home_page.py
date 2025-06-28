@@ -1,18 +1,18 @@
 from auto_openai.utils.support_models.model_config import all_supported_device, system_models_config
 from nicegui import ui
 import plotly.graph_objects as go
-
+import os
 
 
 
 
 def index():
-    title = "上海交通大学 软件学院"
+    title = os.getenv('PLATFORM_NAME', "软件学院 AI模型调度平台")
     # 主要内容区
     # hero section
     with ui.card().classes('w-full p-8 bg-white text-black'):
         ui.label(title).classes('text-4xl font-bold mb-4')
-        ui.label('基于 vllm 和 ComfyUI 等Backend的高效 AI 计算调度解决方案').classes(
+        ui.label('AI模型调度平台提供高效的深度学习模型调度服务，可扩展模型100+，支持异构算力调度(国内外主流AI芯片)，提供高效兼容的API服务，快速体验各种主楼模型应用').classes(
             'text-xl mb-4')
 
     # 特性展示

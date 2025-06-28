@@ -8,7 +8,8 @@ class SupportedDevice(BaseModel):
 
 
 all_supported_device = [
-    SupportedDevice(name="NV-A100", mem=40, bandwidth="1555GB/s"),
+    SupportedDevice(name="NV-A100-40G", mem=40, bandwidth="1555GB/s"),
+    SupportedDevice(name="NV-A100-80G", mem=80, bandwidth="1555GB/s"),
     SupportedDevice(name="NV-4090", mem=24, bandwidth="1008GB/s"),
     SupportedDevice(name="NV-A30", mem=24, bandwidth="933GB/s"),
     SupportedDevice(name="NV-3090", mem=24, bandwidth="936GB/s"),

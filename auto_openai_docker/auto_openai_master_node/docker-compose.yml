@@ -1,0 +1,13 @@
+services:
+  openai-api:
+    command:
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.main --port=9000
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    ports:
+    - 9000:9000
+    restart: always
+    volumes:
+    - ./conf:/app/conf
+version: '3'

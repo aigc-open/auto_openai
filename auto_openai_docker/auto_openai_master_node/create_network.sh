@@ -1,0 +1,1 @@
+docker network create auto_openai_network

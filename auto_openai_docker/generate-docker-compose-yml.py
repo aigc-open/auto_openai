@@ -8,8 +8,6 @@ import os
 BASE_PORT = 30000
 
 image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx"
-generate_dir = "auto_openai_deployment"
-
 
 class Gen:
     default = {
@@ -67,19 +65,57 @@ class Gen:
         service = dict(cls.default)
         service.update({"services": containers})
         yaml_data = yaml.dump(service)
-        os.makedirs(generate_dir, exist_ok=True)
-        with open(cls.yaml_filename.format(generate_dir=generate_dir, gpu="-".join(map(str, gpu)), split_size=split_size, other_name=other_name), 'w') as file:
-            file.write(yaml_data)
+        for generate_dir in ["auto_openai_gpu_node", "auto_openai_gcu_node"]:
+            os.makedirs(generate_dir, exist_ok=True)
+            with open(cls.yaml_filename.format(generate_dir=generate_dir, gpu="-".join(map(str, gpu)), split_size=split_size, other_name=other_name), 'w') as file:
+                file.write(yaml_data)
         return service
+    
+    @classmethod
+    def generate_master_node(cls):
+        default = {
+            "version": "3",
+            "services": {
+                "openai-api": {
+                    "image": image,
+                    "ports": ["9000:9000"],
+                    "command": [
+                        "/bin/sh",
+                        "-c",
+                        "python3 -m auto_openai.main --port=9000"
+                    ],
+                    "restart": "always",
+                    "volumes": ["./conf:/app/conf"],
+                }
+            }
+        }
+        with open("auto_openai_master_node/docker-compose.yml", "w") as file:
+            yaml.dump(default, file)
 
+    @classmethod
+    def sync_conf(cls):
+        import shutil
+        # Copy conf directory to gpu and cpu paths
+        for generate_dir in ["auto_openai_gpu_node", "auto_openai_master_node"]:
+            conf_dest = os.path.join(generate_dir, "conf")
+            if os.path.exists("conf"):
+                if os.path.exists(conf_dest):
+                    shutil.rmtree(conf_dest)
+                shutil.copytree("conf", conf_dest)
+
+    @classmethod
+    def generate_node_pull_script(cls):
+        with open("auto_openai_gpu_node/pull.sh", "w") as file:
+            file.write(f"docker pull {image}")
+        with open("auto_openai_master_node/pull.sh", "w") as file:
+            file.write(f"docker pull {image}")
 
 # size 是指一个实例挂载得卡数
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=1)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=2)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=4)
-Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=8)
+# Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=1)
+# Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=2)
+# Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=4)
+# Gen.run(gpu=[0, 1, 2, 3, 4, 5, 6, 7], split_size=8)
 Gen.run(gpu=[0, 1, 2, 3], split_size=1)
-Gen.run(gpu=[0, 1, 2], split_size=1)
 Gen.run(gpu=[0, 1], split_size=1)
 Gen.run(gpu=[0, 1, 2, 3], split_size=2)
 Gen.run(gpu=[0, 1, 2, 3], split_size=4)
@@ -87,3 +123,8 @@ Gen.run(gpu=[100, 100, 100, 100], split_size=1,
         AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU", other_name="-cpu")
 Gen.run(gpu=[101, 101, 101, 101], split_size=1,
         AVAILABLE_SERVER_TYPES="embedding,rerank", GPU_TYPE="CPU", other_name="-cpu")
+Gen.generate_master_node()
+Gen.generate_node_pull_script()
+Gen.sync_conf()
+os.system("cd auto_openai_gpu_node && bash echo.sh")
+os.system("cd auto_openai_gcu_node && bash echo.sh")

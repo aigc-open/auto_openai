@@ -1,0 +1,25 @@
+REDIS_CLIENT_CONFIG:
+  address: 192.168.6.200:6379
+  username:
+  password:
+  cluster: False
+
+OSS_CLIENT_CONFIG:
+  endpoint_url: https://boto3.cpolar.cn
+  aws_access_key_id: admin
+  aws_secret_access_key: admin123
+  bucket_name: api-platform
+  region_name:
+
+#######################################################
+QUEUE_TIMEOUT: 600
+INFER_TIMEOUT: 600
+USERFULL_TIMES_PER_MODEL: 20
+UNUSERFULL_TIMES_PER_MODEL: 10
+DEFAULT_MODEL_CONFIG_max_tokens: 4096
+NODE_GPU_TOTAL: "4"
+MOCK: false
+GPU_TYPE: NV-A100
+IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
+#######################################################
+# CUSTOM_MODLES:

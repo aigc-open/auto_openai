@@ -169,3 +169,4 @@ tmp
 conf/config.yaml
 nohup.out
 outputs
+# scheduler-*-docker-compose.yml

@@ -1,0 +1,22 @@
+version: "3"
+services:
+  redis:
+    image: harbor.uat.enflame.cc/library/enflame.cn/redis:7-alpine
+    ports:
+      - "6379:6379"
+    restart: always
+    command:
+      - redis-server
+  minio:
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/minio:RELEASE.2023-03-20T20-16-18Z
+    restart: always
+    ports:
+      - 19000:9000
+      - 19001:9001
+    environment:
+      TZ: "Asia/Shanghai"
+      MINIO_ROOT_USER: "admin"
+      MINIO_ROOT_PASSWORD: "admin123"
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123
+    command: server /data --console-address ":9000" --address ":9001"
