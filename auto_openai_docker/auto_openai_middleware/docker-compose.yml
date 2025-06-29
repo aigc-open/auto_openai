@@ -3,12 +3,11 @@ services:
   redis:
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/redis:7-alpine
     ports:
-      - "6379:6379"
+      - "16379:6379"
     restart: always
     networks:
       - auto_openai_network
-    command:
-      - redis-server --requirepass admin123
+    command: redis-server --requirepass admin123
     # volumes:
     #   - /data/volumes/redis:/data
   minio:
