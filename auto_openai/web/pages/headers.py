@@ -8,7 +8,7 @@ def index():
             # Logo section
             with ui.row().classes('flex items-center gap-3'):
                 try:
-                    ui.image('auto_openai/statics/logo.png').classes('h-8 w-8')
+                    ui.image('conf/logo.png').classes('h-8 w-8')
                 except:
                     ui.icon('auto_awesome').classes('text-3xl text-yellow-500')
                 ui.label('AI 模型调度系统').classes(
