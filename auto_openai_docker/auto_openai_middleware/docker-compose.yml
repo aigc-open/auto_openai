@@ -26,3 +26,8 @@ services:
       MINIO_ACCESS_KEY: admin
       MINIO_SECRET_KEY: admin123
     command: server /data --console-address ":9000" --address ":9001"
+
+
+networks:
+  auto_openai_network:
+    external: true
