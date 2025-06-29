@@ -36,4 +36,11 @@ mkdir -p $webui_path
 # cd $webui_path && git lfs install && git clone https://www.modelscope.cn/AI-ModelScope/clip-vit-large-patch14.git
 # # webui 使用的clip,必须安装
 
+cd $LLM_path && git lfs install && git clone https://modelscope.cn/Qwen/Qwen2.5-VL-7B-Instruct.git
 cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-7B-Instruct.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/Qwen/Qwen2.5-Coder-7B.git
+cd $LLM_path && git lfs install && git clone https://www.modelscope.cn/deepseek-ai/DeepSeek-R1-Distill-Qwen-7B.git
+mkdir -p $webui_path/diffusers/Kwai-Kolors
+cd $webui_path/diffusers/Kwai-Kolors && git lfs install && git clone https://www.modelscope.cn/JunHowie/Kolors-diffusers.git
+mkdir -p $webui_path/wan 
+cd $webui_path/wan && git lfs install && git clone https://www.modelscope.cn/models/Wan-AI/Wan2.1-T2V-1.3B-Diffusers.git
