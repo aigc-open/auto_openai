@@ -1,12 +1,14 @@
 version: "3"
 services:
   redis:
-    image: harbor.uat.enflame.cc/library/enflame.cn/redis:7-alpine
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/redis:7-alpine
     ports:
       - "6379:6379"
     restart: always
     command:
-      - redis-server
+      - redis-server --requirepass admin123
+    # volumes:
+    #   - /data/volumes/redis:/data
   minio:
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/minio:RELEASE.2023-03-20T20-16-18Z
     restart: always
