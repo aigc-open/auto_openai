@@ -36,8 +36,6 @@ ln -s $DISK/share_models /root/
 - 拉取镜像 `bash pull.sh`
 - 修改 `conf/config.yaml` ,将 `GPU_TYPE: NV-A100` 改成对应的卡配置即可
     - NV-A100-40G
-    - NV-A100-80
-    - NV-A100-40G
     - NV-A100-80G
     - NV-4090
     - NV-A30
