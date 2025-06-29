@@ -1,7 +1,7 @@
 REDIS_CLIENT_CONFIG:
-  address: 10.12.110.149:6379
+  address: 192.168.31.164:16379
   username:
-  password:
+  password: admin123
   cluster: False
 
 OSS_CLIENT_CONFIG:
