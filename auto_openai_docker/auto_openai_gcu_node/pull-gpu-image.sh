@@ -13,9 +13,9 @@ services=(
     "vllm-glm"
     "vllm-qwen2-vl"
     "vllm-qwen25-vl"
-    "webui"
-    # "diffusers-image-server"
-    # "diffusers-video-server"
+    # "webui"
+    "diffusers-image-server"
+    "diffusers-video-server"
 )
 
 # Loop through each service and build the Docker image
