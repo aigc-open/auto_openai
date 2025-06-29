@@ -30,15 +30,27 @@ ln -s $DISK/share_models /root/
 - 部署 `docker-compose up -d`
 
 # gpu节点(模型调度器)
-- (`auto_openai_docker/auto_openai_gpu_node`)
+- `cd auto_openai_docker`
+- 复制一个节点配置 `cp -rf auto_openai_gpu_node_{ip最后一位标识一下}` 例如 `auto_openai_gpu_node_133`
+- `cd auto_openai_gpu_node_133`
 - 拉取镜像 `bash pull.sh`
+- 修改 `conf/config.yaml` ,将 `GPU_TYPE: NV-A100` 改成对应的卡配置即可
+    - NV-A100-40G
+    - NV-A100-80
+    - NV-A100-40G
+    - NV-A100-80G
+    - NV-4090
+    - NV-A30
+    - NV-3090
+    - EF-S60
+    - NV-4060
+    - NV-P40
+    - NV-3060
+    - NV-T4-16G
+    - CPU
 - 根据当前卡数选择不同的调度器 `vim start.sh` 打开不同的配置
 - 部署 `bash start.sh`
-- 停止 `bash stop.sh`
 
 # gcu节点(模型调度器)
 - (`auto_openai_docker/auto_openai_gcu_node`)
-- 拉取镜像 `bash pull.sh`
-- 根据当前卡数选择不同的调度器 `vim start.sh` 打开不同的配置
-- 部署 `bash start.sh`
-- 停止 `bash stop.sh`
+- 其他同上
