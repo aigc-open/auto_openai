@@ -5,6 +5,8 @@ services:
     ports:
       - "6379:6379"
     restart: always
+    networks:
+      - auto_openai_network
     command:
       - redis-server --requirepass admin123
     # volumes:
@@ -12,6 +14,8 @@ services:
   minio:
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/minio:RELEASE.2023-03-20T20-16-18Z
     restart: always
+    networks:
+      - auto_openai_network
     ports:
       - 19000:9000
       - 19001:9001
