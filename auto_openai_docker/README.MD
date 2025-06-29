@@ -15,8 +15,8 @@ ln -s $DISK/share_models /root/
 # 中间件部署
 - (`auto_openai_docker/auto_openai_middleware`)
 - 创建网络 `bash create_network.sh`
-- 拉取镜像 `docker-compose pull -f docker-compose.yml`
-- 部署 `docker-compose -f docker-compose.yml up -d`
+- 拉取镜像 `docker-compose pull`
+- 部署 `docker-compose up -d`
 - 创建S3桶 `bash create_bucket.sh`
 
 # 同步配置
