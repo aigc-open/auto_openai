@@ -44,3 +44,6 @@ mkdir -p $webui_path/diffusers/Kwai-Kolors
 cd $webui_path/diffusers/Kwai-Kolors && git lfs install && git clone https://www.modelscope.cn/JunHowie/Kolors-diffusers.git
 mkdir -p $webui_path/wan 
 cd $webui_path/wan && git lfs install && git clone https://www.modelscope.cn/models/Wan-AI/Wan2.1-T2V-1.3B-Diffusers.git
+
+cd $Embedding_path && git lfs install && git clone https://www.modelscope.cn/ai-modelscope/bge-base-zh-v1.5.git
+cd $rerank_path && git lfs install && git clone https://www.modelscope.cn/BAAI/bge-reranker-v2-m3.git
