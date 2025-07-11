@@ -21,7 +21,7 @@ RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/5rZSpmSi/nf
     bash topsrider.run -C vllm --container -y && \
     rm -rf topsrider.run
 
-RUN pip3.10 install torch==2.5.0 --force-reinstall
+RUN pip3.10 install torchvision==0.20.0 torch==2.5.0 torchaudio==2.5.0 --force-reinstall 
 
 RUN pip3.10 install protobuf==3.20 fire
 COPY ./template /template
