@@ -24,6 +24,7 @@ RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/5rZSpmSi/nf
 RUN pip3.10 install torchvision==0.20.0 torch==2.5.0 torchaudio==2.5.0 --force-reinstall 
 
 RUN pip3.10 install protobuf==3.20 fire
+RUN pip3.10 install numpy==1.24.3
 COPY ./template /template
 
 ENTRYPOINT []
