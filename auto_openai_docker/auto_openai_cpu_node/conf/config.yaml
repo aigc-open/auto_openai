@@ -1,7 +1,7 @@
 REDIS_CLIENT_CONFIG:
-  address: 192.168.31.164:16379
+  address: 10.12.110.149:6379
   username:
-  password: admin123
+  password:
   cluster: False
 
 OSS_CLIENT_CONFIG:
@@ -10,7 +10,6 @@ OSS_CLIENT_CONFIG:
   aws_secret_access_key: admin123
   bucket_name: api-platform
   region_name:
-
 #######################################################
 QUEUE_TIMEOUT: 600
 INFER_TIMEOUT: 600

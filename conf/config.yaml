@@ -20,7 +20,7 @@ DEFAULT_MODEL_CONFIG_max_tokens: 4096
 NODE_GPU_TOTAL: "6"
 MOCK: false
 GPU_TYPE: CPU
-IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
+IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
 AVAILABLE_MODELS: ALL
 #######################################################
 CUSTOM_MODLES:
