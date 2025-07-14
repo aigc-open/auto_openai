@@ -1,5 +1,5 @@
 image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
-device=gcu
+device=gpu
 
 # List of services to build
 services=(
