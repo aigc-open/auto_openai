@@ -1,0 +1,24 @@
+FROM nvcr.io/nvidia/pytorch:23.12-py3
+
+
+RUN apt update -y && apt install curl git ffmpeg -y && python3 -m pip install --upgrade pip==24.0
+
+RUN pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple && pip config set global.trusted-host pypi.tuna.tsinghua.edu.cn
+
+WORKDIR /workspace
+
+RUN curl -fsSL https://ollama.com/install.sh | sh
+COPY ./template /template
+
+COPY ./projects/ollama/ /workspace/ollama/
+
+ENTRYPOINT []
+
+WORKDIR /root/share_models/LLM/
+
+CMD "sleep infinity"
+
+
+
+
+

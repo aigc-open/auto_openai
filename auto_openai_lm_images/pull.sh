@@ -24,4 +24,13 @@ for service in "${services[@]}"; do
     docker pull "$image_name/$service:$device"
 done
 
+services=(
+    "ollama"
+)
+device=cpu
+
+for service in "${services[@]}"; do
+    docker pull "$image_name/$service:$device"
+done
+
 docker pull "$image_name/auto_openai:0.2"

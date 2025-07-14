@@ -1,7 +1,7 @@
 image_name=harbor.uat.enflame.cc/library/enflame.cn
 device=gcu
-# image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
-# device=gpu
+image_name=registry.cn-shanghai.aliyuncs.com/zhph-server
+device=gpu
 
 # List of services to build
 services=(
@@ -25,4 +25,13 @@ services=(
 for service in "${services[@]}"; do
     docker build -t "$image_name/$service:$device" -f "Dockerfile.$service.$device" .
     # docker push "$image_name/$service:$device"
+done
+
+
+services=(
+    "ollama"
+)
+device=cpu
+for service in "${services[@]}"; do
+    docker build -t "$image_name/$service:$device" -f "Dockerfile.$service.$device" .
 done
