@@ -12,6 +12,7 @@ python3 -m auto_openai.lm_server.install_models tiktoken
 python3 -m auto_openai.lm_server.start --help
 
 python3 -m auto_openai.lm_server.start get_vllm Qwen2.5-7B-Instruct 5 1 7861 /template/template_qwen.jinja 1024 gcu
+python3 -m auto_openai.lm_server.start get_vllm Qwen2.5-7B-Instruct 5 1 7861 /template/template_qwen.jinja 1024 auto
 python3 -m auto_openai.lm_server.start get_maskgct 6 7861
 python3 -m auto_openai.lm_server.start get_webui 6 7861
 python3 -m auto_openai.lm_server.start get_comfyui 6 7861

@@ -19,7 +19,7 @@ UNUSERFULL_TIMES_PER_MODEL: 10
 DEFAULT_MODEL_CONFIG_max_tokens: 4096
 NODE_GPU_TOTAL: "6"
 MOCK: false
-GPU_TYPE: EF-S60
+GPU_TYPE: CPU
 IMAGE_BASE_PATH: "harbor.uat.enflame.cc/library/enflame.cn"
 AVAILABLE_MODELS: ALL
 #######################################################

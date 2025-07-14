@@ -59,9 +59,25 @@ class CMD:
         else:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gcu"
         return image
+    
+    @classmethod
+    def get_ollama(cls, model_name, device, port):
+        cmd = f"""
+            bash /workspace/ollama/start.sh 
+            --model-name {model_name} 
+            --model-path {os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name)} 
+            --host "0.0.0.0:{port}"
+        """
+        cmd = cmd.replace("\n", " ").strip()
+        logger.info(f"本次启动模型: \n{cmd}")
+        environment = cls.get_environment(device)
+        container = Docker().run(image=global_config.IMAGE_BASE_PATH + f"/ollama:cpu", command=cmd,
+                                 device_ids=device,
+                                 GPU_TYPE=global_config.GPU_TYPE, environment=environment)
+        return cls.check_status(container=container, port=port)
 
     @classmethod
-    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name,
+    def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name="auto",
                  quantization="", server_type="vllm", gpu_memory_utilization=0.9,
                  enforce_eager=True, num_scheduler_steps=1, reasoning_parser=""):
         """
@@ -88,6 +104,8 @@ class CMD:
         override_neuron_config=None, override_pooler_config=None, compilation_config=None, kv_transfer_config=None, worker_cls='auto', disable_log_requests=False, 
         max_log_len=None, disable_fastapi_docs=False, enable_prompt_tokens_details=False)
         """
+        if "CPU" in global_config.GPU_TYPE:
+            return cls.get_ollama(model_name, device, port)
         # 如果device 是list 获取 tuple 则device转成字符串
         if isinstance(device, list):
             device = tuple(device)
