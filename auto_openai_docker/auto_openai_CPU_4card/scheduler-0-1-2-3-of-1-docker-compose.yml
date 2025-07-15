@@ -1,0 +1,73 @@
+services:
+  scheduler-0-of-0:
+    command: &id001
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-1257791108
+      LM_SERVER_BASE_PORT: 30008
+      NODE_GPU_TOTAL: '0'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: &id002
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+  scheduler-1-of-1:
+    command: *id001
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-709451164
+      LM_SERVER_BASE_PORT: 30016
+      NODE_GPU_TOTAL: '1'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id002
+  scheduler-2-of-2:
+    command: *id001
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-39637546
+      LM_SERVER_BASE_PORT: 30024
+      NODE_GPU_TOTAL: '2'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id002
+  scheduler-3-of-3:
+    command: *id001
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-1518208477
+      LM_SERVER_BASE_PORT: 30032
+      NODE_GPU_TOTAL: '3'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id002
+version: '3'

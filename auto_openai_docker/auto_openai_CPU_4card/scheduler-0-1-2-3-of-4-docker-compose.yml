@@ -1,0 +1,25 @@
+services:
+  scheduler-0_1_2_3-of-0:
+    command:
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: ALL
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-1532433552
+      LM_SERVER_BASE_PORT: 30088
+      NODE_GPU_TOTAL: 0,1,2,3
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes:
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+version: '3'

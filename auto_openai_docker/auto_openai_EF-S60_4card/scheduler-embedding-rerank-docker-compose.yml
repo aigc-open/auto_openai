@@ -1,0 +1,41 @@
+services:
+  scheduler-100-of-0-cpu:
+    command: &id001
+    - /bin/sh
+    - -c
+    - python3 -m auto_openai.scheduler
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-34093755
+      LM_SERVER_BASE_PORT: 30336
+      NODE_GPU_TOTAL: '100'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: &id002
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+  scheduler-101-of-1-cpu:
+    command: *id001
+    environment:
+      AVAILABLE_MODELS: ALL
+      AVAILABLE_SERVER_TYPES: embedding,rerank
+      CPU_IMAGE_TYPE: NV
+      GPU_TYPE: CPU
+      LABEL: lm-server-1752565602-1716208198
+      LM_SERVER_BASE_PORT: 30344
+      NODE_GPU_TOTAL: '101'
+    image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
+    network_mode: host
+    privileged: true
+    restart: always
+    shm_size: 8gb
+    volumes: *id002
+version: '3'
