@@ -22,4 +22,67 @@ MOCK: false
 GPU_TYPE: NV-A100
 IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
 #######################################################
-# CUSTOM_MODLES:
+CUSTOM_MODLES:
+  - name: AI仿真大模型
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "AI仿真大模型"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 1
+      NV-A100-40G:
+        need_gpu_count: 1
+      NV-A100-80G:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      NV-A30:
+        need_gpu_count: 1
+      NV-3090:
+        need_gpu_count: 1
+      NV-3060:
+        need_gpu_count: 1
+      NV-T4-16G:
+        need_gpu_count: 1
+      NV-P40:
+        need_gpu_count: 1
+      NV-4060:
+        need_gpu_count: 1
+      CPU:
+        need_gpu_count: 1
+  - name: 石油大模型
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "石油大模型"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 1
+      NV-A100-40G:
+        need_gpu_count: 1
+      NV-A100-80G:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 1
+      NV-A30:
+        need_gpu_count: 1
+      NV-3090:
+        need_gpu_count: 1
+      NV-3060:
+        need_gpu_count: 1
+      NV-T4-16G:
+        need_gpu_count: 1
+      NV-P40:
+        need_gpu_count: 1
+      NV-4060:
+        need_gpu_count: 1
+      CPU:
+        need_gpu_count: 1
+ 
