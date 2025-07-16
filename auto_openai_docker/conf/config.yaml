@@ -22,7 +22,7 @@ MOCK: false
 IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
 #######################################################
 CUSTOM_MODLES:
-  - name: AI仿真大模型
+  - name: AI-Simulation-Large-Model
     server_type: vllm
     api_type: LLM
     model_max_tokens: 10240
@@ -53,7 +53,7 @@ CUSTOM_MODLES:
         need_gpu_count: 1
       CPU:
         need_gpu_count: 1
-  - name: 石油大模型
+  - name: Oil-Large-Model
     server_type: vllm
     api_type: LLM
     model_max_tokens: 10240

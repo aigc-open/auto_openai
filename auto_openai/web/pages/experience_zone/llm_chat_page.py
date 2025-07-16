@@ -14,9 +14,9 @@ client = AsyncOpenAI(base_url=base_url, api_key=api_key)
 def index(model_name):
     import asyncio
     
-    if "仿真" in model_name:
+    if "AI-Simulation-Large-Model" in model_name:
         prompt_value = "AI仿真大模型有什么用处呢?"
-    elif "石油" in model_name:
+    elif "Oil-Large-Model" in model_name:
         prompt_value = "石油大模型有什么用处呢?"
     else:
         prompt_value = "请你介绍一下人工智能带来的好处"
