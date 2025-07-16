@@ -13,6 +13,13 @@ client = AsyncOpenAI(base_url=base_url, api_key=api_key)
 
 def index(model_name):
     import asyncio
+    
+    if "仿真" in model_name:
+        prompt_value = "AI仿真大模型有什么用处呢?"
+    elif "石油" in model_name:
+        prompt_value = "石油大模型有什么用处呢?"
+    else:
+        prompt_value = "请你介绍一下人工智能带来的好处"
 
     # 创建主容器
     with ui.card().classes('w-full max-w-7xl mx-auto p-6 shadow-lg rounded-xl') as card:
@@ -32,7 +39,7 @@ def index(model_name):
                 with ui.row().classes('w-full gap-4 items-end'):
                     with ui.column().classes('flex-grow'):
                         prompt = ui.input(
-                            value="请你使用python 写3种排序算法",
+                            value=prompt_value,
                             label='提示词',
                             placeholder='请输入您想问的问题...'
                         ).props('filled outlined').classes('w-full')
