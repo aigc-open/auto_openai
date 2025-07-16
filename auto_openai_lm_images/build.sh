@@ -16,7 +16,7 @@ services=(
     # "vllm-qwen25-vl"
     # "webui"
     # "vllm"
-    # "wan21"
+    "wan21"
     "diffusers-image-server"
     "diffusers-video-server"
 )

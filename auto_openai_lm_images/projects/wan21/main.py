@@ -18,16 +18,20 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
         device = "gcu"
+        torch_dtype = torch.bfloat16
         from gcu_diffusers import modify_apply_rotary_emb
         modify_apply_rotary_emb()
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
 elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
 else:
     device = "cpu"
+    torch_dtype = torch.float32
 
 # Constants
 OUTPUT_DIR = "/root/share_models/tmp"
@@ -61,13 +65,13 @@ def load_model(model_path):
             if "Diffusers" in model_path:
                 t2v_model = WanPipeline.from_pretrained(
                     model_path,
-                    torch_dtype=torch.bfloat16
+                    torch_dtype=torch_dtype
                 )
             else:
                 t2v_model = WanPipeline.from_pretrained(
                     model_path,
                     vae=vae,
-                    torch_dtype=torch.bfloat16
+                    torch_dtype=torch_dtype
                 )
                 scheduler = UniPCMultistepScheduler(
                     prediction_type='flow_prediction', 
@@ -100,14 +104,14 @@ def load_model(model_path):
                     model_path, 
                     vae=vae, 
                     image_encoder=image_encoder, 
-                    torch_dtype=torch.bfloat16
+                    torch_dtype=torch_dtype
                 )
             else:
                 i2v_model = WanPipeline.from_pretrained(
                     model_path,
                     vae=vae,
                     image_encoder=image_encoder,
-                    torch_dtype=torch.bfloat16
+                    torch_dtype=torch_dtype
                 )
                 scheduler = UniPCMultistepScheduler(
                     prediction_type='flow_prediction', 
