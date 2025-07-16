@@ -18,14 +18,18 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
         device = "gcu"
+        torch_dtype = torch.bfloat16
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
 elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
 else:
     device = "cpu"
+    torch_dtype = torch.float32
 
 from diffusers import CogVideoXPipeline
 from diffusers.utils import export_to_video
@@ -44,7 +48,7 @@ def load_model(model_path):
     if "CogVideoX-5b" in model_path:
         pipline = CogVideoXPipeline.from_pretrained(
             model_path,
-            torch_dtype=torch.bfloat16,
+            torch_dtype=torch_dtype,
         )
         pipline.to(device)
         pipline.enable_model_cpu_offload()

@@ -18,15 +18,19 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
         device = "gcu"
+        torch_dtype = torch.bfloat16
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
 elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
     device = "cuda"
+    torch_dtype = torch.float16
+    
 else:
     device = "cpu"
-
+    torch_dtype = torch.float32
 
 def random_uuid() -> str:
     return str(uuid.uuid4().hex)
@@ -44,8 +48,7 @@ def load_model(model_path):
         from diffusers import KolorsPipeline
         pipeline = KolorsPipeline.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
-            variant="fp16"
+            torch_dtype=torch_dtype,
         )
         pipeline.to(device)
         logger.info(f"Loaded Kolors pipeline from {model_path}")
@@ -54,8 +57,7 @@ def load_model(model_path):
         from diffusers import StableDiffusionXLPipeline
         pipeline = StableDiffusionXLPipeline.from_pretrained(
             model_path,
-            torch_dtype=torch.float16,
-            variant="fp16"
+            torch_dtype=torch_dtype,
         )
         pipeline.to(device)
         logger.info(f"Loaded SDXL pipeline from {model_path}")
@@ -64,7 +66,7 @@ def load_model(model_path):
         from diffusers import StableDiffusionPipeline
         pipeline = StableDiffusionPipeline.from_pretrained(
             model_path,
-            torch_dtype=torch.float16
+            torch_dtype=torch_dtype
         )
         pipeline.to(device)
         logger.info(f"Loaded Stable Diffusion pipeline from {model_path}")
@@ -75,7 +77,7 @@ def load_model(model_path):
         try:
             pipeline = DiffusionPipeline.from_pretrained(
                 model_path,
-                torch_dtype=torch.float16
+                torch_dtype=torch_dtype
             )
             pipeline.to(device)
             logger.info(f"Loaded generic diffusion pipeline from {model_path}")
