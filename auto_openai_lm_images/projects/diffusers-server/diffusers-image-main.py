@@ -49,6 +49,7 @@ def load_model(model_path):
         pipeline = KolorsPipeline.from_pretrained(
             model_path,
             torch_dtype=torch_dtype,
+            variant="fp16"
         )
         pipeline.to(device)
         logger.info(f"Loaded Kolors pipeline from {model_path}")
