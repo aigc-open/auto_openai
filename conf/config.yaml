@@ -35,3 +35,5 @@ CUSTOM_MODLES:
     gpu_types:
       EF-S60:
         need_gpu_count: 1
+  
+      

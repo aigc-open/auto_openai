@@ -84,4 +84,40 @@ CUSTOM_MODLES:
         need_gpu_count: 1
       CPU:
         need_gpu_count: 1
+  - name: Qwen2.5-VL-7B-Instruct
+    server_type: vllm
+    api_type: LLM
+    model_max_tokens: 10240
+    description: "Qwen2.5-VL-7B-Instruct"
+    need_gpu_count: 1
+    template: template_qwen.jinja
+    stop: ["<|im_start", "<|", "<|im_end|>", "<|endoftext|"]
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 1
+      NV-A100-80G:
+        need_gpu_count: 1
+      NV-A100-40G:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      CPU:
+        need_gpu_count: 1
+
+  - name: wan/Wan2.1-T2V-1.3B-Diffusers
+    server_type: wan21
+    api_type: Video
+    description: "wan/Wan2.1-T2V-1.3B-Diffusers"
+    need_gpu_count: 1
+    gpu_types:
+      EF-S60:
+        need_gpu_count: 1
+      NV-A100-80G:
+        need_gpu_count: 1
+      NV-A100-40G:
+        need_gpu_count: 1
+      NV-4090:
+        need_gpu_count: 2
+      CPU:
+        need_gpu_count: 1
         

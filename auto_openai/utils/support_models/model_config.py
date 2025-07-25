@@ -589,7 +589,7 @@ system_models_config.extend(VisionConfig(name="Qwen2.5-VL-7B-Instruct",
                                          model_url="https://modelscope.cn/Qwen/Qwen2.5-VL-7B-Instruct.git",
                                          server_type="vllm-qwen25-vl",
                                          api_type="VLLM",
-                                         model_max_tokens=32768,
+                                         model_max_tokens=4096,
                                          description="Qwen2.5-VL-7B-Instruct",
                                          need_gpu_count=1,
                                          template="template_qwen.jinja",
@@ -598,7 +598,7 @@ system_models_config.extend(VisionConfig(name="Qwen2.5-VL-7B-Instruct",
                                          gpu_types=get_gpu_types_count(24)
                                          ).extend([
                                              MultiGPUS(
-                                                 model_max_tokens=32*1024, gpu_types=get_gpu_types_count(24)),
+                                                 model_max_tokens=32*1024, gpu_types=get_gpu_types_count(40)),
                                          ]))
 system_models_config.extend(VisionConfig(name="Qwen2.5-VL-3B-Instruct",
                                          model_url="https://modelscope.cn/Qwen/Qwen2.5-VL-3B-Instruct.git",
