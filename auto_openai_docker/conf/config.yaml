@@ -20,6 +20,7 @@ DEFAULT_MODEL_CONFIG_max_tokens: 4096
 NODE_GPU_TOTAL: "4"
 MOCK: false
 IMAGE_BASE_PATH: "registry.cn-shanghai.aliyuncs.com/zhph-server"
+MOUNT_CODE_PATH: "/root/share_models/auto_openai"
 #######################################################
 CUSTOM_MODLES:
   - name: AI-Simulation-Large-Model
