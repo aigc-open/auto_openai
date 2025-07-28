@@ -3,14 +3,14 @@ services:
     command: &id001
     - /bin/sh
     - -c
-    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/
-      /workspace/ && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler;
-      fi
+    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai
+      /workspace/auto_openai && python3 -m auto_openai.scheduler; else python3 -m
+      auto_openai.scheduler; fi
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683327-1416171631
+      LABEL: lm-server-1753683853-864646298
       LM_SERVER_BASE_PORT: 30248
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -30,7 +30,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683327-324962669
+      LABEL: lm-server-1753683853-324472912
       LM_SERVER_BASE_PORT: 30256
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -50,7 +50,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683327-1035244513
+      LABEL: lm-server-1753683853-856632630
       LM_SERVER_BASE_PORT: 30264
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -70,7 +70,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683327-123112899
+      LABEL: lm-server-1753683853-1491093576
       LM_SERVER_BASE_PORT: 30272
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx

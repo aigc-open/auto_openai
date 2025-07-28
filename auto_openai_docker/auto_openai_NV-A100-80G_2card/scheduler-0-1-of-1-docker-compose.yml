@@ -3,14 +3,14 @@ services:
     command: &id001
     - /bin/sh
     - -c
-    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/
-      /workspace/ && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler;
-      fi
+    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai
+      /workspace/auto_openai && python3 -m auto_openai.scheduler; else python3 -m
+      auto_openai.scheduler; fi
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753683327-1026487406
+      LABEL: lm-server-1753683853-1161983092
       LM_SERVER_BASE_PORT: 30112
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -30,7 +30,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753683327-1063502603
+      LABEL: lm-server-1753683853-94427669
       LM_SERVER_BASE_PORT: 30120
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
