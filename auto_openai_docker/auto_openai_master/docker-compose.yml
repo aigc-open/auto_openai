@@ -3,7 +3,9 @@ services:
     command:
     - /bin/sh
     - -c
-    - python3 -m auto_openai.main --port=9000
+    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/
+      /workspace/ && python3 -m auto_openai.main --port=9000; else python3 -m auto_openai.main
+      --port=9000; fi
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
     ports:
     - 9000:9000
@@ -13,6 +15,5 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
-    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
+    - /root/share_models/:/root/share_models/
 version: '3'

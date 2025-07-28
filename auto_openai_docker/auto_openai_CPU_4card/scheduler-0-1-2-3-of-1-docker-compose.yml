@@ -3,13 +3,15 @@ services:
     command: &id001
     - /bin/sh
     - -c
-    - python3 -m auto_openai.scheduler
+    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/
+      /workspace/ && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler;
+      fi
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-237202034
+      LABEL: lm-server-1753683327-806303409
       LM_SERVER_BASE_PORT: 30008
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -22,8 +24,7 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
-    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
+    - /root/share_models/:/root/share_models/
   scheduler-1-of-1:
     command: *id001
     environment:
@@ -31,7 +32,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-434905832
+      LABEL: lm-server-1753683327-1290091736
       LM_SERVER_BASE_PORT: 30016
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -44,8 +45,7 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
-    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
+    - /root/share_models/:/root/share_models/
   scheduler-2-of-2:
     command: *id001
     environment:
@@ -53,7 +53,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-1572658937
+      LABEL: lm-server-1753683327-1732729394
       LM_SERVER_BASE_PORT: 30024
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -66,8 +66,7 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
-    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
+    - /root/share_models/:/root/share_models/
   scheduler-3-of-3:
     command: *id001
     environment:
@@ -75,7 +74,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-1686705628
+      LABEL: lm-server-1753683327-261279193
       LM_SERVER_BASE_PORT: 30032
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -88,6 +87,5 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
-    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
+    - /root/share_models/:/root/share_models/
 version: '3'

@@ -3,13 +3,15 @@ services:
     command: &id001
     - /bin/sh
     - -c
-    - python3 -m auto_openai.scheduler
+    - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/
+      /workspace/ && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler;
+      fi
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: embedding,rerank
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-1206953737
+      LABEL: lm-server-1753683327-1180252146
       LM_SERVER_BASE_PORT: 30232
       NODE_GPU_TOTAL: '100'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -22,6 +24,7 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
+    - /root/share_models/:/root/share_models/
   scheduler-101-of-1-cpu:
     command: *id001
     environment:
@@ -29,7 +32,7 @@ services:
       AVAILABLE_SERVER_TYPES: embedding,rerank
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753667653-1325044116
+      LABEL: lm-server-1753683327-1056775040
       LM_SERVER_BASE_PORT: 30240
       NODE_GPU_TOTAL: '101'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
