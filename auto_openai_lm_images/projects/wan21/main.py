@@ -53,7 +53,18 @@ def load_model(model_path):
         
         # 确定是否使用自动设备映射
         use_auto_device_map = device == "cuda"
-        device_map = "auto" if use_auto_device_map else device
+        if use_auto_device_map:
+            # 尝试使用 balanced 策略，如果不行则使用具体的设备映射
+            device_map = "balanced"
+            # 备选方案：手动设备映射（如果 balanced 不工作）
+            # device_map = {
+            #     "transformer": 0,
+            #     "vae": 0,
+            #     "text_encoder": 1,
+            #     "scheduler": 0
+            # }
+        else:
+            device_map = device
         logger.info(f"Using device: {device}, device_map: {device_map}")
         
         if "T2V" in model_path:
