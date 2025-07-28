@@ -9,7 +9,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-683739402
+      LABEL: lm-server-1753667653-1744370469
       LM_SERVER_BASE_PORT: 30056
       NODE_GPU_TOTAL: 0,1
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -18,7 +18,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -31,7 +31,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-537994860
+      LABEL: lm-server-1753667653-863725795
       LM_SERVER_BASE_PORT: 30064
       NODE_GPU_TOTAL: 2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -40,7 +40,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker

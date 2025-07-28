@@ -8,7 +8,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753506274-830229702
+      LABEL: lm-server-1753667653-383545452
       LM_SERVER_BASE_PORT: 30328
       NODE_GPU_TOTAL: 0,1,2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -17,7 +17,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker

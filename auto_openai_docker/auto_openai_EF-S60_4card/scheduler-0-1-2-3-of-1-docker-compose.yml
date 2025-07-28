@@ -8,7 +8,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753506274-1579917437
+      LABEL: lm-server-1753667653-685098305
       LM_SERVER_BASE_PORT: 30248
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -17,7 +17,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -29,7 +29,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753506274-1691425639
+      LABEL: lm-server-1753667653-68977333
       LM_SERVER_BASE_PORT: 30256
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -38,7 +38,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -50,7 +50,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753506274-1682525294
+      LABEL: lm-server-1753667653-428759641
       LM_SERVER_BASE_PORT: 30264
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -59,7 +59,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -71,7 +71,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753506274-1290563637
+      LABEL: lm-server-1753667653-1165954822
       LM_SERVER_BASE_PORT: 30272
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -80,7 +80,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker

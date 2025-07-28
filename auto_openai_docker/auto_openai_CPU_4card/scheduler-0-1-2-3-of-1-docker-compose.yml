@@ -9,7 +9,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-1278111205
+      LABEL: lm-server-1753667653-237202034
       LM_SERVER_BASE_PORT: 30008
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -18,7 +18,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -31,7 +31,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-824771980
+      LABEL: lm-server-1753667653-434905832
       LM_SERVER_BASE_PORT: 30016
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -40,7 +40,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -53,7 +53,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-994814509
+      LABEL: lm-server-1753667653-1572658937
       LM_SERVER_BASE_PORT: 30024
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -62,7 +62,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -75,7 +75,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1753506274-214111787
+      LABEL: lm-server-1753667653-1686705628
       LM_SERVER_BASE_PORT: 30032
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -84,7 +84,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker

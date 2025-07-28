@@ -10,6 +10,8 @@ BASE_PORT = 30000
 
 image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx"
 
+GPU_TYPE_LIST = ["CPU", "NV-A100-80G", "NV-4090", "EF-S60"]
+
 class Gen:
     default = {
         "version": "3",
@@ -24,7 +26,7 @@ class Gen:
 
     # 基础挂载卷
     base_volumes = [
-        "./conf/:/app/conf",
+        "../conf/:/app/conf",
         "/root/share_models/:/root/share_models/",
         "/var/run/docker.sock:/var/run/docker.sock",
         "/usr/bin/docker:/usr/bin/docker"
@@ -223,7 +225,7 @@ class Gen:
 Gen.mount_code = True  # 可以在这里全局控制是否挂载代码
 
 # size 是指一个实例挂载得卡数
-for GPU_TYPE in ["CPU", "NV-A100-80G", "NV-4090", "EF-S60"]:
+for GPU_TYPE in GPU_TYPE_LIST:
     # 清除 
     Gen.clear_generated_dirs(GPU_TYPE)
     if GPU_TYPE == "NV-A100-80G":

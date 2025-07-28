@@ -8,7 +8,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753506274-1698617533
+      LABEL: lm-server-1753667653-1410503895
       LM_SERVER_BASE_PORT: 30112
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -17,7 +17,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
@@ -29,7 +29,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753506274-640701714
+      LABEL: lm-server-1753667653-906591815
       LM_SERVER_BASE_PORT: 30120
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -38,7 +38,7 @@ services:
     restart: always
     shm_size: 8gb
     volumes:
-    - ./conf/:/app/conf
+    - ../conf/:/app/conf
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
