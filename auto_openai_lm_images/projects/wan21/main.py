@@ -63,7 +63,7 @@ def load_model(model_path):
                 model_path, 
                 subfolder="vae", 
                 torch_dtype=torch.float32,
-                device_map=device_map if use_auto_device_map else None
+                # device_map=device_map if use_auto_device_map else None
             )
             
             flow_shift = 5.0 if "14B" in model_path else 3.0
@@ -104,7 +104,7 @@ def load_model(model_path):
                 model_path, 
                 subfolder="vae", 
                 torch_dtype=torch.float32,
-                device_map=device_map if use_auto_device_map else None
+                # device_map=device_map if use_auto_device_map else None
             )
             
             flow_shift = 5.0 if "720P" in model_path else 3.0
