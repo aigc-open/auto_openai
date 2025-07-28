@@ -13,7 +13,7 @@ class Docker:
     def run(self, image, command, device_ids: str, GPU_TYPE="S60", network_mode="host", environment=[]):
         data = {
             "image": image,
-            "command": command,
+            "command": f"bash -c '{command}'",
             "network_mode": network_mode,
             "detach": True,
             "labels": self.labels,
