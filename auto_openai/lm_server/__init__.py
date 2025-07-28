@@ -62,7 +62,12 @@ class CMD:
     
     @classmethod
     def get_ollama(cls, model_name, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/ollama/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             bash /workspace/ollama/start.sh 
             --model-name {model_name} 
             --model-path {os.path.join(global_config.VLLM_MODEL_ROOT_PATH, model_name)} 
@@ -154,7 +159,12 @@ class CMD:
 
     @classmethod
     def get_comfyui(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/comfyui/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 comfyui-main.py --listen 0.0.0.0
             --gpu-only --use-pytorch-cross-attention 
             --port={port}"""
@@ -171,7 +181,12 @@ class CMD:
 
     @classmethod
     def get_maskgct(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/maskgct/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 main.py --port={port}
             --model_root_path={global_config.MASKGCT_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ").strip()
@@ -184,7 +199,12 @@ class CMD:
 
     @classmethod
     def get_funasr(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/funasr-server/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 funasr-main.py --port={port}
             --model_root_path={global_config.FUNASR_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ").strip()
@@ -197,7 +217,12 @@ class CMD:
 
     @classmethod
     def get_embedding(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/embedding-server/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 embedding-main.py --port={port}
             --model_root_path={global_config.EMBEDDING_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ").strip()
@@ -210,7 +235,12 @@ class CMD:
 
     @classmethod
     def get_llm_transformer(cls, model_name, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/llm-transformer-server/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 llm-transformer-main.py --port={port}
             --model_path={os.path.join(global_config.LLM_TRANSFORMER_MODEL_ROOT_PATH, model_name)}"""
         cmd = cmd.replace("\n", " ").strip()
@@ -223,7 +253,12 @@ class CMD:
 
     @classmethod
     def get_diffusers_video(cls, model_name, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/diffusers-server/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 diffusers-video-main.py --port={port}
             --model_path={os.path.join(global_config.DIFFUSERS_MODEL_ROOT_PATH, model_name)}"""
         cmd = cmd.replace("\n", " ").strip().strip()
@@ -236,7 +271,12 @@ class CMD:
     
     @classmethod
     def get_diffusers_image(cls, model_name, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/diffusers-server/")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 diffusers-image-main.py --port={port}
             --model_path={os.path.join(global_config.WEBUI_MODEL_ROOT_PATH, "diffusers", model_name)}"""
         cmd = cmd.replace("\n", " ").strip().strip()
@@ -249,7 +289,12 @@ class CMD:
 
     @classmethod
     def get_wan21(cls, model_name, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/wan21")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 main.py --port={port}
             --model_path={os.path.join(global_config.DIFFUSERS_MODEL_ROOT_PATH, model_name)}"""
         cmd = cmd.replace("\n", " ").strip().strip()
@@ -262,7 +307,12 @@ class CMD:
 
     @classmethod
     def get_rerank(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/rerank-server")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 rerank-main.py --port={port}
             --model_root_path={global_config.RERANK_MODEL_ROOT_PATH}"""
         cmd = cmd.replace("\n", " ").strip()
@@ -275,7 +325,12 @@ class CMD:
 
     @classmethod
     def get_webui(cls, device, port):
-        cmd = f"""
+        if global_config.MOUNT_CODE_PATH:
+            mount_cmd = f"""cp -rf {os.path.join(global_config.MOUNT_CODE_PATH, "auto_openai_lm_images/projects/webui")} /workspace/"""
+            mount_cmd = mount_cmd.replace("\n", " ").strip()
+        else:
+            mount_cmd = ""
+        cmd = mount_cmd + f"""
             python3 server.py 
             --skip-version-check --skip-install --skip-prepare-environment 
             --api

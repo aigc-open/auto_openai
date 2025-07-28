@@ -16,6 +16,7 @@ class GlobalConfig(BaseModel):
     MOCK: bool = bool(0)
 
     #
+    MOUNT_CODE_PATH: str = ""
     COMFYUI_INPUTS_DIR: str = "/tmp"
     VLLM_MODEL_ROOT_PATH: str = "/root/share_models/LLM/"
     COMFYUI_MODEL_ROOT_PATH: str = "/root/share_models/webui-models/"

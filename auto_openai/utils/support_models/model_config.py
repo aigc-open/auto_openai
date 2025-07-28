@@ -751,7 +751,7 @@ system_models_config.add(VideoConfig(name="wan/Wan2.1-T2V-1.3B-Diffusers",
                                      api_type="Video",
                                      description="万相2.1 视频生成",
                                      need_gpu_count=1,
-                                     gpu_types=get_gpu_types_count(24)
+                                     gpu_types=get_gpu_types_count(40)
                                      ))
 system_models_config.add(VideoConfig(name="wan/Wan2.1-T2V-14B-Diffusers",
                                      model_url="https://www.modelscope.cn/models/Wan-AI/Wan2.1-T2V-14B-Diffusers.git",
