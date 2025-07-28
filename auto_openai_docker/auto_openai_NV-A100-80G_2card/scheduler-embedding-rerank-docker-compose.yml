@@ -9,7 +9,7 @@ services:
       AVAILABLE_SERVER_TYPES: embedding,rerank
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1752565602-1160855293
+      LABEL: lm-server-1753506274-1427250554
       LM_SERVER_BASE_PORT: 30128
       NODE_GPU_TOTAL: '100'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -29,7 +29,7 @@ services:
       AVAILABLE_SERVER_TYPES: embedding,rerank
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1752565602-484130427
+      LABEL: lm-server-1753506274-1589702758
       LM_SERVER_BASE_PORT: 30136
       NODE_GPU_TOTAL: '101'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx

@@ -18,6 +18,21 @@ class Gen:
     
     # 添加类变量来跟踪生成的目录
     generated_dirs = set()
+    
+    # 全局控制是否挂载代码
+    mount_code = False
+
+    # 基础挂载卷
+    base_volumes = [
+        "./conf/:/app/conf",
+        "/root/share_models/:/root/share_models/",
+        "/var/run/docker.sock:/var/run/docker.sock",
+        "/usr/bin/docker:/usr/bin/docker"
+    ]
+
+    # 代码挂载卷
+    code_volume = ["/root/share_models/auto_openai/auto_openai:/app/auto_openai", 
+                   "/root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images"]
 
     default_container = {
         "image": image,
@@ -31,12 +46,7 @@ class Gen:
             "python3 -m auto_openai.scheduler"
         ],
         "restart": "always",
-        "volumes": [
-            "./conf/:/app/conf",
-            "/root/share_models/:/root/share_models/",
-            "/var/run/docker.sock:/var/run/docker.sock",
-            "/usr/bin/docker:/usr/bin/docker"
-        ],
+        "volumes": base_volumes,
         "privileged": True,
         "network_mode": "host"
     }
@@ -110,6 +120,13 @@ class Gen:
             BASE_PORT += 8
             NODE_GPU_TOTAL = ",".join(map(str, data))
             container = dict(cls.default_container)
+            
+            # 根据全局mount_code变量决定是否挂载代码
+            if cls.mount_code:
+                container["volumes"] = cls.base_volumes + cls.code_volume
+            else:
+                container["volumes"] = cls.base_volumes.copy()
+                
             environment = dict(container["environment"])
             environment.update(
                 {"NODE_GPU_TOTAL": NODE_GPU_TOTAL,
@@ -148,6 +165,13 @@ class Gen:
     
     @classmethod
     def generate_master_node(cls):
+        # 准备基础配置
+        volumes = cls.base_volumes  # 只使用 conf 目录挂载
+        
+        # 如果需要挂载代码，添加代码卷
+        if cls.mount_code:
+            volumes.extend(cls.code_volume)
+            
         default = {
             "version": "3",
             "services": {
@@ -160,7 +184,7 @@ class Gen:
                         "python3 -m auto_openai.main --port=9000"
                     ],
                     "restart": "always",
-                    "volumes": ["./conf:/app/conf"],
+                    "volumes": volumes,
                 }
             }
         }
@@ -194,6 +218,9 @@ class Gen:
         for dir_to_remove in glob.glob(f"auto_openai_{GPU_TYPE}_*card"):
             if os.path.exists(dir_to_remove):
                 shutil.rmtree(dir_to_remove, ignore_errors=True)
+
+# 设置是否挂载代码
+Gen.mount_code = True  # 可以在这里全局控制是否挂载代码
 
 # size 是指一个实例挂载得卡数
 for GPU_TYPE in ["CPU", "NV-A100-80G", "NV-4090", "EF-S60"]:

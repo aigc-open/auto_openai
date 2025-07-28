@@ -9,5 +9,10 @@ services:
     - 9000:9000
     restart: always
     volumes:
-    - ./conf:/app/conf
+    - ./conf/:/app/conf
+    - /root/share_models/:/root/share_models/
+    - /var/run/docker.sock:/var/run/docker.sock
+    - /usr/bin/docker:/usr/bin/docker
+    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
+    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
 version: '3'

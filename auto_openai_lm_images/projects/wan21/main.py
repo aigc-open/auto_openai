@@ -51,13 +51,19 @@ def load_model(model_path):
     try:
         logger.info(f"Loading model from: {model_path}")
         
+        # 确定是否使用自动设备映射
+        use_auto_device_map = device == "cuda"
+        device_map = "auto" if use_auto_device_map else device
+        logger.info(f"Using device: {device}, device_map: {device_map}")
+        
         if "T2V" in model_path:
             # Load T2V model
             logger.info("Loading T2V model")
             vae = AutoencoderKLWan.from_pretrained(
                 model_path, 
                 subfolder="vae", 
-                torch_dtype=torch.float32
+                torch_dtype=torch.float32,
+                device_map=device_map if use_auto_device_map else None
             )
             
             flow_shift = 5.0 if "14B" in model_path else 3.0
@@ -65,13 +71,15 @@ def load_model(model_path):
             if "Diffusers" in model_path:
                 t2v_model = WanPipeline.from_pretrained(
                     model_path,
-                    torch_dtype=torch_dtype
+                    torch_dtype=torch_dtype,
+                    device_map=device_map if use_auto_device_map else None
                 )
             else:
                 t2v_model = WanPipeline.from_pretrained(
                     model_path,
                     vae=vae,
-                    torch_dtype=torch_dtype
+                    torch_dtype=torch_dtype,
+                    device_map=device_map if use_auto_device_map else None
                 )
                 scheduler = UniPCMultistepScheduler(
                     prediction_type='flow_prediction', 
@@ -80,21 +88,23 @@ def load_model(model_path):
                     flow_shift=flow_shift
                 )
                 t2v_model.scheduler = scheduler
-                
-            t2v_model.to(device)
             
+            if not use_auto_device_map:
+                t2v_model.to(device)
         elif "I2V" in model_path:
             # Load I2V model
             logger.info("Loading I2V model")
             image_encoder = CLIPVisionModel.from_pretrained(
                 model_path, 
                 subfolder="image_encoder", 
-                torch_dtype=torch.float32
+                torch_dtype=torch.float32,
+                device_map=device_map if use_auto_device_map else None
             )
             vae = AutoencoderKLWan.from_pretrained(
                 model_path, 
                 subfolder="vae", 
-                torch_dtype=torch.float32
+                torch_dtype=torch.float32,
+                device_map=device_map if use_auto_device_map else None
             )
             
             flow_shift = 5.0 if "720P" in model_path else 3.0
@@ -104,14 +114,16 @@ def load_model(model_path):
                     model_path, 
                     vae=vae, 
                     image_encoder=image_encoder, 
-                    torch_dtype=torch_dtype
+                    torch_dtype=torch_dtype,
+                    device_map=device_map if use_auto_device_map else None
                 )
             else:
                 i2v_model = WanPipeline.from_pretrained(
                     model_path,
                     vae=vae,
                     image_encoder=image_encoder,
-                    torch_dtype=torch_dtype
+                    torch_dtype=torch_dtype,
+                    device_map=device_map if use_auto_device_map else None
                 )
                 scheduler = UniPCMultistepScheduler(
                     prediction_type='flow_prediction', 
@@ -120,8 +132,9 @@ def load_model(model_path):
                     flow_shift=flow_shift
                 )
                 i2v_model.scheduler = scheduler
-                
-            i2v_model.to(device)
+            
+            if not use_auto_device_map:
+                i2v_model.to(device)
             
         else:
             logger.error(f"Unknown model type in path: {model_path}")

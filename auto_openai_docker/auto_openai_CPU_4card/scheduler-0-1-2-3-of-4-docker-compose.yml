@@ -9,7 +9,7 @@ services:
       AVAILABLE_SERVER_TYPES: ALL
       CPU_IMAGE_TYPE: NV
       GPU_TYPE: CPU
-      LABEL: lm-server-1752565602-1532433552
+      LABEL: lm-server-1753506274-779458161
       LM_SERVER_BASE_PORT: 30088
       NODE_GPU_TOTAL: 0,1,2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -22,4 +22,6 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
+    - /root/share_models/auto_openai/auto_openai:/app/auto_openai
+    - /root/share_models/auto_openai/auto_openai_lm_images:/app/auto_openai_lm_images
 version: '3'
