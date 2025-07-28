@@ -11,6 +11,7 @@ BASE_PORT = 30000
 image = "registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx"
 
 GPU_TYPE_LIST = ["CPU", "NV-A100-80G", "NV-4090", "EF-S60"]
+export_port = 9000
 
 class Gen:
     default = {
@@ -166,7 +167,7 @@ class Gen:
             "services": {
                 "openai-api": {
                     "image": image,
-                    "ports": ["9000:9000"],
+                    "ports": [f"{export_port}:9000"],
                     "command": [
                         "/bin/sh",
                         "-c",
