@@ -39,7 +39,7 @@ class Gen:
         "command": [
             "/bin/sh",
             "-c",
-            "if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai /app/auto_openai && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler; fi"
+            "if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai /app/ && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler; fi"
         ],
         "restart": "always",
         "volumes": base_volumes,
