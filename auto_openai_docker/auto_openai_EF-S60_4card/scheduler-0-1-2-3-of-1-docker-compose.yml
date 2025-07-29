@@ -4,13 +4,13 @@ services:
     - /bin/sh
     - -c
     - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai
-      /workspace/auto_openai && python3 -m auto_openai.scheduler; else python3 -m
-      auto_openai.scheduler; fi
+      /app/auto_openai && python3 -m auto_openai.scheduler; else python3 -m auto_openai.scheduler;
+      fi
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683853-864646298
+      LABEL: lm-server-1753761110-1649054210
       LM_SERVER_BASE_PORT: 30248
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -23,14 +23,13 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/:/root/share_models/
   scheduler-1-of-1:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683853-324472912
+      LABEL: lm-server-1753761110-505664885
       LM_SERVER_BASE_PORT: 30256
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -43,14 +42,13 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/:/root/share_models/
   scheduler-2-of-2:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683853-856632630
+      LABEL: lm-server-1753761110-1327768530
       LM_SERVER_BASE_PORT: 30264
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -63,14 +61,13 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/:/root/share_models/
   scheduler-3-of-3:
     command: *id001
     environment:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753683853-1491093576
+      LABEL: lm-server-1753761110-1141478836
       LM_SERVER_BASE_PORT: 30272
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -83,5 +80,4 @@ services:
     - /root/share_models/:/root/share_models/
     - /var/run/docker.sock:/var/run/docker.sock
     - /usr/bin/docker:/usr/bin/docker
-    - /root/share_models/:/root/share_models/
 version: '3'
