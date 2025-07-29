@@ -171,6 +171,39 @@ class ChatCompletionRequest(BaseModel):
 
     # NOTE this will be ignored by VLLM -- the model determines the behavior
     # parallel_tool_calls: Optional[bool] = False
+    
+    
+    def change_messages_image_url_to_base64(self):
+        import base64
+        import requests
+        from PIL import Image
+        from io import BytesIO
+
+        for message in self.messages:
+            if message.get("role") == "user" and isinstance(message.get("content"), list):
+                for item in message["content"]:
+                    if (
+                        isinstance(item, dict)
+                        and item.get("type") == "image_url"
+                        and isinstance(item.get("image_url"), dict)
+                        and item.get("image_url", {}).get("url") is not None
+                    ):
+                        url = item.get("image_url", {}).get("url")
+                        # 判断url是否以http开头
+                        if isinstance(url, str) and url.startswith("http"):
+                            try:
+                                # Download the image
+                                response = requests.get(url,verify=False)
+                                response.raise_for_status()
+                                image = Image.open(BytesIO(response.content))
+                                buffered = BytesIO()
+                                image.save(buffered, format="PNG")
+                                image_base64 = base64.b64encode(buffered.getvalue()).decode("utf-8")
+                                item["image_url"]["url"] = f"data:image/jpeg;base64,{image_base64}"
+                            except Exception as e:
+                                # If error, keep the original url
+                                pass
+        return self.messages
 
 
 class CompletionRequest(BaseModel):

@@ -62,6 +62,7 @@ async def chat_completion(
     scheduler.set_model_config(
         model_name=data.model, value=json.dumps(model_config))
     request_id = gen_request_id()
+    data.change_messages_image_url_to_base64()
     if data.stream:
         return StreamingResponse(scheduler.ChatCompletionStream(
             request=data,
