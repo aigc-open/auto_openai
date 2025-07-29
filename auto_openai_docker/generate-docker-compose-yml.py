@@ -170,7 +170,7 @@ class Gen:
                     "command": [
                         "/bin/sh",
                         "-c",
-                        "if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai /workspace/auto_openai && python3 -m auto_openai.main --port=9000; else python3 -m auto_openai.main --port=9000; fi"
+                        "if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai /app/ && python3 -m auto_openai.main --port=9000; else python3 -m auto_openai.main --port=9000; fi"
                     ],
                     "restart": "always",
                     "volumes": volumes,

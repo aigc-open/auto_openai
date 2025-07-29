@@ -4,8 +4,8 @@ services:
     - /bin/sh
     - -c
     - if [ -d /root/share_models/auto_openai/ ]; then cp -rf /root/share_models/auto_openai/auto_openai
-      /workspace/auto_openai && python3 -m auto_openai.main --port=9000; else python3
-      -m auto_openai.main --port=9000; fi
+      /app/ && python3 -m auto_openai.main --port=9000; else python3 -m auto_openai.main
+      --port=9000; fi
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
     ports:
     - 9000:9000

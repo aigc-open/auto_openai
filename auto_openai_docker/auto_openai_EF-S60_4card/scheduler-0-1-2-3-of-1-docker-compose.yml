@@ -10,7 +10,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753761735-1134926701
+      LABEL: lm-server-1753762432-1304740470
       LM_SERVER_BASE_PORT: 30248
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -29,7 +29,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753761735-1332417677
+      LABEL: lm-server-1753762432-510047183
       LM_SERVER_BASE_PORT: 30256
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -48,7 +48,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753761735-1667658105
+      LABEL: lm-server-1753762432-963122352
       LM_SERVER_BASE_PORT: 30264
       NODE_GPU_TOTAL: '2'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -67,7 +67,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753761735-251564584
+      LABEL: lm-server-1753762432-572143574
       LM_SERVER_BASE_PORT: 30272
       NODE_GPU_TOTAL: '3'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx

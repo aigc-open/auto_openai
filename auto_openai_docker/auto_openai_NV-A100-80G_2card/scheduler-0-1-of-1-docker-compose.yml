@@ -10,7 +10,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753761735-1198541210
+      LABEL: lm-server-1753762432-823454077
       LM_SERVER_BASE_PORT: 30112
       NODE_GPU_TOTAL: '0'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
@@ -29,7 +29,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-A100-80G
-      LABEL: lm-server-1753761735-146580026
+      LABEL: lm-server-1753762432-1469119020
       LM_SERVER_BASE_PORT: 30120
       NODE_GPU_TOTAL: '1'
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx

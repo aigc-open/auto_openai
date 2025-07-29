@@ -10,7 +10,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: EF-S60
-      LABEL: lm-server-1753761735-50368107
+      LABEL: lm-server-1753762432-941547127
       LM_SERVER_BASE_PORT: 30328
       NODE_GPU_TOTAL: 0,1,2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx

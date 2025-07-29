@@ -10,7 +10,7 @@ services:
       AVAILABLE_MODELS: ALL
       AVAILABLE_SERVER_TYPES: ALL
       GPU_TYPE: NV-4090
-      LABEL: lm-server-1753761735-1492138171
+      LABEL: lm-server-1753762432-98642117
       LM_SERVER_BASE_PORT: 30224
       NODE_GPU_TOTAL: 0,1,2,3
     image: registry.cn-shanghai.aliyuncs.com/zhph-server/auto_openai:shdx
