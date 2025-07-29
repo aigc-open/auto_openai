@@ -33,8 +33,8 @@ def load_model(model_name: str):
     if now_model_name_path != model_name_path:
         embed_model = HuggingFaceEmbeddings(
             model_name=now_model_name_path,
-            model_kwargs={'device': device} if device != "cpu" else None,
-            encode_kwargs={'normalize_embeddings': False}
+            encode_kwargs={'normalize_embeddings': False},
+            **{} if device == "cpu" else {"model_kwargs": {'device': device}}
         )
         model_name_path = now_model_name_path
 
