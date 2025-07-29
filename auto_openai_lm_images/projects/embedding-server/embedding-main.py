@@ -3,7 +3,9 @@ import os
 import sys
 import json
 from langchain_huggingface import HuggingFaceEmbeddings
+import logging
 import torch
+
 if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
     # 支持GCU算力卡
     try:
@@ -12,15 +14,15 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         device = "gcu"
     except Exception as e:
         raise e
-elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
-    device = "cuda"
-elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
+elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None and torch.cuda.is_available():
     device = "cuda"
 else:
     device = "cpu"
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-print(f"current device: {device}")
+logger.info(f"current device: {device}")
 
 embed_model = None
 model_name_path = None
@@ -34,7 +36,7 @@ def load_model(model_name: str):
         embed_model = HuggingFaceEmbeddings(
             model_name=now_model_name_path,
             encode_kwargs={'normalize_embeddings': False},
-            **{} if device == "cpu" else {"model_kwargs": {'device': device}}
+            model_kwargs={'device': device}
         )
         model_name_path = now_model_name_path
 

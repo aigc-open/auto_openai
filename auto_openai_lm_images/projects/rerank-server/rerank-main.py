@@ -3,6 +3,7 @@ from sentence_transformers import CrossEncoder
 import os
 import sys
 import json
+import logging
 import torch
 if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
     # 支持GCU算力卡
@@ -12,12 +13,16 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         device = "gcu"
     except Exception as e:
         raise e
-elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
-    device = "cuda"
-elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
+elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None and torch.cuda.is_available():
     device = "cuda"
 else:
     device = "cpu"
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+logger.info(f"current device: {device}")
+
 
 model = None
 tokenizer = None

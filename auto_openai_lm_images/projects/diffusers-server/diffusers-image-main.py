@@ -21,13 +21,9 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         torch_dtype = torch.bfloat16
     except Exception as e:
         raise e
-elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None:
+elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None and torch.cuda.is_available():
     device = "cuda"
     torch_dtype = torch.float16
-elif os.environ.get("NVIDIA_VISIBLE_DEVICES") is not None:
-    device = "cuda"
-    torch_dtype = torch.float16
-    
 else:
     device = "cpu"
     torch_dtype = torch.float32
