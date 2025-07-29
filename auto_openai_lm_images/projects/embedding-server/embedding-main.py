@@ -20,6 +20,8 @@ else:
     device = "cpu"
 
 
+print(f"current device: {device}")
+
 embed_model = None
 model_name_path = None
 
