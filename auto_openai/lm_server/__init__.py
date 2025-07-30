@@ -56,6 +56,8 @@ class CMD:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gpu"
         elif "CPU" in global_config.GPU_TYPE and "NV" in global_config.CPU_IMAGE_TYPE:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gpu"
+            if not Docker().image_exist(image=image):
+                image = global_config.IMAGE_BASE_PATH + f"/{name}:gcu"
         else:
             image = global_config.IMAGE_BASE_PATH + f"/{name}:gcu"
         return image

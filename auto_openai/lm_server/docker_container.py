@@ -53,3 +53,10 @@ class Docker:
             logger.info(f"删除容器: {i.id}")
             i.remove()
         return True
+    
+    def image_exist(self, image:str)->bool:
+        for i in self.client.images.list(name=image):
+            for image_ in i.tags:
+                if image_ == image:
+                    return True
+        return False
