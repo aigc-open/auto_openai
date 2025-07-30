@@ -210,7 +210,7 @@ class VllmTask(BaseTask):
             try:
                 server_type = self.model_config.get("server_type", "vllm")
                 if server_type == "vllm-qwen25-vl":
-                    other_cmd = "pip3.10 install torchvision==0.18.0 numpy==1.24.3 torchaudio==2.3.0 --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple &&"
+                    other_cmd = ""
                 else:
                     other_cmd=""
                 other_cmd = ""

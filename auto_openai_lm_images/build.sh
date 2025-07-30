@@ -12,7 +12,7 @@ services=(
     # "maskgct"
     # "rerank-server"
     # "vllm-glm"
-    # "vllm-qwen2-vl"
+    "vllm-qwen2-vl"
     "vllm-qwen25-vl"
     # "webui"
     # "vllm"

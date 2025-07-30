@@ -14,18 +14,17 @@ RUN apt update -y && apt install curl git ffmpeg -y && python3.10 -m pip install
 
 RUN pip3 config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip3 config set global.trusted-host artifact.enflame.cn
 
-WORKDIR /workspace
-
-# 软件栈安装
-RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/Dy5-Y6X0/nfs/tops_daily/TopsRider_i3x_3.3.109_deb_amd64.run" && \
-    bash topsrider.run -C vllm --container -y && \
+RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/RLOcAa76/nfs/tops_daily/TopsRider_i3x_3.4.20250425_deb_amd64.run" && \
+    bash topsrider.run -C vllm-gcu --container -y && \
     rm -rf topsrider.run
 
-RUN pip3.10 install torch==2.3.0 --force-reinstall
+WORKDIR /workspace
+
+RUN pip3.10 install torchvision==0.20.0 torch==2.5.0 torchaudio==2.5.0 --force-reinstall 
 
 RUN pip3.10 install protobuf==3.20 fire
 RUN pip3.10 install git+https://github.com/huggingface/transformers
-RUN pip3.10 install torchvision==0.18.0 torchaudio==2.3.0 numpy==1.24.3 --force-reinstall
+RUN pip3.10 install pillow==11.3.0 numpy==1.24.3  --upgrade
 COPY ./template /template
 
 ENTRYPOINT []
