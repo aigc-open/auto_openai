@@ -213,6 +213,7 @@ class VllmTask(BaseTask):
                     other_cmd = "pip3.10 install torchvision==0.18.0 numpy==1.24.3 torchaudio==2.3.0 --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple &&"
                 else:
                     other_cmd=""
+                other_cmd = ""
                 status = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
                     self.split_gpu()[idx]), port=port, template=self.get_chat_template(model_name),
                     model_max_tokens=self.model_config['model_max_tokens'], device_name=device_name,
