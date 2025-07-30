@@ -209,6 +209,10 @@ class VllmTask(BaseTask):
                 device_name = "gcu"
             try:
                 server_type = self.model_config.get("server_type", "vllm")
+                if server_type == "vllm-qwen25-vl":
+                    other_cmd = "pip3.10 install torchvision==0.18.0 torchaudio==2.3.0 --force-reinstall -i https://pypi.tuna.tsinghua.edu.cn/simple &&"
+                else:
+                    other_cmd=""
                 status = CMD.get_vllm(model_name=model_name, device=device, need_gpu_count=len(
                     self.split_gpu()[idx]), port=port, template=self.get_chat_template(model_name),
                     model_max_tokens=self.model_config['model_max_tokens'], device_name=device_name,
@@ -217,7 +221,8 @@ class VllmTask(BaseTask):
                     enforce_eager=self.model_config.get("enforce_eager", True),
                     num_scheduler_steps=self.model_config.get(
                         "num_scheduler_steps", 1),
-                    reasoning_parser=self.model_config.get("reasoning_parser", ""))
+                    reasoning_parser=self.model_config.get("reasoning_parser", ""),
+                    other_cmd=other_cmd)
             except Exception as e:
                 status = False
         # self.status = status

@@ -86,7 +86,7 @@ class CMD:
     @classmethod
     def get_vllm(cls, model_name, device, need_gpu_count, port, template, model_max_tokens, device_name="auto",
                  quantization="", server_type="vllm", gpu_memory_utilization=0.9,
-                 enforce_eager=True, num_scheduler_steps=1, reasoning_parser=""):
+                 enforce_eager=True, num_scheduler_steps=1, reasoning_parser="", other_cmd=""):
         """
         args: Namespace(host=None, port=30104, uvicorn_log_level='info', 
         allow_credentials=False, allowed_origins=['*'], allowed_methods=['*'], allowed_headers=['*'], api_key=None, 
@@ -132,7 +132,7 @@ class CMD:
         quantization = f"--quantization {quantization}" if quantization else ""
         template = f"--chat-template {template}" if ".jinja" in template else ""
         enforce_eager = "--enforce-eager" if enforce_eager else ""
-        cmd = f"""
+        cmd = other_cmd + f"""
             python3 -m vllm.entrypoints.openai.api_server 
             --model {model_path} 
             --device={device_name} 
