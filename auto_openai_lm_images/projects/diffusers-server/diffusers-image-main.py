@@ -18,7 +18,7 @@ if os.environ.get("TOPS_VISIBLE_DEVICES") is not None:
         import torch_gcu  # 导入 torch_gcu
         from torch_gcu import transfer_to_gcu  # 导入 transfer_to_gcu
         device = "gcu"
-        torch_dtype = torch.bfloat16
+        torch_dtype = torch.float16
     except Exception as e:
         raise e
 elif os.environ.get("CUDA_VISIBLE_DEVICES") is not None and torch.cuda.is_available():
