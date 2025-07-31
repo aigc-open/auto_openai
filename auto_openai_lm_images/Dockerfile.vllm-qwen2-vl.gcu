@@ -14,13 +14,14 @@ RUN apt update -y && apt install curl git ffmpeg -y && python3.10 -m pip install
 
 RUN pip3 config set global.index-url http://artifact.enflame.cn/artifactory/api/pypi/pypi-remote/simple && pip3 config set global.trusted-host artifact.enflame.cn
 
-RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/RLOcAa76/nfs/tops_daily/TopsRider_i3x_3.4.20250425_deb_amd64.run" && \
-    bash topsrider.run -C vllm-gcu --container -y && \
+RUN wget -c -O topsrider.run "http://10.9.115.79:15001/api/public/dl/lNt_HpEM/nfs/tops_daily/TopsRider_i3x_3.5.20250723_deb_amd64.run" && \
+    bash topsrider.run -C vllm-gcu -C torch-gcu-2.6 --container -y && \
     rm -rf topsrider.run
 
 WORKDIR /workspace
 
-RUN pip3.10 install torchvision==0.20.0 torch==2.5.0 torchaudio==2.5.0 --force-reinstall 
+RUN pip3.10 install torchvision==0.21.0 torch==2.6.0 torchaudio==2.6.0 --force-reinstall 
+RUN pip3.10 install vllm==0.8.0
 
 RUN pip3.10 install protobuf==3.20 fire
 RUN wget https://gitee.com/lijiacai/transformers/releases/download/v4.45.0/transformers-4.45.0.dev0-py3-none-any.whl && pip3.10 install transformers-4.45.0.dev0-py3-none-any.whl
